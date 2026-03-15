@@ -41,6 +41,47 @@ IntelliJ IDEA
   - `./gradlew runServer`: Start the game in server mode.（ログのみ表示される）
 -  mod の挙動をゲーム画面で確認するときは、サーバーモードでゲームを開始したままクライアントモードでゲームを開始すればよい。
 
+### Gradle コマンドが使えない場合
+
+このリポジトリでは `./gradlew` を使う想定ですが、`gradlew` が存在しない状態だと以下のようなエラーになります。
+
+- `zsh: no such file or directory: ./gradlew`
+- `zsh: permission denied: ./gradle`
+
+`./gradle` は実行ファイルではなくディレクトリのため、`./gradle runServer` は実行できません。
+
+その場合は、まずローカルに Gradle をインストールして wrapper を再生成してください。
+
+macOS:
+
+```sh
+brew install gradle
+gradle wrapper
+./gradlew runServer
+```
+
+Windows (PowerShell):
+
+```powershell
+winget install Gradle.Gradle
+gradle wrapper
+.\gradlew.bat runServer
+```
+
+クライアントを起動する場合は、wrapper 再生成後に以下を実行してください。
+
+macOS:
+
+```sh
+./gradlew runClient
+```
+
+Windows (PowerShell):
+
+```powershell
+.\gradlew.bat runClient
+```
+
 [Fabric公式ドキュメント](https://docs.fabricmc.net/develop/getting-started/)を参考にしてください。
 IDEは[IntelliJ IDEA](https://www.jetbrains.com/ja-jp/idea/) (community版) を推奨しています。（無料）
 
