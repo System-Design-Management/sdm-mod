@@ -25,12 +25,12 @@ Firstly, clone this repository using Git:
 
 - 開発者向け
 ```sh
-git clone git@github.com:System-Design-Management/mod_test-template-1.21.6.git
+git clone git@github.com:System-Design-Management/extra-items.git
 ```
 
 - mod を利用する方向け
 ```sh
-git clone https://github.com/System-Design-Management/mod_test-template-1.21.6.git
+git clone https://github.com/System-Design-Management/extra-items.git
 ```
 
 Once you've opened the project in your IDE, it should automatically load the project's Gradle configuration and perform the necessary setup tasks.
