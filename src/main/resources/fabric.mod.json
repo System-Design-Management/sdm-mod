@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "extra_items",
+  "version": "${version}",
+  "name": "Extra Items Mod",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/extra_items/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "jp.ac.u_tokyo.sdm.extra_items.client.ExtraItemsDataGenerator"
+    ],
+    "client": [
+      "jp.ac.u_tokyo.sdm.extra_items.client.ExtraItemsClient"
+    ],
+    "main": [
+      "jp.ac.u_tokyo.sdm.extra_items.ExtraItems"
+    ]
+  },
+  "mixins": [
+    "extra_items.mixins.json",
+    {
+      "config": "extra_items.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
