@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "extra_items:block/technical_book"
+    }
+  }
+}
