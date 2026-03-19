@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.extra_items;
 
+import jp.ac.u_tokyo.sdm.extra_items.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 
 public class ExtraItems implements ModInitializer {
@@ -8,6 +9,7 @@ public class ExtraItems implements ModInitializer {
     @Override
     public void onInitialize() {
         ModBlocks.initialize();
+        ModScreenHandlers.initialize();
         ModItems.initialize();
     }
 }

@@ -1,4 +1,7 @@
 {
   "item.extra_items.student_id": "Student ID",
-  "block.extra_items.technical_book": "Technical Book"
+  "block.extra_items.technical_book": "Technical Book",
+  "item.extra_items.technical_book": "Technical Book",
+  "screen.extra_items.technical_book.body": "The technical book is open. You can build the study and explanation UI here next.",
+  "screen.extra_items.technical_book.close": "Close"
 }

@@ -1,4 +1,7 @@
 {
   "item.extra_items.student_id": "学生証",
-  "block.extra_items.technical_book": "専門書"
+  "block.extra_items.technical_book": "専門書",
+  "item.extra_items.technical_book": "専門書",
+  "screen.extra_items.technical_book.body": "専門書を開きました。ここに学習内容や解説 UI を実装していけます。",
+  "screen.extra_items.technical_book.close": "閉じる"
 }
