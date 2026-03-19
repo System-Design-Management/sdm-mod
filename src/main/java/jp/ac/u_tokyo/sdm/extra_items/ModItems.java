@@ -1,6 +1,6 @@
 package jp.ac.u_tokyo.sdm.extra_items;
 
-import net.minecraft.item.BlockItem;
+import jp.ac.u_tokyo.sdm.extra_items.item.TechnicalBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -15,7 +15,7 @@ public final class ModItems {
 
     public static final Item TECHNICAL_BOOK = register(
         "technical_book",
-        settings -> new BlockItem(ModBlocks.TECHNICAL_BOOK, settings)
+        settings -> new TechnicalBookItem(ModBlocks.TECHNICAL_BOOK, settings)
     );
 
     private ModItems() {
