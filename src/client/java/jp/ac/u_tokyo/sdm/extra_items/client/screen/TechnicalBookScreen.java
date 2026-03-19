@@ -7,8 +7,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
 public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreenHandler> {
-    private static final Text SUBTITLE_TEXT = Text.translatable("screen.extra_items.technical_book.subtitle");
-    private static final Text FORMULA_TEXT = Text.translatable("screen.extra_items.technical_book.formula");
     private static final Text EXPLANATION_TEXT = Text.translatable("screen.extra_items.technical_book.explanation");
     private static final Text FOOTNOTE_TEXT = Text.translatable("screen.extra_items.technical_book.footnote");
     private static final Text LEFT_PAGE_TEXT = Text.translatable("screen.extra_items.technical_book.left_page");
@@ -19,7 +17,6 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
     private static final int HEADER_HEIGHT = 24;
     private static final int PAGE_PADDING = 14;
     private static final int GUTTER_WIDTH = 8;
-    private static final int FORMULA_SECTION_HEIGHT = 30;
 
     public TechnicalBookScreen(
         TechnicalBookScreenHandler handler,
@@ -43,37 +40,26 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
         // TODO: ページ送りや章構成を追加する場合は、左右ページごとに操作を分ける。
         PanelMetrics panel = this.getPanelMetrics();
         int titleWidth = this.textRenderer.getWidth(this.title);
-        int subtitleWidth = this.textRenderer.getWidth(SUBTITLE_TEXT);
-        int leftPageNumberWidth = this.textRenderer.getWidth("01");
         int rightPageNumberWidth = this.textRenderer.getWidth("02");
-        int formulaWidth = this.textRenderer.getWidth(FORMULA_TEXT);
-        int lineHeight = this.textRenderer.fontHeight;
 
         int titleX = panel.left + (panel.width - titleWidth) / 2 - this.x;
         int titleY = panel.top + 7 - this.y;
-        int subtitleX = panel.paperLeft + (panel.paperWidth - subtitleWidth) / 2 - this.x;
-        int subtitleY = panel.paperTop + 8 - this.y;
-        int formulaX = panel.paperLeft + (panel.paperWidth - formulaWidth) / 2 - this.x;
-        int formulaY = panel.formulaTop + (FORMULA_SECTION_HEIGHT - lineHeight) / 2 - this.y;
-
         int leftPageX = panel.leftPageLeft + PAGE_PADDING - this.x;
         int leftPageY = panel.pageBodyTop - this.y;
         int rightPageX = panel.rightPageLeft + PAGE_PADDING - this.x;
         int rightPageY = panel.pageBodyTop - this.y;
         int pageTextWidth = panel.pageWidth - PAGE_PADDING * 2;
 
-        context.drawText(this.textRenderer, this.title, titleX, titleY, 0xFF4A3221, false);
-        context.drawText(this.textRenderer, SUBTITLE_TEXT, subtitleX, subtitleY, 0xFF8C6F58, false);
-        context.drawText(this.textRenderer, "01", leftPageX, panel.pageNumberY - this.y, 0xFFAE9A84, false);
+        context.drawText(this.textRenderer, this.title, titleX, titleY, 0xFF111111, false);
+        context.drawText(this.textRenderer, "01", leftPageX, panel.pageNumberY - this.y, 0xFF222222, false);
         context.drawText(
             this.textRenderer,
             "02",
             panel.rightPageRight - PAGE_PADDING - rightPageNumberWidth - this.x,
             panel.pageNumberY - this.y,
-            0xFFAE9A84,
+            0xFF222222,
             false
         );
-        context.drawText(this.textRenderer, FORMULA_TEXT, formulaX, formulaY, 0xFF2F2015, false);
 
         context.drawWrappedText(
             this.textRenderer,
@@ -81,16 +67,16 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
             leftPageX,
             leftPageY,
             pageTextWidth,
-            0xFF5B4737,
+            0xFF111111,
             false
         );
         context.drawWrappedText(
             this.textRenderer,
             EXPLANATION_TEXT,
             rightPageX,
-            rightPageY,
+            rightPageY + 2,
             pageTextWidth,
-            0xFF5B4737,
+            0xFF111111,
             false
         );
         context.drawWrappedText(
@@ -99,7 +85,7 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
             rightPageX,
             panel.rightPageNoteY - this.y,
             pageTextWidth,
-            0xFF7A6654,
+            0xFF222222,
             false
         );
         context.drawWrappedText(
@@ -108,7 +94,7 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
             leftPageX,
             panel.leftPageNoteY - this.y,
             pageTextWidth,
-            0xFF7A6654,
+            0xFF222222,
             false
         );
     }
@@ -146,8 +132,8 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
         context.fill(panel.gutterLeft, panel.paperTop + 6, panel.gutterRight, panel.paperBottom - 6, 0xFFD5C5AB);
         context.fill(panel.gutterLeft + 1, panel.paperTop + 6, panel.gutterRight - 1, panel.paperBottom - 6, 0x55FFF8E8);
 
-        context.fill(panel.paperLeft + 12, panel.formulaTop - 6, panel.paperRight - 12, panel.formulaTop - 5, 0x22A28C6A);
-        context.fill(panel.paperLeft + 12, panel.formulaBottom + 5, panel.paperRight - 12, panel.formulaBottom + 6, 0x22A28C6A);
+        context.fill(panel.paperLeft + 18, panel.pageNumberY + 14, panel.gutterLeft - 12, panel.pageNumberY + 15, 0x22A28C6A);
+        context.fill(panel.gutterRight + 12, panel.pageNumberY + 14, panel.paperRight - 18, panel.pageNumberY + 15, 0x22A28C6A);
         context.fill(panel.paperLeft + 18, panel.leftPageNoteY - 8, panel.gutterLeft - 12, panel.leftPageNoteY - 7, 0x22A28C6A);
         context.fill(panel.gutterRight + 12, panel.rightPageNoteY - 8, panel.paperRight - 18, panel.rightPageNoteY - 7, 0x22A28C6A);
     }
@@ -175,9 +161,7 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
         int rightPageLeft = gutterRight;
         int rightPageRight = paperRight;
 
-        int formulaTop = paperTop + 26;
-        int formulaBottom = formulaTop + FORMULA_SECTION_HEIGHT;
-        int pageNumberY = formulaBottom + 8;
+        int pageNumberY = paperTop + 12;
         int pageBodyTop = pageNumberY + this.textRenderer.fontHeight + 8;
         int leftPageNoteY = paperBottom - 58;
         int rightPageNoteY = paperBottom - 58;
@@ -187,7 +171,7 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
             paperLeft, paperTop, paperRight, paperBottom, paperWidth, paperHeight,
             gutterLeft, gutterRight,
             leftPageLeft, leftPageRight, rightPageLeft, rightPageRight, pageWidth,
-            formulaTop, formulaBottom, pageNumberY, pageBodyTop, leftPageNoteY, rightPageNoteY
+            pageNumberY, pageBodyTop, leftPageNoteY, rightPageNoteY
         );
     }
 
@@ -211,8 +195,6 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
         int rightPageLeft,
         int rightPageRight,
         int pageWidth,
-        int formulaTop,
-        int formulaBottom,
         int pageNumberY,
         int pageBodyTop,
         int leftPageNoteY,
