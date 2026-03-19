@@ -15,7 +15,7 @@ public final class ModItems {
 
     public static final Item TECHNICAL_BOOK = register(
         "technical_book",
-        TechnicalBookItem::new
+        settings -> new TechnicalBookItem(ModBlocks.TECHNICAL_BOOK, settings)
     );
 
     private ModItems() {

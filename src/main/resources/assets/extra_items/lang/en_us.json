@@ -2,6 +2,9 @@
   "item.extra_items.student_id": "Student ID",
   "block.extra_items.technical_book": "Technical Book",
   "item.extra_items.technical_book": "Technical Book",
-  "screen.extra_items.technical_book.body": "The technical book is open. You can build the study and explanation UI here next.",
+  "screen.extra_items.technical_book.subtitle": "Math Notes Chapter 1",
+  "screen.extra_items.technical_book.formula": "e^(iπ) + 1 = 0",
+  "screen.extra_items.technical_book.explanation": "Substituting x = π into Euler's formula e^(ix) = cos(x) + i sin(x) gives e^(iπ) = -1. Therefore, e^(iπ) + 1 = 0.",
+  "screen.extra_items.technical_book.footnote": "It is known as a beautiful identity because it links e, i, π, 1, and 0 in a single equation.",
   "screen.extra_items.technical_book.close": "Close"
 }
