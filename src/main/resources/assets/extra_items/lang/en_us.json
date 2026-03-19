@@ -6,5 +6,6 @@
   "screen.extra_items.technical_book.right_page": "Substituting x = π simplifies the expression to e^(iπ) = -1.",
   "screen.extra_items.technical_book.explanation": "Therefore, e^(iπ) + 1 = 0.",
   "screen.extra_items.technical_book.footnote": "It is widely known as a beautiful identity.",
-  "screen.extra_items.technical_book.close": "Close"
+  "screen.extra_items.technical_book.close": "Close",
+  "screen.extra_items.technical_book.close_hint": "Press Esc or Menu/Back to close"
 }

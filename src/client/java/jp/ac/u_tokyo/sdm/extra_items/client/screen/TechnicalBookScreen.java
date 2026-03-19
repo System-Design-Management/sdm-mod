@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.extra_items.client.screen;
 import jp.ac.u_tokyo.sdm.extra_items.screen.TechnicalBookScreenHandler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
@@ -11,6 +12,8 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
     private static final Text FOOTNOTE_TEXT = Text.translatable("screen.extra_items.technical_book.footnote");
     private static final Text LEFT_PAGE_TEXT = Text.translatable("screen.extra_items.technical_book.left_page");
     private static final Text RIGHT_PAGE_TEXT = Text.translatable("screen.extra_items.technical_book.right_page");
+    private static final Text CLOSE_TEXT = Text.translatable("screen.extra_items.technical_book.close");
+    private static final Text CLOSE_HINT_TEXT = Text.translatable("screen.extra_items.technical_book.close_hint");
     private static final int PANEL_WIDTH = 292;
     private static final int PANEL_HEIGHT = 180;
     private static final int PANEL_PADDING = 12;
@@ -33,6 +36,15 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
     @Override
     protected void init() {
         super.init();
+
+        int buttonWidth = 96;
+        int buttonHeight = 20;
+        int buttonX = this.x + (this.backgroundWidth - buttonWidth) / 2;
+        int buttonY = this.y + this.backgroundHeight + 8;
+
+        this.addDrawableChild(ButtonWidget.builder(CLOSE_TEXT, button -> this.close())
+            .dimensions(buttonX, buttonY, buttonWidth, buttonHeight)
+            .build());
     }
 
     @Override
@@ -97,6 +109,11 @@ public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreen
             0xFF222222,
             false
         );
+
+        int hintWidth = this.textRenderer.getWidth(CLOSE_HINT_TEXT);
+        int hintX = panel.left + (panel.width - hintWidth) / 2 - this.x;
+        int hintY = panel.bottom + 34 - this.y;
+        context.drawText(this.textRenderer, CLOSE_HINT_TEXT, hintX, hintY, 0xFFEDE6DB, false);
     }
 
     @Override

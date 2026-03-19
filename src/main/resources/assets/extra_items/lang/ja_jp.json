@@ -6,5 +6,6 @@
   "screen.extra_items.technical_book.right_page": "x = π を代入すると、式は e^(iπ) = -1 に簡約される。",
   "screen.extra_items.technical_book.explanation": "したがって e^(iπ) + 1 = 0 が得られる。",
   "screen.extra_items.technical_book.footnote": "美しい等式としてよく知られている。",
-  "screen.extra_items.technical_book.close": "閉じる"
+  "screen.extra_items.technical_book.close": "閉じる",
+  "screen.extra_items.technical_book.close_hint": "Esc またはメニュー/戻る で閉じる"
 }
