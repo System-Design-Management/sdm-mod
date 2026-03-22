@@ -1,6 +1,6 @@
-package jp.ac.u_tokyo.sdm.extra_items.client.screen;
+package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
-import jp.ac.u_tokyo.sdm.extra_items.screen.TechnicalBookScreenHandler;
+import jp.ac.u_tokyo.sdm.sdm_mod.screen.TechnicalBookScreenHandler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -8,12 +8,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
 public final class TechnicalBookScreen extends HandledScreen<TechnicalBookScreenHandler> {
-    private static final Text EXPLANATION_TEXT = Text.translatable("screen.extra_items.technical_book.explanation");
-    private static final Text FOOTNOTE_TEXT = Text.translatable("screen.extra_items.technical_book.footnote");
-    private static final Text LEFT_PAGE_TEXT = Text.translatable("screen.extra_items.technical_book.left_page");
-    private static final Text RIGHT_PAGE_TEXT = Text.translatable("screen.extra_items.technical_book.right_page");
-    private static final Text CLOSE_TEXT = Text.translatable("screen.extra_items.technical_book.close");
-    private static final Text CLOSE_HINT_TEXT = Text.translatable("screen.extra_items.technical_book.close_hint");
+    private static final Text EXPLANATION_TEXT = Text.translatable("screen.sdm_mod.technical_book.explanation");
+    private static final Text FOOTNOTE_TEXT = Text.translatable("screen.sdm_mod.technical_book.footnote");
+    private static final Text LEFT_PAGE_TEXT = Text.translatable("screen.sdm_mod.technical_book.left_page");
+    private static final Text RIGHT_PAGE_TEXT = Text.translatable("screen.sdm_mod.technical_book.right_page");
+    private static final Text CLOSE_TEXT = Text.translatable("screen.sdm_mod.technical_book.close");
+    private static final Text CLOSE_HINT_TEXT = Text.translatable("screen.sdm_mod.technical_book.close_hint");
     private static final int PANEL_WIDTH = 292;
     private static final int PANEL_HEIGHT = 180;
     private static final int PANEL_PADDING = 12;

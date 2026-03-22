@@ -1,6 +1,6 @@
-package jp.ac.u_tokyo.sdm.extra_items.screen;
+package jp.ac.u_tokyo.sdm.sdm_mod.screen;
 
-import jp.ac.u_tokyo.sdm.extra_items.ExtraItems;
+import jp.ac.u_tokyo.sdm.sdm_mod.SdmMod;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -21,7 +21,7 @@ public final class ModScreenHandlers {
         String name,
         ScreenHandlerType.Factory<T> factory
     ) {
-        Identifier id = Identifier.of(ExtraItems.MOD_ID, name);
+        Identifier id = Identifier.of(SdmMod.MOD_ID, name);
         RegistryKey<ScreenHandlerType<?>> key = RegistryKey.of(Registries.SCREEN_HANDLER.getKey(), id);
         return Registry.register(
             Registries.SCREEN_HANDLER,

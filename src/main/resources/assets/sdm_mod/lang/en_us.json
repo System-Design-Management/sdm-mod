@@ -1,0 +1,11 @@
+{
+  "item.sdm_mod.student_id": "Student ID",
+  "block.sdm_mod.technical_book": "Technical Book",
+  "item.sdm_mod.technical_book": "Technical Book",
+  "screen.sdm_mod.technical_book.left_page": "Euler's formula links exponential and trigonometric functions.",
+  "screen.sdm_mod.technical_book.right_page": "Substituting x = π simplifies the expression to e^(iπ) = -1.",
+  "screen.sdm_mod.technical_book.explanation": "Therefore, e^(iπ) + 1 = 0.",
+  "screen.sdm_mod.technical_book.footnote": "It is widely known as a beautiful identity.",
+  "screen.sdm_mod.technical_book.close": "Close",
+  "screen.sdm_mod.technical_book.close_hint": "Press Esc or Menu/Back to close"
+}

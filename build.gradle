@@ -14,7 +14,7 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        "extra_items" {
+        "sdm_mod" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }

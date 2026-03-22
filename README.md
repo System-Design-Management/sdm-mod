@@ -1,4 +1,4 @@
-# Extra Items
+# SDM Mod
 
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-%5B1.21.6%5D-green.svg)](https://www.minecraft.net)
 [![Mod Loader](https://img.shields.io/badge/Mod%20Loader-Fabric-lightgrey.svg)](https://fabricmc.net/)
@@ -9,7 +9,7 @@ Minecraft (Java Edition) Fabric 向け MOD リポジトリです。
 
 ## 📖 概要 (Overview)
 
-このリポジトリは、アイテムの追加を行うためのものです。
+このリポジトリは、System Design Management 向けの Minecraft Fabric MOD を開発するためのものです。
 
 ## ⚙️ 必須環境 (Requirements)
 
@@ -25,12 +25,12 @@ Firstly, clone this repository using Git:
 
 - 開発者向け
 ```sh
-git clone git@github.com:System-Design-Management/extra-items.git
+git clone git@github.com:System-Design-Management/sdm-mod.git
 ```
 
 - mod を利用する方向け
 ```sh
-git clone https://github.com/System-Design-Management/extra-items.git
+git clone https://github.com/System-Design-Management/sdm-mod.git
 ```
 
 Once you've opened the project in your IDE, it should automatically load the project's Gradle configuration and perform the necessary setup tasks.

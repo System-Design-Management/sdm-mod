@@ -1,4 +1,4 @@
-package jp.ac.u_tokyo.sdm.extra_items.screen;
+package jp.ac.u_tokyo.sdm.sdm_mod.screen;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

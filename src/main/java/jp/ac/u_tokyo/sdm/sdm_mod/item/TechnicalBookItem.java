@@ -1,6 +1,6 @@
-package jp.ac.u_tokyo.sdm.extra_items.item;
+package jp.ac.u_tokyo.sdm.sdm_mod.item;
 
-import jp.ac.u_tokyo.sdm.extra_items.screen.TechnicalBookScreenHandler;
+import jp.ac.u_tokyo.sdm.sdm_mod.screen.TechnicalBookScreenHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -12,7 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 public final class TechnicalBookItem extends BlockItem {
-    private static final Text TITLE = Text.translatable("item.extra_items.technical_book");
+    private static final Text TITLE = Text.translatable("item.sdm_mod.technical_book");
 
     public TechnicalBookItem(Block block, Settings settings) {
         super(block, settings);

@@ -1,9 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "jp.ac.u_tokyo.sdm.extra_items.mixin.client",
+  "package": "jp.ac.u_tokyo.sdm.sdm_mod.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
+  "mixins": [
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "extra_items:block/technical_book"
+    "all": "sdm_mod:block/technical_book"
   }
 }

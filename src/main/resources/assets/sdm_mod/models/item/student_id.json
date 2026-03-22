@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "extra_items:item/student_id"
+    "layer0": "sdm_mod:item/student_id"
   }
 }

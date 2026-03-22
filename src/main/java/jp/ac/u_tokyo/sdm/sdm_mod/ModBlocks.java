@@ -1,4 +1,4 @@
-package jp.ac.u_tokyo.sdm.extra_items;
+package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -17,7 +17,7 @@ public final class ModBlocks {
     }
 
     private static Block register(String name, AbstractBlock.Settings settings) {
-        Identifier id = Identifier.of(ExtraItems.MOD_ID, name);
+        Identifier id = Identifier.of(SdmMod.MOD_ID, name);
         RegistryKey<Block> key = RegistryKey.of(Registries.BLOCK.getKey(), id);
         return Registry.register(Registries.BLOCK, key, new Block(settings.registryKey(key)));
     }
