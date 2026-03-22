@@ -85,6 +85,25 @@ Windows (PowerShell):
 [Fabric公式ドキュメント](https://docs.fabricmc.net/develop/getting-started/)を参考にしてください。
 IDEは[IntelliJ IDEA](https://www.jetbrains.com/ja-jp/idea/) (community版) を推奨しています。（無料）
 
+## ストーリー開始コマンド
+
+ストーリー開始時の初期化は、ワールド起動時の自動実行ではなくコマンド実行で行います。
+
+- コマンド: `/sdm_story start`
+- 実行権限: 権限レベル 2 以上（管理者権限）
+
+このコマンドを実行すると、以下の初期化が行われます。
+
+- 実績解除の告知を無効化する
+- ストーリー進行状態を開始地点に戻す
+- 全プレイヤーのインベントリとエンダーチェストを空にする
+- 全プレイヤーの体力、満腹度、呼吸ゲージ、経験値などを初期状態に戻す
+- 全プレイヤーをアドベンチャーモードにする
+- `/function thepa:give/revolver with @a` を実行する
+- `/function thepa:give/bullets with @a` を実行する
+
+開始地点へのテレポートは、座標確定後に追加予定です。
+
 ## 📚 参考ドキュメント (Reference)
 
 MOD開発の学習には、以下のFabric公式ドキュメントが役立ちます。
