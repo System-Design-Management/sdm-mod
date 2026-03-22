@@ -37,8 +37,8 @@ Once you've opened the project in your IDE, it should automatically load the pro
 
 IntelliJ IDEA
 - If you're using the command line, you can use the following Gradle commands to start the game:
-  - `./gradlew runClient`: Start the game in client mode.（ゲーム画面が起動）
   - `./gradlew runServer`: Start the game in server mode.（ログのみ表示される）
+  - `./gradlew runClient`: Start the game in client mode.（ゲーム画面が起動）
 -  mod の挙動をゲーム画面で確認するときは、サーバーモードでゲームを開始したままクライアントモードでゲームを開始すればよい。
 
 ### Gradle コマンドが使えない場合
