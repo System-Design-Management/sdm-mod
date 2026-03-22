@@ -17,8 +17,10 @@ public final class StoryStartService {
         GameRulesInitializer.applyStoryDefaults(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
-        executeServerCommand(server, "function thepa:give/revolver with @a");
-        executeServerCommand(server, "function thepa:give/bullets with @a");
+        server.getPlayerManager().getPlayerList().forEach(player -> {
+            executePlayerCommand(server, player, "function thepa:give/revolver");
+            executePlayerCommand(server, player, "function thepa:give/bullets");
+        });
 
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
@@ -49,8 +51,12 @@ public final class StoryStartService {
         // TODO: ストーリー開始地点の座標が確定したら、ここでテレポートする。
     }
 
-    private static void executeServerCommand(MinecraftServer server, String command) {
-        ServerCommandSource commandSource = server.getCommandSource().withLevel(2);
+    private static void executePlayerCommand(MinecraftServer server, ServerPlayerEntity player, String command) {
+        ServerCommandSource commandSource = server.getCommandSource()
+            .withLevel(2)
+            .withEntity(player)
+            .withPosition(player.getPos())
+            .withRotation(player.getRotationClient());
         server.getCommandManager().executeWithPrefix(commandSource, command);
     }
 }
