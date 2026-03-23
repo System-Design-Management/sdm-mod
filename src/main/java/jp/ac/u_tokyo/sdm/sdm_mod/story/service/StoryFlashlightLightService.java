@@ -15,6 +15,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public final class StoryFlashlightLightService {
     private static final int FLASHLIGHT_MAX_LIGHT_LEVEL = 10;
@@ -88,10 +89,11 @@ public final class StoryFlashlightLightService {
 
     private static LightPlacement findPlacement(ServerPlayerEntity player) {
         HitResult hitResult = player.raycast(FLASHLIGHT_REACH, 1.0f, false);
-        if (!(hitResult instanceof BlockHitResult blockHitResult) || hitResult.getType() != HitResult.Type.BLOCK) {
-            return null;
+        if (hitResult.getType() != HitResult.Type.BLOCK) {
+            return findMissPlacement(player);
         }
 
+        BlockHitResult blockHitResult = (BlockHitResult) hitResult;
         ServerWorld world = player.getWorld();
         BlockPos targetPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
         if (!canPlaceLight(world, targetPos)) {
@@ -101,6 +103,18 @@ public final class StoryFlashlightLightService {
 
         int lightLevel = calculateLightLevel(player, hitResult);
         return new LightPlacement(world, targetPos, lightLevel);
+    }
+
+    private static LightPlacement findMissPlacement(ServerPlayerEntity player) {
+        ServerWorld world = player.getWorld();
+        Vec3d eyePos = player.getEyePos();
+        Vec3d endPos = eyePos.add(player.getRotationVec(1.0f).multiply(FLASHLIGHT_REACH));
+        BlockPos targetPos = BlockPos.ofFloored(endPos);
+        if (!canPlaceLight(world, targetPos)) {
+            return null;
+        }
+
+        return new LightPlacement(world, targetPos, FLASHLIGHT_MIN_LIGHT_LEVEL);
     }
 
     private static boolean canPlaceLight(ServerWorld world, BlockPos pos) {
