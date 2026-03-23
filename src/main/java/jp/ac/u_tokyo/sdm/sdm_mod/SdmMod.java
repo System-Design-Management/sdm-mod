@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.command.StoryCommandInitializer;
@@ -13,6 +14,7 @@ public class SdmMod implements ModInitializer {
         ModBlocks.initialize();
         ModScreenHandlers.initialize();
         ModItems.initialize();
+        CommandPermissionInitializer.initialize();
         StoryModule.initialize();
         StoryCommandInitializer.initialize();
     }
