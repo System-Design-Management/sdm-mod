@@ -94,6 +94,7 @@ public final class StoryFlashlightLightService {
         ServerWorld world = player.getWorld();
         BlockPos targetPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
         if (!canPlaceLight(world, targetPos)) {
+            // TODO: 視線先に直接 light を置けない場合、周辺候補へフォールバックする。
             return null;
         }
 
