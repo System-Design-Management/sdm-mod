@@ -12,29 +12,23 @@ import net.minecraft.block.LightBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
-public final class StoryAmbientLightService {
-    private static final int STORY_LIGHT_LEVEL = 8;
+public final class StoryFlashlightLightService {
+    private static final int FLASHLIGHT_LIGHT_LEVEL = 8;
     private static final int LIGHT_UPDATE_FLAGS = 3;
-    private static final BlockPos[] LIGHT_OFFSETS = {
-        new BlockPos(0, 1, 0),
-        BlockPos.ORIGIN,
-        new BlockPos(0, 2, 0),
-        new BlockPos(1, 1, 0),
-        new BlockPos(-1, 1, 0),
-        new BlockPos(0, 1, 1),
-        new BlockPos(0, 1, -1)
-    };
+    private static final double FLASHLIGHT_REACH = 10.0;
 
     private static final Map<UUID, LightPlacement> ACTIVE_LIGHTS = new HashMap<>();
     private static boolean enabled;
 
-    private StoryAmbientLightService() {
+    private StoryFlashlightLightService() {
     }
 
     public static void initialize() {
-        ServerTickEvents.END_SERVER_TICK.register(StoryAmbientLightService::tick);
+        ServerTickEvents.END_SERVER_TICK.register(StoryFlashlightLightService::tick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             if (enabled) {
                 updatePlayerLight(handler.getPlayer());
@@ -56,7 +50,7 @@ public final class StoryAmbientLightService {
 
     public static void disable() {
         enabled = false;
-        ACTIVE_LIGHTS.values().forEach(StoryAmbientLightService::removeLightIfPresent);
+        ACTIVE_LIGHTS.values().forEach(StoryFlashlightLightService::removeLightIfPresent);
         ACTIVE_LIGHTS.clear();
     }
 
@@ -92,43 +86,44 @@ public final class StoryAmbientLightService {
     }
 
     private static LightPlacement findPlacement(ServerPlayerEntity player) {
-        ServerWorld world = player.getWorld();
-        BlockPos origin = player.getBlockPos();
-
-        for (BlockPos offset : LIGHT_OFFSETS) {
-            BlockPos targetPos = origin.add(offset);
-            if (canPlaceLight(world, targetPos)) {
-                return new LightPlacement(world, targetPos);
-            }
+        HitResult hitResult = player.raycast(FLASHLIGHT_REACH, 1.0f, false);
+        if (!(hitResult instanceof BlockHitResult blockHitResult) || hitResult.getType() != HitResult.Type.BLOCK) {
+            return null;
         }
 
-        return null;
+        ServerWorld world = player.getWorld();
+        BlockPos targetPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
+        if (!canPlaceLight(world, targetPos)) {
+            return null;
+        }
+
+        return new LightPlacement(world, targetPos);
     }
 
     private static boolean canPlaceLight(ServerWorld world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return state.isAir() || isStoryLight(state);
+        return state.isAir() || isFlashlightLight(state);
     }
 
     private static void placeLight(LightPlacement placement) {
         placement.world().setBlockState(
             placement.pos(),
-            Blocks.LIGHT.getDefaultState().with(LightBlock.LEVEL_15, STORY_LIGHT_LEVEL),
+            Blocks.LIGHT.getDefaultState().with(LightBlock.LEVEL_15, FLASHLIGHT_LIGHT_LEVEL),
             LIGHT_UPDATE_FLAGS
         );
     }
 
     private static void removeLightIfPresent(LightPlacement placement) {
         BlockState state = placement.world().getBlockState(placement.pos());
-        if (isStoryLight(state)) {
+        if (isFlashlightLight(state)) {
             placement.world().setBlockState(placement.pos(), Blocks.AIR.getDefaultState(), LIGHT_UPDATE_FLAGS);
         }
     }
 
-    private static boolean isStoryLight(BlockState state) {
+    private static boolean isFlashlightLight(BlockState state) {
         return state.isOf(Blocks.LIGHT)
             && state.contains(LightBlock.LEVEL_15)
-            && state.get(LightBlock.LEVEL_15) == STORY_LIGHT_LEVEL;
+            && state.get(LightBlock.LEVEL_15) == FLASHLIGHT_LIGHT_LEVEL;
     }
 
     private record LightPlacement(ServerWorld world, BlockPos pos) {

@@ -25,7 +25,7 @@ public final class StoryStartService {
             executePlayerCommand(server, player, "function thepa:give/m1_garand");
             executePlayerCommand(server, player, "function thepa:give/medium_round");
         });
-        StoryAmbientLightService.enable(server);
+        StoryFlashlightLightService.enable(server);
 
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
