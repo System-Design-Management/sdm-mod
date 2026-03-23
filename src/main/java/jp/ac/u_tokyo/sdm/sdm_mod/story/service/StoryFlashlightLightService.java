@@ -22,6 +22,20 @@ public final class StoryFlashlightLightService {
     private static final int FLASHLIGHT_MIN_LIGHT_LEVEL = 1;
     private static final int LIGHT_UPDATE_FLAGS = 3;
     private static final double FLASHLIGHT_REACH = 32.0;
+    private static final BlockPos[] LIGHT_FALLBACK_OFFSETS = {
+        BlockPos.ORIGIN,
+        new BlockPos(0, 1, 0),
+        new BlockPos(0, -1, 0),
+        new BlockPos(1, 0, 0),
+        new BlockPos(-1, 0, 0),
+        new BlockPos(0, 0, 1),
+        new BlockPos(0, 0, -1),
+        new BlockPos(0, 2, 0),
+        new BlockPos(1, 1, 0),
+        new BlockPos(-1, 1, 0),
+        new BlockPos(0, 1, 1),
+        new BlockPos(0, 1, -1)
+    };
 
     private static final Map<UUID, LightPlacement> ACTIVE_LIGHTS = new HashMap<>();
     private static boolean enabled;
@@ -95,14 +109,9 @@ public final class StoryFlashlightLightService {
 
         BlockHitResult blockHitResult = (BlockHitResult) hitResult;
         ServerWorld world = player.getWorld();
-        BlockPos targetPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
-        if (!canPlaceLight(world, targetPos)) {
-            // TODO: 視線先に直接 light を置けない場合、周辺候補へフォールバックする。
-            return null;
-        }
-
         int lightLevel = calculateLightLevel(player, hitResult);
-        return new LightPlacement(world, targetPos, lightLevel);
+        BlockPos targetPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
+        return findPlacementWithFallback(world, targetPos, lightLevel);
     }
 
     private static LightPlacement findMissPlacement(ServerPlayerEntity player) {
@@ -110,11 +119,18 @@ public final class StoryFlashlightLightService {
         Vec3d eyePos = player.getEyePos();
         Vec3d endPos = eyePos.add(player.getRotationVec(1.0f).multiply(FLASHLIGHT_REACH));
         BlockPos targetPos = BlockPos.ofFloored(endPos);
-        if (!canPlaceLight(world, targetPos)) {
-            return null;
+        return findPlacementWithFallback(world, targetPos, FLASHLIGHT_MIN_LIGHT_LEVEL);
+    }
+
+    private static LightPlacement findPlacementWithFallback(ServerWorld world, BlockPos targetPos, int lightLevel) {
+        for (BlockPos offset : LIGHT_FALLBACK_OFFSETS) {
+            BlockPos candidatePos = targetPos.add(offset);
+            if (canPlaceLight(world, candidatePos)) {
+                return new LightPlacement(world, candidatePos, lightLevel);
+            }
         }
 
-        return new LightPlacement(world, targetPos, FLASHLIGHT_MIN_LIGHT_LEVEL);
+        return null;
     }
 
     private static boolean canPlaceLight(ServerWorld world, BlockPos pos) {
