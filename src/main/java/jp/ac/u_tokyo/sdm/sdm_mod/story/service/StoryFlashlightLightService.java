@@ -17,9 +17,10 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
 public final class StoryFlashlightLightService {
-    private static final int FLASHLIGHT_LIGHT_LEVEL = 8;
+    private static final int FLASHLIGHT_MAX_LIGHT_LEVEL = 10;
+    private static final int FLASHLIGHT_MIN_LIGHT_LEVEL = 1;
     private static final int LIGHT_UPDATE_FLAGS = 3;
-    private static final double FLASHLIGHT_REACH = 10.0;
+    private static final double FLASHLIGHT_REACH = 32.0;
 
     private static final Map<UUID, LightPlacement> ACTIVE_LIGHTS = new HashMap<>();
     private static boolean enabled;
@@ -98,35 +99,44 @@ public final class StoryFlashlightLightService {
             return null;
         }
 
-        return new LightPlacement(world, targetPos);
+        int lightLevel = calculateLightLevel(player, hitResult);
+        return new LightPlacement(world, targetPos, lightLevel);
     }
 
     private static boolean canPlaceLight(ServerWorld world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return state.isAir() || isFlashlightLight(state);
+        return state.isAir() || state.isOf(Blocks.LIGHT);
     }
 
     private static void placeLight(LightPlacement placement) {
         placement.world().setBlockState(
             placement.pos(),
-            Blocks.LIGHT.getDefaultState().with(LightBlock.LEVEL_15, FLASHLIGHT_LIGHT_LEVEL),
+            Blocks.LIGHT.getDefaultState().with(LightBlock.LEVEL_15, placement.lightLevel()),
             LIGHT_UPDATE_FLAGS
         );
     }
 
     private static void removeLightIfPresent(LightPlacement placement) {
         BlockState state = placement.world().getBlockState(placement.pos());
-        if (isFlashlightLight(state)) {
+        if (isFlashlightLight(state, placement.lightLevel())) {
             placement.world().setBlockState(placement.pos(), Blocks.AIR.getDefaultState(), LIGHT_UPDATE_FLAGS);
         }
     }
 
-    private static boolean isFlashlightLight(BlockState state) {
-        return state.isOf(Blocks.LIGHT)
-            && state.contains(LightBlock.LEVEL_15)
-            && state.get(LightBlock.LEVEL_15) == FLASHLIGHT_LIGHT_LEVEL;
+    private static int calculateLightLevel(ServerPlayerEntity player, HitResult hitResult) {
+        double distance = player.getEyePos().distanceTo(hitResult.getPos());
+        double progress = Math.min(distance / FLASHLIGHT_REACH, 1.0);
+        int levelRange = FLASHLIGHT_MAX_LIGHT_LEVEL - FLASHLIGHT_MIN_LIGHT_LEVEL;
+        int lightLevel = FLASHLIGHT_MAX_LIGHT_LEVEL - (int) Math.floor(progress * levelRange);
+        return Math.max(FLASHLIGHT_MIN_LIGHT_LEVEL, lightLevel);
     }
 
-    private record LightPlacement(ServerWorld world, BlockPos pos) {
+    private static boolean isFlashlightLight(BlockState state, int lightLevel) {
+        return state.isOf(Blocks.LIGHT)
+            && state.contains(LightBlock.LEVEL_15)
+            && state.get(LightBlock.LEVEL_15) == lightLevel;
+    }
+
+    private record LightPlacement(ServerWorld world, BlockPos pos, int lightLevel) {
     }
 }
