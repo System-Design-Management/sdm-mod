@@ -41,6 +41,22 @@ IntelliJ IDEA
   - `./gradlew runClient`: Start the game in client mode.（ゲーム画面が起動）
 -  mod の挙動をゲーム画面で確認するときは、サーバーモードでゲームを開始したままクライアントモードでゲームを開始すればよい。
 
+### IDE 開発時にバックアップしたワールドを使う方法
+
+`./gradlew runClient` で起動する開発環境は、通常の `.minecraft/saves/` ではなく、このリポジトリの `run/saves/` をワールド保存先として使います。
+
+既存ワールドのバックアップを開発環境で使いたい場合は、バックアップしたワールドフォルダを `run/saves/` の下に配置してください。
+
+例:
+
+```sh
+run/saves/MyWorld/
+```
+
+この状態で `./gradlew runClient` を起動すると、ワールド選択画面に `MyWorld` が表示されます。
+
+通常の Minecraft で使っているワールドを直接編集すると破損時の影響が大きいため、コピーしたバックアップを `run/saves/` に置いて利用することを推奨します。
+
 ### Gradle コマンドが使えない場合
 
 このリポジトリでは `./gradlew` を使う想定ですが、`gradlew` が存在しない状態だと以下のようなエラーになります。
@@ -84,6 +100,19 @@ Windows (PowerShell):
 
 [Fabric公式ドキュメント](https://docs.fabricmc.net/develop/getting-started/)を参考にしてください。
 IDEは[IntelliJ IDEA](https://www.jetbrains.com/ja-jp/idea/) (community版) を推奨しています。（無料）
+
+## MOD の導入先
+
+`./gradlew build` を実行すると、このプロジェクトの配布用 jar は `build/libs/sdm-mod-1.0-SNAPSHOT.jar` に生成されます。
+
+この jar を実際の Minecraft に導入する場合は、Fabric を導入済みの Minecraft の `mods` フォルダに配置してください。
+
+- macOS: `~/Library/Application Support/minecraft/mods/`
+- Windows: `%AppData%/.minecraft/mods/`
+- Linux: `~/.minecraft/mods/`
+
+開発環境で `./gradlew runClient` を使って起動する場合は、実行用ディレクトリが `run/` になるため、外部 mod は `run/mods/` に配置します。
+このプロジェクト自身の mod は起動時に自動で読み込まれるため、`build/libs/sdm-mod-1.0-SNAPSHOT.jar` を `run/mods/` にコピーする必要はありません。
 
 ## ストーリー開始コマンド
 
