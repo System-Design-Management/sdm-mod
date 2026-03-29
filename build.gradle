@@ -3,6 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
+import java.util.Properties
+
 version = project.mod_version
 group = project.maven_group
 
@@ -33,6 +35,48 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
+}
+
+def localDevProperties = new Properties()
+def localDevPropertiesFile = rootProject.file("local.dev.properties")
+if (localDevPropertiesFile.exists()) {
+    localDevPropertiesFile.withInputStream { stream ->
+        localDevProperties.load(stream)
+    }
+}
+
+def devWorldSourceDir = localDevProperties.getProperty("devWorldSourceDir")?.trim()
+def devWorldName = localDevProperties.getProperty("devWorldName")?.trim()
+
+tasks.register("syncDevWorld", Sync) {
+    group = "sdm story"
+    description = "Copy a local development world into run/saves before launching the game."
+
+    onlyIf {
+        devWorldSourceDir
+    }
+
+    doFirst {
+        File sourceDir = file(devWorldSourceDir)
+        if (!sourceDir.exists()) {
+            throw new GradleException("devWorldSourceDir does not exist: ${sourceDir}")
+        }
+        if (!sourceDir.isDirectory()) {
+            throw new GradleException("devWorldSourceDir must be a directory: ${sourceDir}")
+        }
+        if (!devWorldName) {
+            throw new GradleException("devWorldName must be set in local.dev.properties")
+        }
+    }
+
+    from {
+        file(devWorldSourceDir)
+    }
+    into layout.projectDirectory.dir("run/saves/${devWorldName ?: '_unset'}")
+}
+
+tasks.matching { it.name in ["runClient", "runServer"] }.configureEach {
+    dependsOn(tasks.named("syncDevWorld"))
 }
 
 dependencies {

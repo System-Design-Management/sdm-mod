@@ -1,0 +1,8 @@
+# Copy a local world into run/saves automatically before runClient / runServer.
+# Set devWorldSourceDir to the world folder you want to use in development.
+# Example on macOS:
+# devWorldSourceDir=/Users/yourname/Library/Application Support/minecraft/saves/MyWorld
+# devWorldName=MyWorld
+
+devWorldSourceDir=
+devWorldName=

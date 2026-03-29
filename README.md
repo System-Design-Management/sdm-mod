@@ -57,6 +57,30 @@ run/saves/MyWorld/
 
 通常の Minecraft で使っているワールドを直接編集すると破損時の影響が大きいため、コピーしたバックアップを `run/saves/` に置いて利用することを推奨します。
 
+### 開発用ワールドを自動コピーする方法
+
+毎回 `run/saves/` に手で配置しなくてよいように、ローカル設定ファイルから自動同期できます。
+
+1. ルートの `local.dev.properties.example` を参考に、`local.dev.properties` を作成する
+2. `devWorldSourceDir` に元ワールドのフルパスを書く
+3. `devWorldName` に `run/saves/` 側で使いたいフォルダ名を書く
+4. `./gradlew runClient` または `./gradlew runServer` を実行する
+
+例:
+
+```properties
+devWorldSourceDir=/Users/yourname/Library/Application Support/minecraft/saves/MyWorld
+devWorldName=MyWorld
+```
+
+この設定がある場合、起動前に Gradle の `syncDevWorld` タスクが走り、`run/saves/MyWorld/` に自動で同期します。
+
+注意:
+
+- `local.dev.properties` は `.gitignore` 対象なので、各開発者がローカルで設定します。
+- 同期先は `run/saves/<devWorldName>/` です。
+- 元ワールドの内容が更新されたら、次回の `runClient` / `runServer` 実行時に再同期されます。
+
 ### Gradle コマンドが使えない場合
 
 このリポジトリでは `./gradlew` を使う想定ですが、`gradlew` が存在しない状態だと以下のようなエラーになります。
