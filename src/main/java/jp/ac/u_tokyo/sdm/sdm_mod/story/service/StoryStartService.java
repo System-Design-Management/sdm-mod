@@ -8,6 +8,9 @@ import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
 
 import java.util.Set;
@@ -63,9 +66,14 @@ public final class StoryStartService {
 
     private static void preparePlayerForStory(ServerPlayerEntity player) {
         // TODO: 開始地点の高さを再確認し、安全が確認できたら ADVENTURE に戻す。
+        ServerWorld world = (ServerWorld) player.getWorld();
+        ChunkPos destinationChunk = new ChunkPos(BlockPos.ofFloored(STORY_START_X, STORY_START_Y, STORY_START_Z));
+
+        // Load the destination chunk before teleporting so the first command execution is not racing chunk load.
+        world.getChunk(destinationChunk.x, destinationChunk.z);
         player.changeGameMode(GameMode.CREATIVE);
         player.teleport(
-            player.getWorld(),
+            world,
             STORY_START_X,
             STORY_START_Y,
             STORY_START_Z,
