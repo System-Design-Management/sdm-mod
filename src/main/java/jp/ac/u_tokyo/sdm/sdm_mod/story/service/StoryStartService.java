@@ -4,17 +4,26 @@ import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 
+import java.util.Set;
+
 public final class StoryStartService {
+    private static final double STORY_START_X = -160.0;
+    private static final double STORY_START_Y = 27.0;
+    private static final double STORY_START_Z = -614.0;
+
     private StoryStartService() {
     }
 
     public static StoryProgress start(MinecraftServer server) {
         GameRulesInitializer.applyStoryDefaults(server);
+        // Remove existing hostile/passive mobs before players are reset into the story state.
+        StoryEntityControlService.clearNonPlayerLivingEntities(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
         server.getPlayerManager().getPlayerList().forEach(player -> {
@@ -29,6 +38,8 @@ public final class StoryStartService {
 
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
+        // Mark the story as active last so entity-load hooks do not run during setup.
+        storyManager.activate();
         return storyManager.getProgress();
     }
 
@@ -51,9 +62,18 @@ public final class StoryStartService {
     }
 
     private static void preparePlayerForStory(ServerPlayerEntity player) {
-        player.changeGameMode(GameMode.ADVENTURE);
-
-        // TODO: ストーリー開始地点の座標が確定したら、ここでテレポートする。
+        // TODO: 開始地点の高さを再確認し、安全が確認できたら ADVENTURE に戻す。
+        player.changeGameMode(GameMode.CREATIVE);
+        player.teleport(
+            player.getWorld(),
+            STORY_START_X,
+            STORY_START_Y,
+            STORY_START_Z,
+            Set.<PositionFlag>of(),
+            player.getYaw(),
+            player.getPitch(),
+            false
+        );
     }
 
     private static void executePlayerCommand(MinecraftServer server, ServerPlayerEntity player, String command) {

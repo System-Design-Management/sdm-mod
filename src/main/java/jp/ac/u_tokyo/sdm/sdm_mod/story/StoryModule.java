@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ public final class StoryModule {
     public static void initialize() {
         StoryChapterRegistry.initialize();
         storyManager = StoryManager.createDefault();
+        StoryEntityControlService.initialize();
         LOGGER.info("Story module initialized with {} chapter(s).", StoryChapterRegistry.size());
     }
 
