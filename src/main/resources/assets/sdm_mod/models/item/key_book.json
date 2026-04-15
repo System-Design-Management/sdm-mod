@@ -96,5 +96,14 @@
 				"down": {"uv": [3.125, 9, 3, 11.5], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 5.5, 4.5]
+		},
+		"firstperson_righthand": {
+			"rotation": [-13, 24, 0],
+			"translation": [0.5, 6.75, 0]
+		}
+	}
 }
