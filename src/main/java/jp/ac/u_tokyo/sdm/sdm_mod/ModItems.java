@@ -18,6 +18,16 @@ public final class ModItems {
         settings -> new TechnicalBookItem(ModBlocks.TECHNICAL_BOOK, settings)
     );
 
+    public static final Item ICHO_ITEM = register(
+        "icho_item",
+        settings -> new Item(settings)
+    );
+
+    public static final Item KEY_BOOK = register(
+        "key_book",
+        settings -> new Item(settings)
+    );
+
     private ModItems() {
     }
 
