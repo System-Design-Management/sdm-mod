@@ -3,6 +3,8 @@
   "item.sdm_mod.icho_item": "イチョウ",
   "item.sdm_mod.key_book": "ゾンビの治し方",
   "block.sdm_mod.technical_book": "専門書",
+  "block.sdm_mod.search_pc": "検索PC",
+  "item.sdm_mod.search_pc": "検索PC",
   "item.sdm_mod.technical_book": "専門書",
   "screen.sdm_mod.technical_book.left_page": "オイラーの公式は、指数関数と三角関数を結びつける公式である。",
   "screen.sdm_mod.technical_book.right_page": "x = π を代入すると、式は e^(iπ) = -1 に簡約される。",

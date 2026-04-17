@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.item.TechnicalBookItem;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -26,6 +27,11 @@ public final class ModItems {
     public static final Item KEY_BOOK = register(
         "key_book",
         settings -> new Item(settings)
+    );
+
+    public static final Item SEARCH_PC = register(
+        "search_pc",
+        settings -> new BlockItem(ModBlocks.SEARCH_PC, settings)
     );
 
     private ModItems() {
