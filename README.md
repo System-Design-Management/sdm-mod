@@ -57,6 +57,31 @@ run/saves/MyWorld/
 
 通常の Minecraft で使っているワールドを直接編集すると破損時の影響が大きいため、コピーしたバックアップを `run/saves/` に置いて利用することを推奨します。
 
+### 開発用ワールドを自動コピーする方法
+
+毎回 `run/saves/` に手で配置しなくてよいように、ローカル設定ファイルから自動同期できます。
+
+1. ルートの `local.dev.properties.example` を参考に、`local.dev.properties` を作成する
+2. `devWorldSourceDir` に元ワールドのパスを書く
+3. `devWorldName` に `run/saves/` 側で使いたいフォルダ名を書く
+4. `./gradlew runClient` または `./gradlew runServer` を実行する
+
+例:
+
+```properties
+devWorldSourceDir=backup/20260329
+devWorldName=MyWorld
+```
+
+この設定がある場合、起動前に Gradle の `syncDevWorld` タスクが走り、`run/saves/MyWorld/` に自動で同期します。
+
+注意:
+
+- `local.dev.properties` は `.gitignore` 対象なので、各開発者がローカルで設定します。
+- `devWorldSourceDir` はプロジェクトルートからの相対パスとして書けます。
+- 同期先は `run/saves/<devWorldName>/` です。
+- 元ワールドの内容が更新されたら、次回の `runClient` / `runServer` 実行時に再同期されます。
+
 ### Gradle コマンドが使えない場合
 
 このリポジトリでは `./gradlew` を使う想定ですが、`gradlew` が存在しない状態だと以下のようなエラーになります。
@@ -321,11 +346,19 @@ grep "my_item\|Missing" run/logs/latest.log
 - 全プレイヤーのインベントリとエンダーチェストを空にする
 - 全プレイヤーの体力、満腹度、呼吸ゲージ、経験値などを初期状態に戻す
 - 全プレイヤーをアドベンチャーモードにする
+- mob の自然スポーンを無効化する
+- プレイヤー以外の生存エンティティを削除する
 - 全プレイヤーの視線先に当たったブロック付近だけを、弱い光で照らす
 - 各プレイヤーを実行主体にして `function thepa:give/revolver` を順に実行する
 - 各プレイヤーを実行主体にして `function thepa:give/bullets` を順に実行する
 
 開始地点へのテレポートは、座標確定後に追加予定です。
+
+## ストーリー実装の配置方針
+
+ストーリー実装は [src/main/java/jp/ac/u_tokyo/sdm/sdm_mod/story](/Users/miyoshinaoki/sdm-mod/src/main/java/jp/ac/u_tokyo/sdm/sdm_mod/story) 配下に集約し、各フェーズ固有のコードは `phase1/` から `phase6/` に分けて管理します。
+
+各フェーズフォルダには `README.md` を置き、そのフェーズの目的、責務、開始条件、完了条件を先に整理してから実装を追加する方針にします。
 
 ## 📚 参考ドキュメント (Reference)
 
