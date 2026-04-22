@@ -25,6 +25,7 @@ public final class StoryStartService {
 
     public static StoryProgress start(MinecraftServer server) {
         GameRulesInitializer.applyStoryDefaults(server);
+        server.getPlayerManager().getPlayerList().forEach(player -> stopBackgroundMusic(server, player));
         // Remove existing hostile/passive mobs before players are reset into the story state.
         StoryEntityControlService.clearNonPlayerLivingEntities(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
@@ -44,6 +45,10 @@ public final class StoryStartService {
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
         return storyManager.getProgress();
+    }
+
+    private static void stopBackgroundMusic(MinecraftServer server, ServerPlayerEntity player) {
+        executePlayerCommand(server, player, "stopsound @s music");
     }
 
     private static void resetPlayerState(ServerPlayerEntity player) {
