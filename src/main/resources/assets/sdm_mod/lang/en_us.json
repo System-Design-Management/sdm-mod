@@ -6,10 +6,17 @@
   "block.sdm_mod.search_pc": "Search PC",
   "item.sdm_mod.search_pc": "Search PC",
   "item.sdm_mod.technical_book": "Technical Book",
+  "item.sdm_mod.warp_tablet": "Warp Tablet",
   "screen.sdm_mod.technical_book.left_page": "Euler's formula links exponential and trigonometric functions.",
   "screen.sdm_mod.technical_book.right_page": "Substituting x = π simplifies the expression to e^(iπ) = -1.",
   "screen.sdm_mod.technical_book.explanation": "Therefore, e^(iπ) + 1 = 0.",
   "screen.sdm_mod.technical_book.footnote": "It is widely known as a beautiful identity.",
   "screen.sdm_mod.technical_book.close": "Close",
-  "screen.sdm_mod.technical_book.close_hint": "Press Esc or Menu/Back to close"
+  "screen.sdm_mod.technical_book.close_hint": "Press Esc or Menu/Back to close",
+  "screen.sdm_mod.warp.description": "Choose where to teleport.",
+  "screen.sdm_mod.warp.close": "Close",
+  "screen.sdm_mod.warp.teleported": "Teleported to %s.",
+  "warp.sdm_mod.destination.akamonmae": "Akamonmae",
+  "warp.sdm_mod.destination.yasuda": "Yasuda",
+  "warp.sdm_mod.destination.library": "Library"
 }

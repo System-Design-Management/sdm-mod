@@ -6,10 +6,17 @@
   "block.sdm_mod.search_pc": "検索PC",
   "item.sdm_mod.search_pc": "検索PC",
   "item.sdm_mod.technical_book": "専門書",
+  "item.sdm_mod.warp_tablet": "ワープアイテム",
   "screen.sdm_mod.technical_book.left_page": "オイラーの公式は、指数関数と三角関数を結びつける公式である。",
   "screen.sdm_mod.technical_book.right_page": "x = π を代入すると、式は e^(iπ) = -1 に簡約される。",
   "screen.sdm_mod.technical_book.explanation": "したがって e^(iπ) + 1 = 0 が得られる。",
   "screen.sdm_mod.technical_book.footnote": "美しい等式としてよく知られている。",
   "screen.sdm_mod.technical_book.close": "閉じる",
-  "screen.sdm_mod.technical_book.close_hint": "Esc またはメニュー/戻る で閉じる"
+  "screen.sdm_mod.technical_book.close_hint": "Esc またはメニュー/戻る で閉じる",
+  "screen.sdm_mod.warp.description": "移動先を選択してください。",
+  "screen.sdm_mod.warp.close": "閉じる",
+  "screen.sdm_mod.warp.teleported": "%s にワープしました。",
+  "warp.sdm_mod.destination.akamonmae": "赤門前",
+  "warp.sdm_mod.destination.yasuda": "安田講堂",
+  "warp.sdm_mod.destination.library": "総合図書館"
 }
