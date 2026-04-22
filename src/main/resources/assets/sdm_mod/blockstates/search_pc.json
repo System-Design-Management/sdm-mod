@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "sdm_mod:block/search_pc"
+    }
+  }
+}

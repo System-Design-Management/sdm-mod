@@ -123,3 +123,7 @@ local.dev.properties
 
 # Local backups
 backup/
+
+# CLAUDE
+CLAUDE.md
+.claude/
