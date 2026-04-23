@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.item.TechnicalBookItem;
+import jp.ac.u_tokyo.sdm.sdm_mod.item.WarpItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -27,6 +28,11 @@ public final class ModItems {
     public static final Item KEY_BOOK = register(
         "key_book",
         settings -> new Item(settings)
+    );
+
+    public static final Item WARP_TABLET = register(
+        "warp_tablet",
+        WarpItem::new
     );
 
     public static final Item SEARCH_PC = register(
