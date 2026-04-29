@@ -47,7 +47,7 @@ public final class StoryStartService {
         notifyPhaseChange(server, STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
-        Phase3ZombieService.spawnZombieA(server.getOverworld());
+        Phase3ZombieService.spawnPhase2Zombies(server.getOverworld());
         return storyManager.getProgress();
     }
 
