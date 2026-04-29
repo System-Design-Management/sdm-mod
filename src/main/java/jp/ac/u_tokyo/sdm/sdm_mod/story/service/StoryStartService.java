@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
@@ -44,6 +45,7 @@ public final class StoryStartService {
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
         storyManager.advanceToChapter(STORY_START_CHAPTER_ID);
+        notifyPhaseChange(server, STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
         return storyManager.getProgress();
@@ -98,5 +100,10 @@ public final class StoryStartService {
             .withPosition(player.getPos())
             .withRotation(player.getRotationClient());
         server.getCommandManager().executeWithPrefix(commandSource, command);
+    }
+
+    private static void notifyPhaseChange(MinecraftServer server, String chapterId) {
+        // TODO: Remove this debug notification once phase transitions are verified in playtesting.
+        server.getPlayerManager().broadcast(Text.literal("[DEBUG] Story phase changed to " + chapterId + "."), false);
     }
 }
