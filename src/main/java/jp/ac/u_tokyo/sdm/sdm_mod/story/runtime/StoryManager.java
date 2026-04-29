@@ -30,6 +30,30 @@ public final class StoryManager {
         active = true;
     }
 
+    public boolean isAtChapter(String chapterId) {
+        return progress.currentChapterId().equals(chapterId);
+    }
+
+    public StoryProgress advanceToChapter(String chapterId) {
+        if (!StoryChapterRegistry.contains(chapterId)) {
+            throw new IllegalArgumentException("Unknown story chapter: " + chapterId);
+        }
+
+        int currentOrder = StoryChapterRegistry.getOrder(progress.currentChapterId());
+        int nextOrder = StoryChapterRegistry.getOrder(chapterId);
+        if (nextOrder != currentOrder + 1) {
+            throw new IllegalStateException(
+                "Story chapters must advance one step at a time: current="
+                    + progress.currentChapterId()
+                    + ", requested="
+                    + chapterId
+            );
+        }
+
+        progress = StoryProgress.startingAt(chapterId);
+        return progress;
+    }
+
     public void reset() {
         StoryChapterDefinition startingChapter = StoryChapterRegistry.getStartingChapter();
         progress = StoryProgress.startingAt(startingChapter.id());

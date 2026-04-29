@@ -9,7 +9,7 @@
 - `runtime/`: 実行中の進行制御
 - `service/`: ストーリー演出や初期化などの処理単位
 - `state/`: 永続化や同期対象になる進行状態
-- `phase1/` - `phase6/`: 各フェーズ固有の実装
+- `phase1/` - `phase6/`: 各フェーズ固有の実装（コード実装部分はphase2-phase5）
 
 ## Phase Folder Rule
 

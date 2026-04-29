@@ -12,8 +12,12 @@ public final class StoryChapterRegistry {
     public static void initialize() {
         CHAPTERS.clear();
 
-        // TODO: ストーリー章データの実体を追加したら、ここで登録する。
-        register(new StoryChapterDefinition("prologue", "Prologue"));
+        register(new StoryChapterDefinition("phase1", "Phase 1"));
+        register(new StoryChapterDefinition("phase2", "Phase 2"));
+        register(new StoryChapterDefinition("phase3", "Phase 3"));
+        register(new StoryChapterDefinition("phase4", "Phase 4"));
+        register(new StoryChapterDefinition("phase5", "Phase 5"));
+        register(new StoryChapterDefinition("phase6", "Phase 6"));
     }
 
     public static StoryChapterDefinition getStartingChapter() {
@@ -26,6 +30,22 @@ public final class StoryChapterRegistry {
 
     public static int size() {
         return CHAPTERS.size();
+    }
+
+    public static boolean contains(String chapterId) {
+        return CHAPTERS.containsKey(chapterId);
+    }
+
+    public static int getOrder(String chapterId) {
+        int index = 0;
+        for (String registeredChapterId : CHAPTERS.keySet()) {
+            if (registeredChapterId.equals(chapterId)) {
+                return index;
+            }
+            index++;
+        }
+
+        throw new IllegalArgumentException("Unknown story chapter: " + chapterId);
     }
 
     private static void register(StoryChapterDefinition chapter) {

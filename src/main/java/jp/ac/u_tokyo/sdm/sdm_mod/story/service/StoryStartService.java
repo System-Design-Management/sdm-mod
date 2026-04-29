@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
@@ -16,6 +17,7 @@ import net.minecraft.world.GameMode;
 import java.util.Set;
 
 public final class StoryStartService {
+    private static final String STORY_START_CHAPTER_ID = "phase2";
     private static final double STORY_START_X = -160.0;
     private static final double STORY_START_Y = 27.0;
     private static final double STORY_START_Z = -614.0;
@@ -28,20 +30,20 @@ public final class StoryStartService {
         server.getPlayerManager().getPlayerList().forEach(player -> stopBackgroundMusic(server, player));
         // Remove existing hostile/passive mobs before players are reset into the story state.
         StoryEntityControlService.clearNonPlayerLivingEntities(server);
+        StoryTorchCleanupService.removeTorchesInStoryArea(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
         server.getPlayerManager().getPlayerList().forEach(player -> {
             executePlayerCommand(server, player, "function thepa:give/revolver");
             executePlayerCommand(server, player, "function thepa:give/bullets");
-            executePlayerCommand(server, player, "function thepa:give/pump_shotgun");
-            executePlayerCommand(server, player, "function thepa:give/shells");
-            executePlayerCommand(server, player, "function thepa:give/m1_garand");
-            executePlayerCommand(server, player, "function thepa:give/medium_round");
+            executePlayerCommand(server, player, "give @s sdm_mod:student_id 1");
         });
         StoryFlashlightLightService.enable(server);
 
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
+        storyManager.advanceToChapter(STORY_START_CHAPTER_ID);
+        notifyPhaseChange(server, STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
         return storyManager.getProgress();
@@ -96,5 +98,10 @@ public final class StoryStartService {
             .withPosition(player.getPos())
             .withRotation(player.getRotationClient());
         server.getCommandManager().executeWithPrefix(commandSource, command);
+    }
+
+    private static void notifyPhaseChange(MinecraftServer server, String chapterId) {
+        // TODO: Remove this debug notification once phase transitions are verified in playtesting.
+        server.getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + chapterId + " に切り替わりました。"), false);
     }
 }
