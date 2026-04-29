@@ -82,8 +82,8 @@ public final class StoryStudentIdGateService {
 
     private static void notifyMissingStudentId(ServerPlayerEntity player) {
         long currentTick = player.getWorld().getTime();
-        long lastNotificationTick = LAST_NOTIFICATION_TICKS.getOrDefault(player.getUuid(), Long.MIN_VALUE);
-        if (currentTick - lastNotificationTick < NOTIFICATION_COOLDOWN_TICKS) {
+        Long lastNotificationTick = LAST_NOTIFICATION_TICKS.get(player.getUuid());
+        if (lastNotificationTick != null && currentTick - lastNotificationTick < NOTIFICATION_COOLDOWN_TICKS) {
             return;
         }
 
