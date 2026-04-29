@@ -16,6 +16,7 @@ import net.minecraft.world.GameMode;
 import java.util.Set;
 
 public final class StoryStartService {
+    private static final String STORY_START_CHAPTER_ID = "phase2";
     private static final double STORY_START_X = -160.0;
     private static final double STORY_START_Y = 27.0;
     private static final double STORY_START_Z = -614.0;
@@ -42,6 +43,7 @@ public final class StoryStartService {
 
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
+        storyManager.advanceToChapter(STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
         return storyManager.getProgress();
