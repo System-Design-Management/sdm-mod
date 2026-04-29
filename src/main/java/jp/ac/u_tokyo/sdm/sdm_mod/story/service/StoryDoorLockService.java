@@ -67,6 +67,6 @@ public final class StoryDoorLockService {
     }
 
     private static void notifyDoorLocked(ServerPlayerEntity player) {
-        player.sendMessage(Text.literal("The door will not open right now."), false);
+        player.sendMessage(Text.literal("今はこの扉を開けられません。"), false);
     }
 }

@@ -104,6 +104,6 @@ public final class StoryStartService {
 
     private static void notifyPhaseChange(MinecraftServer server, String chapterId) {
         // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        server.getPlayerManager().broadcast(Text.literal("[DEBUG] Story phase changed to " + chapterId + "."), false);
+        server.getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + chapterId + " に切り替わりました。"), false);
     }
 }

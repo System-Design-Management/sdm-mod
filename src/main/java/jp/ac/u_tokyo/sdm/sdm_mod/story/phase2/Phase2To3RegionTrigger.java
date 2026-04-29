@@ -61,6 +61,6 @@ public final class Phase2To3RegionTrigger {
 
     private static void notifyTriggered(MinecraftServer server) {
         // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        server.getPlayerManager().broadcast(Text.literal("[DEBUG] Story phase changed to " + PHASE3_ID + "."), false);
+        server.getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + PHASE3_ID + " に切り替わりました。"), false);
     }
 }

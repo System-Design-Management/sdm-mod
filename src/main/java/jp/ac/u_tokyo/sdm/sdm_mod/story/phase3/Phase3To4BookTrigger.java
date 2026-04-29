@@ -106,6 +106,6 @@ public final class Phase3To4BookTrigger {
 
     private static void notifyTriggered(ServerPlayerEntity player) {
         // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        player.getServer().getPlayerManager().broadcast(Text.literal("[DEBUG] Story phase changed to " + PHASE4_ID + "."), false);
+        player.getServer().getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + PHASE4_ID + " に切り替わりました。"), false);
     }
 }
