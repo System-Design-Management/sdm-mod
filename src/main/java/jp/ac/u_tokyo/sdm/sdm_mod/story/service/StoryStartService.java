@@ -35,10 +35,6 @@ public final class StoryStartService {
         server.getPlayerManager().getPlayerList().forEach(player -> {
             executePlayerCommand(server, player, "function thepa:give/revolver");
             executePlayerCommand(server, player, "function thepa:give/bullets");
-            executePlayerCommand(server, player, "function thepa:give/pump_shotgun");
-            executePlayerCommand(server, player, "function thepa:give/shells");
-            executePlayerCommand(server, player, "function thepa:give/m1_garand");
-            executePlayerCommand(server, player, "function thepa:give/medium_round");
             executePlayerCommand(server, player, "give @s sdm_mod:student_id 1");
         });
         StoryFlashlightLightService.enable(server);
