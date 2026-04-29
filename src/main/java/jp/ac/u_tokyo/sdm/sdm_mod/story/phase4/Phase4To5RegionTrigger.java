@@ -14,9 +14,21 @@ public final class Phase4To5RegionTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(Phase4To5RegionTrigger.class);
     private static final String PHASE4_ID = "phase4";
     private static final String PHASE5_ID = "phase5";
-    // Temporary trigger region for phase4 -> phase5. Update these corners if the area changes.
-    private static final BlockPos REGION_CORNER_A = new BlockPos(-149, 40, -644);
-    private static final BlockPos REGION_CORNER_B = new BlockPos(-149, 43, -641);
+    // Temporary trigger regions for phase4 -> phase5. Update these corners if the route layout changes.
+    private static final TriggerRegion[] TRIGGER_REGIONS = {
+        new TriggerRegion(
+            new BlockPos(-149, 40, -644),
+            new BlockPos(-149, 43, -641)
+        ),
+        new TriggerRegion(
+            new BlockPos(-161, 40, -641),
+            new BlockPos(-160, 43, -640)
+        ),
+        new TriggerRegion(
+            new BlockPos(-176, 40, -641),
+            new BlockPos(-175, 43, -640)
+        )
+    };
 
     private Phase4To5RegionTrigger() {
     }
@@ -32,7 +44,8 @@ public final class Phase4To5RegionTrigger {
         }
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            if (!isInsideTriggerRegion(player.getBlockPos())) {
+            TriggerRegion matchedRegion = findMatchedRegion(player.getBlockPos());
+            if (matchedRegion == null) {
                 continue;
             }
 
@@ -43,24 +56,36 @@ public final class Phase4To5RegionTrigger {
                 PHASE4_ID,
                 PHASE5_ID,
                 player.getName().getString(),
-                REGION_CORNER_A,
-                REGION_CORNER_B
+                matchedRegion.cornerA(),
+                matchedRegion.cornerB()
             );
             return;
         }
     }
 
-    private static boolean isInsideTriggerRegion(BlockPos pos) {
-        return pos.getX() >= Math.min(REGION_CORNER_A.getX(), REGION_CORNER_B.getX())
-            && pos.getX() <= Math.max(REGION_CORNER_A.getX(), REGION_CORNER_B.getX())
-            && pos.getY() >= Math.min(REGION_CORNER_A.getY(), REGION_CORNER_B.getY())
-            && pos.getY() <= Math.max(REGION_CORNER_A.getY(), REGION_CORNER_B.getY())
-            && pos.getZ() >= Math.min(REGION_CORNER_A.getZ(), REGION_CORNER_B.getZ())
-            && pos.getZ() <= Math.max(REGION_CORNER_A.getZ(), REGION_CORNER_B.getZ());
+    private static TriggerRegion findMatchedRegion(BlockPos pos) {
+        for (TriggerRegion region : TRIGGER_REGIONS) {
+            if (region.contains(pos)) {
+                return region;
+            }
+        }
+
+        return null;
     }
 
     private static void notifyTriggered(MinecraftServer server) {
         // TODO: Remove this debug notification once phase transitions are verified in playtesting.
         server.getPlayerManager().broadcast(Text.literal("[DEBUG] Story phase changed to " + PHASE5_ID + "."), false);
+    }
+
+    private record TriggerRegion(BlockPos cornerA, BlockPos cornerB) {
+        private boolean contains(BlockPos pos) {
+            return pos.getX() >= Math.min(cornerA.getX(), cornerB.getX())
+                && pos.getX() <= Math.max(cornerA.getX(), cornerB.getX())
+                && pos.getY() >= Math.min(cornerA.getY(), cornerB.getY())
+                && pos.getY() <= Math.max(cornerA.getY(), cornerB.getY())
+                && pos.getZ() >= Math.min(cornerA.getZ(), cornerB.getZ())
+                && pos.getZ() <= Math.max(cornerA.getZ(), cornerB.getZ());
+        }
     }
 }
