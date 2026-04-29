@@ -39,6 +39,7 @@ public final class StoryStartService {
             executePlayerCommand(server, player, "function thepa:give/shells");
             executePlayerCommand(server, player, "function thepa:give/m1_garand");
             executePlayerCommand(server, player, "function thepa:give/medium_round");
+            executePlayerCommand(server, player, "give @s sdm_mod:student_id 1");
         });
         StoryFlashlightLightService.enable(server);
 
