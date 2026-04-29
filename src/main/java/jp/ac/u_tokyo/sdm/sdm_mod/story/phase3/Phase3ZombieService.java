@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.phase3;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -9,9 +10,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +34,8 @@ public final class Phase3ZombieService {
     private static final String PHASE3_ID = "phase3";
     private static final String PHASE3_ZOMBIE_TAG = "sdm_mod.phase3_zombie";
     private static final BlockPos ZOMBIE_A_SPAWN_POS = new BlockPos(-175, 41, -638);
+    private static final double ZOMBIE_MAX_HEALTH = 4.0;
+    private static final double ZOMBIE_ATTACK_DAMAGE = 4.0;
     private static final double IDLE_HOME_RADIUS = 2.5;
     private static final double IDLE_HOME_RADIUS_SQUARED = IDLE_HOME_RADIUS * IDLE_HOME_RADIUS;
     private static final double RETURN_SPEED = 0.9;
@@ -73,6 +80,7 @@ public final class Phase3ZombieService {
 
     public static void register(ZombieEntity zombie) {
         zombie.addCommandTag(PHASE3_ZOMBIE_TAG);
+        StoryCombatService.configureStoryZombieCombat(zombie);
         HOME_POSITIONS.put(zombie.getUuid(), zombie.getBlockPos());
     }
 
