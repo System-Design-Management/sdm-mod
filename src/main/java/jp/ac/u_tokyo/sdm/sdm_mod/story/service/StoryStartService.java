@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -46,6 +47,7 @@ public final class StoryStartService {
         notifyPhaseChange(server, STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
+        Phase3ZombieService.spawnZombieA(server.getOverworld());
         return storyManager.getProgress();
     }
 
