@@ -20,7 +20,9 @@ import net.minecraft.util.math.Vec3d;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.HashSet;
 
 public final class Phase3ZombieService {
     private static final String PHASE2_ID = "phase2";
@@ -32,14 +34,21 @@ public final class Phase3ZombieService {
     private static final double RETURN_SPEED = 0.9;
     private static final int IDLE_LOOK_INTERVAL_TICKS = 40;
     private static final Map<UUID, BlockPos> HOME_POSITIONS = new HashMap<>();
+    private static final Set<UUID> CHASING_ZOMBIES = new HashSet<>();
 
     private Phase3ZombieService() {
     }
 
     public static void initialize() {
         ServerTickEvents.END_SERVER_TICK.register(Phase3ZombieService::tick);
-        ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> HOME_POSITIONS.remove(entity.getUuid()));
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> HOME_POSITIONS.clear());
+        ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+            HOME_POSITIONS.remove(entity.getUuid());
+            CHASING_ZOMBIES.remove(entity.getUuid());
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            HOME_POSITIONS.clear();
+            CHASING_ZOMBIES.clear();
+        });
     }
 
     public static void spawnZombieA(ServerWorld world) {
@@ -100,6 +109,7 @@ public final class Phase3ZombieService {
     private static void tickPhase2Zombie(ZombieEntity zombie) {
         zombie.getNavigation().stop();
         zombie.setTarget(null);
+        CHASING_ZOMBIES.remove(zombie.getUuid());
         zombie.setForwardSpeed(0.0f);
         zombie.setSidewaysSpeed(0.0f);
         zombie.setMovementSpeed(0.0f);
@@ -108,7 +118,13 @@ public final class Phase3ZombieService {
     private static void tickPhase3Zombie(ZombieEntity zombie) {
         BlockPos homePos = HOME_POSITIONS.computeIfAbsent(zombie.getUuid(), uuid -> zombie.getBlockPos());
         if (hasActivePlayerTarget(zombie)) {
+            CHASING_ZOMBIES.add(zombie.getUuid());
             return;
+        }
+
+        if (CHASING_ZOMBIES.remove(zombie.getUuid())) {
+            homePos = zombie.getBlockPos();
+            HOME_POSITIONS.put(zombie.getUuid(), homePos);
         }
 
         Vec3d homeCenter = Vec3d.ofBottomCenter(homePos);
@@ -150,6 +166,7 @@ public final class Phase3ZombieService {
 
     private static void cleanup(ZombieEntity zombie) {
         HOME_POSITIONS.remove(zombie.getUuid());
+        CHASING_ZOMBIES.remove(zombie.getUuid());
         zombie.discard();
     }
 
