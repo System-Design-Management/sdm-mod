@@ -30,6 +30,19 @@ public final class StoryManager {
         active = true;
     }
 
+    public boolean isAtChapter(String chapterId) {
+        return progress.currentChapterId().equals(chapterId);
+    }
+
+    public StoryProgress advanceToChapter(String chapterId) {
+        if (!StoryChapterRegistry.contains(chapterId)) {
+            throw new IllegalArgumentException("Unknown story chapter: " + chapterId);
+        }
+
+        progress = StoryProgress.startingAt(chapterId);
+        return progress;
+    }
+
     public void reset() {
         StoryChapterDefinition startingChapter = StoryChapterRegistry.getStartingChapter();
         progress = StoryProgress.startingAt(startingChapter.id());
