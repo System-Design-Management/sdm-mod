@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -34,6 +35,10 @@ public final class StoryEntityControlService {
     }
 
     private static boolean shouldRemove(Entity entity) {
+        if (Phase3ZombieService.isManagedPhaseZombie(entity)) {
+            return false;
+        }
+
         // Preserve multiplayer participants while removing mobs and other living entities.
         return entity instanceof LivingEntity && !(entity instanceof ServerPlayerEntity);
     }

@@ -1,10 +1,12 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2To3RegionTrigger;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3To4BookTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4To5RegionTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryDoorLockService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStudentIdGateService;
@@ -22,9 +24,11 @@ public final class StoryModule {
         StoryChapterRegistry.initialize();
         storyManager = StoryManager.createDefault();
         StoryEntityControlService.initialize();
+        StoryCombatService.initialize();
         StoryDoorLockService.initialize();
         StoryStudentIdGateService.initialize();
         Phase2To3RegionTrigger.initialize();
+        Phase3ZombieService.initialize();
         Phase3To4BookTrigger.initialize();
         Phase4To5RegionTrigger.initialize();
         LOGGER.info("Story module initialized with {} chapter(s).", StoryChapterRegistry.size());
