@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2To3RegionTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3To4BookTrigger;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4To5RegionTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
@@ -21,6 +22,7 @@ public final class StoryModule {
         StoryEntityControlService.initialize();
         Phase2To3RegionTrigger.initialize();
         Phase3To4BookTrigger.initialize();
+        Phase4To5RegionTrigger.initialize();
         LOGGER.info("Story module initialized with {} chapter(s).", StoryChapterRegistry.size());
     }
 

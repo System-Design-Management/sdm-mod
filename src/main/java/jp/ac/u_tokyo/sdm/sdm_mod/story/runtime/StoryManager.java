@@ -39,6 +39,17 @@ public final class StoryManager {
             throw new IllegalArgumentException("Unknown story chapter: " + chapterId);
         }
 
+        int currentOrder = StoryChapterRegistry.getOrder(progress.currentChapterId());
+        int nextOrder = StoryChapterRegistry.getOrder(chapterId);
+        if (nextOrder != currentOrder + 1) {
+            throw new IllegalStateException(
+                "Story chapters must advance one step at a time: current="
+                    + progress.currentChapterId()
+                    + ", requested="
+                    + chapterId
+            );
+        }
+
         progress = StoryProgress.startingAt(chapterId);
         return progress;
     }

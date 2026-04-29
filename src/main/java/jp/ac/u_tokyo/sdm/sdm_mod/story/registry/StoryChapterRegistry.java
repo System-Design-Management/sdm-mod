@@ -36,6 +36,18 @@ public final class StoryChapterRegistry {
         return CHAPTERS.containsKey(chapterId);
     }
 
+    public static int getOrder(String chapterId) {
+        int index = 0;
+        for (String registeredChapterId : CHAPTERS.keySet()) {
+            if (registeredChapterId.equals(chapterId)) {
+                return index;
+            }
+            index++;
+        }
+
+        throw new IllegalArgumentException("Unknown story chapter: " + chapterId);
+    }
+
     private static void register(StoryChapterDefinition chapter) {
         CHAPTERS.put(chapter.id(), chapter);
     }
