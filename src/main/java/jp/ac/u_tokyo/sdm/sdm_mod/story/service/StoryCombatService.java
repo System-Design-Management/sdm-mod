@@ -14,6 +14,7 @@ import net.minecraft.util.ActionResult;
 public final class StoryCombatService {
     private static final double STORY_ZOMBIE_MAX_HEALTH = 4.0;
     private static final double STORY_ZOMBIE_ATTACK_DAMAGE = 4.0;
+    // TODO: It is possible to slightly extend the player's attack reach only against story/phase zombies without changing zombie attack reach.
 
     private StoryCombatService() {
     }
