@@ -7,6 +7,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryDoorLockService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStudentIdGateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public final class StoryModule {
         storyManager = StoryManager.createDefault();
         StoryEntityControlService.initialize();
         StoryDoorLockService.initialize();
+        StoryStudentIdGateService.initialize();
         Phase2To3RegionTrigger.initialize();
         Phase3To4BookTrigger.initialize();
         Phase4To5RegionTrigger.initialize();
