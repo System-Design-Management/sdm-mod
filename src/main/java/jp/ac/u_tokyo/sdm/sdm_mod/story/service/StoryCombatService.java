@@ -14,7 +14,7 @@ import net.minecraft.util.ActionResult;
 public final class StoryCombatService {
     private static final double STORY_ZOMBIE_MAX_HEALTH = 4.0;
     private static final double STORY_ZOMBIE_ATTACK_DAMAGE = 4.0;
-    private static final double PHASE5_ZOMBIE_SPEED_MULTIPLIER = 2.0;
+    private static final double PHASE5_ZOMBIE_MOVEMENT_SPEED = 0.30;
     // TODO: It is possible to slightly extend the player's attack reach only against story/phase zombies without changing zombie attack reach.
 
     private StoryCombatService() {
@@ -46,9 +46,8 @@ public final class StoryCombatService {
 
     public static void configurePhase5ZombieCombat(ZombieEntity zombie) {
         double defaultMaxHealth = getDefaultAttributeBaseValue(EntityAttributes.MAX_HEALTH);
-        double defaultMovementSpeed = getDefaultAttributeBaseValue(EntityAttributes.MOVEMENT_SPEED);
         setAttributeBaseValue(zombie, EntityAttributes.MAX_HEALTH, defaultMaxHealth);
-        setAttributeBaseValue(zombie, EntityAttributes.MOVEMENT_SPEED, defaultMovementSpeed * PHASE5_ZOMBIE_SPEED_MULTIPLIER);
+        setAttributeBaseValue(zombie, EntityAttributes.MOVEMENT_SPEED, PHASE5_ZOMBIE_MOVEMENT_SPEED);
         zombie.setHealth((float) defaultMaxHealth);
     }
 
