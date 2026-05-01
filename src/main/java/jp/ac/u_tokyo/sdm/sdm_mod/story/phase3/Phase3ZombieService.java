@@ -14,6 +14,7 @@ import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -29,7 +30,10 @@ import java.util.HashSet;
 public final class Phase3ZombieService {
     private static final String PHASE2_ID = "phase2";
     private static final String PHASE3_ID = "phase3";
+    private static final String PHASE4_ID = "phase4";
+    private static final String PHASE5_ID = "phase5";
     private static final String PHASE3_ZOMBIE_TAG = "sdm_mod.phase3_zombie";
+    private static final String PHASE5_ENRAGED_TAG = "sdm_mod.phase5_enraged";
     private static final List<BlockPos> PHASE2_SPAWN_POSITIONS = List.of(
         new BlockPos(-175, 41, -638),
         new BlockPos(-187, 41, -636),
@@ -95,6 +99,8 @@ public final class Phase3ZombieService {
         StoryManager storyManager = StoryModule.getStoryManager();
         boolean phase2Active = storyManager.isActive() && storyManager.isAtChapter(PHASE2_ID);
         boolean phase3Active = storyManager.isActive() && storyManager.isAtChapter(PHASE3_ID);
+        boolean phase4Active = storyManager.isActive() && storyManager.isAtChapter(PHASE4_ID);
+        boolean phase5Active = storyManager.isActive() && storyManager.isAtChapter(PHASE5_ID);
 
         server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
             if (!(entity instanceof ZombieEntity zombie) || !zombie.getCommandTags().contains(PHASE3_ZOMBIE_TAG)) {
@@ -106,12 +112,22 @@ public final class Phase3ZombieService {
                 return;
             }
 
-            if (!phase3Active) {
+            if (phase5Active) {
+                tickPhase5Zombie(zombie);
+                return;
+            }
+
+            if (phase3Active || phase4Active) {
+                tickPhase3Zombie(zombie);
+                return;
+            }
+
+            if (!storyManager.isActive()) {
                 cleanup(zombie);
                 return;
             }
 
-            tickPhase3Zombie(zombie);
+            cleanup(zombie);
         }));
 
         pruneMissingHomes(server);
@@ -156,6 +172,12 @@ public final class Phase3ZombieService {
         }
     }
 
+    private static void tickPhase5Zombie(ZombieEntity zombie) {
+        ensurePhase5Combat(zombie);
+        ServerPlayerEntity target = findNearestAttackablePlayer(zombie);
+        zombie.setTarget(target);
+    }
+
     private static boolean hasActivePlayerTarget(ZombieEntity zombie) {
         LivingEntity target = zombie.getTarget();
         if (!(target instanceof PlayerEntity player)) {
@@ -173,6 +195,37 @@ public final class Phase3ZombieService {
         }
 
         zombie.getNavigation().startMovingAlong(path, RETURN_SPEED);
+    }
+
+    private static void ensurePhase5Combat(ZombieEntity zombie) {
+        if (zombie.getCommandTags().contains(PHASE5_ENRAGED_TAG)) {
+            return;
+        }
+
+        StoryCombatService.configurePhase5ZombieCombat(zombie);
+        zombie.addCommandTag(PHASE5_ENRAGED_TAG);
+    }
+
+    private static ServerPlayerEntity findNearestAttackablePlayer(ZombieEntity zombie) {
+        ServerWorld world = (ServerWorld) zombie.getWorld();
+        ServerPlayerEntity nearestPlayer = null;
+        double nearestDistanceSquared = Double.MAX_VALUE;
+
+        for (ServerPlayerEntity player : world.getPlayers()) {
+            if (!player.isAlive() || player.isSpectator()) {
+                continue;
+            }
+
+            double distanceSquared = zombie.squaredDistanceTo(player);
+            if (distanceSquared >= nearestDistanceSquared) {
+                continue;
+            }
+
+            nearestPlayer = player;
+            nearestDistanceSquared = distanceSquared;
+        }
+
+        return nearestPlayer;
     }
 
     private static void cleanup(ZombieEntity zombie) {

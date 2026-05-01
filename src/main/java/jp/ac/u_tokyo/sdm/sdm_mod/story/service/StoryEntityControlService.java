@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -36,6 +37,10 @@ public final class StoryEntityControlService {
 
     private static boolean shouldRemove(Entity entity) {
         if (Phase3ZombieService.isManagedPhaseZombie(entity)) {
+            return false;
+        }
+
+        if (Phase4ZombieService.isManagedPhaseZombie(entity)) {
             return false;
         }
 
