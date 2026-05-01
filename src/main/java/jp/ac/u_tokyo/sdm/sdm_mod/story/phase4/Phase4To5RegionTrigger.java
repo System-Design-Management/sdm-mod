@@ -34,6 +34,7 @@ public final class Phase4To5RegionTrigger {
             }
 
             storyManager.advanceToChapter(PHASE5_ID);
+            Phase4ZombieService.cleanup(server);
             notifyTriggered(server);
             LOGGER.info(
                 "Story advanced from {} to {} after player {} reached x <= {} at ({}, {}, {}).",
