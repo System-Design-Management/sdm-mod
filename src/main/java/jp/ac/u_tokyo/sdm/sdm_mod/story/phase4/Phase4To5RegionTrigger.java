@@ -33,10 +33,8 @@ public final class Phase4To5RegionTrigger {
                 continue;
             }
 
-            storyManager.advanceToChapter(PHASE5_ID);
-            Phase4ZombieService.cleanup(server);
-            notifyTriggered(server);
-            LOGGER.info(
+            tryAdvanceToPhase5(
+                server,
                 "Story advanced from {} to {} after player {} reached x <= {} at ({}, {}, {}).",
                 PHASE4_ID,
                 PHASE5_ID,
@@ -48,6 +46,18 @@ public final class Phase4To5RegionTrigger {
             );
             return;
         }
+    }
+
+    public static boolean tryAdvanceToPhase5(MinecraftServer server, String logMessage, Object... logArguments) {
+        StoryManager storyManager = StoryModule.getStoryManager();
+        if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE4_ID)) {
+            return false;
+        }
+
+        storyManager.advanceToChapter(PHASE5_ID);
+        notifyTriggered(server);
+        LOGGER.info(logMessage, logArguments);
+        return true;
     }
 
     private static void notifyTriggered(MinecraftServer server) {
