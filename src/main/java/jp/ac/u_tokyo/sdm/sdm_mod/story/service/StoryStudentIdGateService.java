@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModItems;
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -13,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -88,6 +90,16 @@ public final class StoryStudentIdGateService {
         }
 
         LAST_NOTIFICATION_TICKS.put(player.getUuid(), currentTick);
+        ((ServerWorld) player.getWorld()).playSound(
+            null,
+            player.getX(),
+            player.getY(),
+            player.getZ(),
+            ModSounds.STUDENT_ID_GATE_REJECT,
+            SoundCategory.BLOCKS,
+            1.0F,
+            1.0F
+        );
         player.sendMessage(Text.literal("学生証を右手に持ってください。"), false);
     }
 

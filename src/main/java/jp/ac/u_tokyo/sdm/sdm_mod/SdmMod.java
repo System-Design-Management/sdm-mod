@@ -15,6 +15,7 @@ public class SdmMod implements ModInitializer {
         ModBlocks.initialize();
         ModScreenHandlers.initialize();
         ModItems.initialize();
+        ModSounds.initialize();
         CommandPermissionInitializer.initialize();
         StoryModule.initialize();
         StoryFlashlightLightService.initialize();
