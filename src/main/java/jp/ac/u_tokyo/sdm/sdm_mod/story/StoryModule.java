@@ -11,6 +11,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryDoorLockService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.Phase5GameOverService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryRespawnService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStudentIdGateService;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ public final class StoryModule {
         StoryEntityControlService.initialize();
         StoryCombatService.initialize();
         StoryDoorLockService.initialize();
+        Phase5GameOverService.initialize();
         StoryRespawnService.initialize();
         StoryStudentIdGateService.initialize();
         Phase2PoliceOfficerGunTrigger.initialize();
