@@ -6,6 +6,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public final class ModSounds {
+    public static final SoundEvent STUDENT_ID_GATE_ACCEPT = register("student_id_gate_accept");
     public static final SoundEvent STUDENT_ID_GATE_REJECT = register("student_id_gate_reject");
 
     private ModSounds() {
