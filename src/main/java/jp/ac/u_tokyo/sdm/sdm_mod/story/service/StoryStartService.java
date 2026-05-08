@@ -19,9 +19,11 @@ import java.util.Set;
 
 public final class StoryStartService {
     private static final String STORY_START_CHAPTER_ID = "phase2";
-    private static final double STORY_START_X = -160.0;
-    private static final double STORY_START_Y = 27.0;
-    private static final double STORY_START_Z = -614.0;
+    private static final double STORY_START_X = -160.5;
+    private static final double STORY_START_Y = 25.0;
+    private static final double STORY_START_Z = -599.0;
+    private static final float STORY_START_YAW = 180.0f;
+    private static final float STORY_START_PITCH = 0.0f;
 
     private StoryStartService() {
     }
@@ -31,6 +33,7 @@ public final class StoryStartService {
         server.getPlayerManager().getPlayerList().forEach(player -> stopBackgroundMusic(server, player));
         // Remove existing hostile/passive mobs before players are reset into the story state.
         StoryEntityControlService.clearNonPlayerLivingEntities(server);
+        StoryPoliceOfficerService.spawnPhase2PoliceOfficer(server);
         StoryTorchCleanupService.removeTorchesInStoryArea(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
@@ -74,21 +77,20 @@ public final class StoryStartService {
     }
 
     private static void preparePlayerForStory(ServerPlayerEntity player) {
-        // TODO: 開始地点の高さを再確認し、安全が確認できたら ADVENTURE に戻す。
         ServerWorld world = (ServerWorld) player.getWorld();
         ChunkPos destinationChunk = new ChunkPos(BlockPos.ofFloored(STORY_START_X, STORY_START_Y, STORY_START_Z));
 
         // Load the destination chunk before teleporting so the first command execution is not racing chunk load.
         world.getChunk(destinationChunk.x, destinationChunk.z);
-        player.changeGameMode(GameMode.CREATIVE);
+        player.changeGameMode(GameMode.ADVENTURE);
         player.teleport(
             world,
             STORY_START_X,
             STORY_START_Y,
             STORY_START_Z,
             Set.<PositionFlag>of(),
-            player.getYaw(),
-            player.getPitch(),
+            STORY_START_YAW,
+            STORY_START_PITCH,
             false
         );
     }

@@ -13,6 +13,7 @@ public class SdmMod implements ModInitializer {
     @Override
     public void onInitialize() {
         ModBlocks.initialize();
+        ModEntities.initialize();
         ModScreenHandlers.initialize();
         ModItems.initialize();
         ModSounds.initialize();
