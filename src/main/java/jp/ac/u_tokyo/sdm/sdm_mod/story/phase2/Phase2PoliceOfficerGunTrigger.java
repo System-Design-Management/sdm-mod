@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.phase2;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -49,6 +50,8 @@ public final class Phase2PoliceOfficerGunTrigger {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
             RECEIVED_PLAYERS.add(player.getUuid());
             giveRevolver(serverPlayer);
+            // 銃を受け取った直後に教授のセリフを表示する。
+            TeacherDialogueService.show(serverPlayer, "お前さん、拳銃なんて使えるのか！？");
             LOGGER.info(
                 "Player {} received revolver from police officer during phase2.",
                 player.getName().getString()

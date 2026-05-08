@@ -1,12 +1,14 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
+import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.command.StoryCommandInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.StoryNetworking;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryFlashlightLightService;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
 public class SdmMod implements ModInitializer {
     public static final String MOD_ID = "sdm_mod";
@@ -19,6 +21,8 @@ public class SdmMod implements ModInitializer {
         ModItems.initialize();
         ModSounds.initialize();
         StoryNetworking.initialize();
+        // S2C パケット型を登録。これがないとクライアントがパケットを受け取れない。
+        PayloadTypeRegistry.playS2C().register(TeacherDialoguePayload.ID, TeacherDialoguePayload.CODEC);
         CommandPermissionInitializer.initialize();
         StoryModule.initialize();
         StoryFlashlightLightService.initialize();
