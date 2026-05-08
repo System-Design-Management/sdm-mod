@@ -135,6 +135,7 @@ public final class StoryStudentIdGateService {
         }
 
         OPEN_GATES.put(gate.id(), new OpenGateState(world, originalStates, world.getTime() + GATE_OPEN_DURATION_TICKS));
+        playGateAcceptedSound(world, gate);
     }
 
     private static void restoreExpiredGates() {
@@ -183,6 +184,20 @@ public final class StoryStudentIdGateService {
         );
     }
 
+    private static void playGateAcceptedSound(ServerWorld world, StudentIdGate gate) {
+        Vec3d soundPos = gate.triggerRegion().center();
+        world.playSound(
+            null,
+            soundPos.x,
+            soundPos.y,
+            soundPos.z,
+            ModSounds.STUDENT_ID_GATE_ACCEPT,
+            SoundCategory.BLOCKS,
+            1.0F,
+            1.0F
+        );
+    }
+
     private record GateRegion(BlockPos cornerA, BlockPos cornerB) {
         private boolean contains(BlockPos pos) {
             return pos.getX() >= Math.min(cornerA.getX(), cornerB.getX())
@@ -205,6 +220,13 @@ public final class StoryStudentIdGateService {
             }
 
             return true;
+        }
+
+        private Vec3d center() {
+            double centerX = (Math.min(cornerA.getX(), cornerB.getX()) + Math.max(cornerA.getX(), cornerB.getX()) + 1) / 2.0D;
+            double centerY = (Math.min(cornerA.getY(), cornerB.getY()) + Math.max(cornerA.getY(), cornerB.getY()) + 1) / 2.0D;
+            double centerZ = (Math.min(cornerA.getZ(), cornerB.getZ()) + Math.max(cornerA.getZ(), cornerB.getZ()) + 1) / 2.0D;
+            return new Vec3d(centerX, centerY, centerZ);
         }
     }
 
