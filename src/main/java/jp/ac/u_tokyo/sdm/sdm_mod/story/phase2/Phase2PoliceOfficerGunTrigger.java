@@ -50,8 +50,9 @@ public final class Phase2PoliceOfficerGunTrigger {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
             RECEIVED_PLAYERS.add(player.getUuid());
             giveRevolver(serverPlayer);
-            // 銃を受け取った直後に教授のセリフを表示する。
-            TeacherDialogueService.show(serverPlayer, "お前さん、拳銃なんて使えるのか！？");
+            // 銃を受け取った直後に教授のセリフを HUD オーバーレイで表示する。
+            // プレイを止めずに表示したいため showAsHud() を使う。
+            TeacherDialogueService.showAsHud(serverPlayer, "お前さん、拳銃なんて使えるのか！？");
             LOGGER.info(
                 "Player {} received revolver from police officer during phase2.",
                 player.getName().getString()

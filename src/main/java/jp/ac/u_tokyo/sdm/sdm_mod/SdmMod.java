@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
+import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialogueHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
@@ -23,6 +24,7 @@ public class SdmMod implements ModInitializer {
         StoryNetworking.initialize();
         // S2C パケット型を登録。これがないとクライアントがパケットを受け取れない。
         PayloadTypeRegistry.playS2C().register(TeacherDialoguePayload.ID, TeacherDialoguePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(TeacherDialogueHudPayload.ID, TeacherDialogueHudPayload.CODEC);
         CommandPermissionInitializer.initialize();
         StoryModule.initialize();
         StoryFlashlightLightService.initialize();

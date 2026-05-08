@@ -12,7 +12,7 @@ public final class TeacherDialogueScreen extends Screen {
         Identifier.of("sdm_mod", "textures/gui/teacher_face.png");
 
     // アイコンのレンダリングサイズ（px）。テクスチャ実寸とは独立して拡縮できる。
-    private static final int FACE_RENDER_SIZE = 80;
+    private static final int FACE_RENDER_SIZE = 128;
     // teacher_face.png の実際のピクセルサイズ。UV計算に使う。
     private static final int FACE_TEXTURE_SIZE = 128;
 
@@ -21,11 +21,12 @@ public final class TeacherDialogueScreen extends Screen {
     private static final int PANEL_LEFT_MARGIN = 16;
     private static final int PANEL_RIGHT_MARGIN = 16;
     private static final int TEXT_PADDING = 12;
-    // 1ティック(50ms)あたりに表示を進める文字数。多いほど速く流れる。
-    private static final int CHARS_PER_TICK = 2;
+    // 1文字進めるのに必要なティック数。大きいほど遅くなる（1=20字/秒、2=10字/秒、4=5字/秒）。
+    private static final int TICKS_PER_CHAR = 5;
 
     private final String fullText;
     private int visibleChars = 0;
+    private int tickCounter = 0;
 
     public TeacherDialogueScreen(String text) {
         super(Text.empty());
@@ -39,11 +40,15 @@ public final class TeacherDialogueScreen extends Screen {
         return false;
     }
 
-    // 毎ティック呼ばれる。visibleChars を増やすことでストリーム表示を実現する。
+    // 毎ティック呼ばれる。TICKS_PER_CHAR ティックごとに1文字進める。
     @Override
     public void tick() {
         if (visibleChars < fullText.length()) {
-            visibleChars = Math.min(visibleChars + CHARS_PER_TICK, fullText.length());
+            tickCounter++;
+            if (tickCounter >= TICKS_PER_CHAR) {
+                tickCounter = 0;
+                visibleChars++;
+            }
         }
     }
 
@@ -98,12 +103,16 @@ public final class TeacherDialogueScreen extends Screen {
 
         // 教授アイコンを描画する。
         // 引数: pipeline, テクスチャID, 描画先X, 描画先Y, UV-X, UV-Y, 描画幅, 描画高さ, テクスチャ幅, テクスチャ高さ
+        // 引数: pipeline, テクスチャID, 描画先X/Y, UV開始, 描画サイズ, 切り取り領域サイズ, テクスチャ実寸
+        // 描画サイズ(FACE_RENDER_SIZE)と切り取り領域(FACE_TEXTURE_SIZE)を分けることで
+        // テクスチャ全体を縮小して表示できる。
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
             TEACHER_FACE_TEXTURE,
             faceX, faceY,
             0.0f, 0.0f,
             FACE_RENDER_SIZE, FACE_RENDER_SIZE,
+            FACE_TEXTURE_SIZE, FACE_TEXTURE_SIZE,
             FACE_TEXTURE_SIZE, FACE_TEXTURE_SIZE
         );
 
