@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2To3RegionTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3To4BookTrigger;
@@ -28,6 +29,7 @@ public final class StoryModule {
         StoryCombatService.initialize();
         StoryDoorLockService.initialize();
         StoryStudentIdGateService.initialize();
+        Phase2PoliceOfficerGunTrigger.initialize();
         Phase2To3RegionTrigger.initialize();
         Phase3ZombieService.initialize();
         Phase3To4BookTrigger.initialize();
