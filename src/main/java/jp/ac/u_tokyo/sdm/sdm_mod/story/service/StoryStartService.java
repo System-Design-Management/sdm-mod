@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
@@ -38,12 +39,11 @@ public final class StoryStartService {
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
         server.getPlayerManager().getPlayerList().forEach(player -> {
-            executePlayerCommand(server, player, "function thepa:give/revolver");
-            executePlayerCommand(server, player, "function thepa:give/bullets");
             executePlayerCommand(server, player, "give @s sdm_mod:student_id 1");
         });
         StoryFlashlightLightService.enable(server);
 
+        Phase2PoliceOfficerGunTrigger.reset();
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.reset();
         storyManager.advanceToChapter(STORY_START_CHAPTER_ID);
