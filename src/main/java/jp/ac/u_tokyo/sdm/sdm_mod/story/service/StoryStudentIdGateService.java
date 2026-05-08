@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public final class StoryStudentIdGateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StoryStudentIdGateService.class);
     private static final long NOTIFICATION_COOLDOWN_TICKS = 20L;
+    private static final long ACCEPT_SOUND_COOLDOWN_TICKS = 20L;
     private static final long GATE_OPEN_DURATION_TICKS = 30L;
     private static final int BLOCK_UPDATE_FLAGS = 3;
     private static final List<StudentIdGate> STUDENT_ID_GATES = List.of(
@@ -37,8 +38,10 @@ public final class StoryStudentIdGateService {
         StudentIdGate.create("gate-5", -155, -154)
     );
     private static final Vec3d FALLBACK_SAFE_POS = new Vec3d(-159.5, 29.0, -633.0);
+    private static final Map<String, Boolean> INITIAL_GATE_CLOSED_STATES = new HashMap<>();
     private static final Map<UUID, SafePosition> LAST_SAFE_POSITIONS = new HashMap<>();
     private static final Map<UUID, Long> LAST_NOTIFICATION_TICKS = new HashMap<>();
+    private static final Map<PlayerGateKey, Long> LAST_ACCEPT_SOUND_TICKS = new HashMap<>();
     private static final Map<String, OpenGateState> OPEN_GATES = new HashMap<>();
 
     private StoryStudentIdGateService() {
@@ -48,8 +51,10 @@ public final class StoryStudentIdGateService {
         ServerTickEvents.END_SERVER_TICK.register(StoryStudentIdGateService::tick);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             restoreAllOpenGates();
+            INITIAL_GATE_CLOSED_STATES.clear();
             LAST_SAFE_POSITIONS.clear();
             LAST_NOTIFICATION_TICKS.clear();
+            LAST_ACCEPT_SOUND_TICKS.clear();
             OPEN_GATES.clear();
         });
     }
@@ -58,12 +63,15 @@ public final class StoryStudentIdGateService {
         StoryManager storyManager = StoryModule.getStoryManager();
         if (!storyManager.isActive()) {
             restoreAllOpenGates();
+            INITIAL_GATE_CLOSED_STATES.clear();
             LAST_SAFE_POSITIONS.clear();
             LAST_NOTIFICATION_TICKS.clear();
+            LAST_ACCEPT_SOUND_TICKS.clear();
             OPEN_GATES.clear();
             return;
         }
 
+        initializeGateClosedStatesIfNeeded(server.getOverworld());
         restoreExpiredGates();
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             handlePlayer(player);
@@ -84,7 +92,7 @@ public final class StoryStudentIdGateService {
         boolean gateClosed = gate.isUpperRegionFilledWithIronBars(world);
         if (gateClosed) {
             if (hasStudentId) {
-                openGateIfNeeded(world, gate);
+                openGateIfNeeded(player, world, gate);
                 return;
             }
 
@@ -93,6 +101,9 @@ public final class StoryStudentIdGateService {
         }
 
         if (hasStudentId) {
+            if (isInitiallyOpen(gate) && !OPEN_GATES.containsKey(gate.id())) {
+                playGateAcceptedSoundIfCooledDown(player, gate);
+            }
             return;
         }
 
@@ -123,7 +134,7 @@ public final class StoryStudentIdGateService {
         return null;
     }
 
-    private static void openGateIfNeeded(ServerWorld world, StudentIdGate gate) {
+    private static void openGateIfNeeded(ServerPlayerEntity player, ServerWorld world, StudentIdGate gate) {
         if (OPEN_GATES.containsKey(gate.id())) {
             return;
         }
@@ -135,7 +146,22 @@ public final class StoryStudentIdGateService {
         }
 
         OPEN_GATES.put(gate.id(), new OpenGateState(world, originalStates, world.getTime() + GATE_OPEN_DURATION_TICKS));
-        playGateAcceptedSound(world, gate);
+        playGateAcceptedSoundIfCooledDown(player, gate);
+    }
+
+    private static void initializeGateClosedStatesIfNeeded(ServerWorld world) {
+        if (INITIAL_GATE_CLOSED_STATES.size() == STUDENT_ID_GATES.size()) {
+            return;
+        }
+
+        INITIAL_GATE_CLOSED_STATES.clear();
+        for (StudentIdGate gate : STUDENT_ID_GATES) {
+            INITIAL_GATE_CLOSED_STATES.put(gate.id(), gate.isUpperRegionFilledWithIronBars(world));
+        }
+    }
+
+    private static boolean isInitiallyOpen(StudentIdGate gate) {
+        return !INITIAL_GATE_CLOSED_STATES.getOrDefault(gate.id(), true);
     }
 
     private static void restoreExpiredGates() {
@@ -182,6 +208,18 @@ public final class StoryStudentIdGateService {
             repelled,
             player.getBlockPos()
         );
+    }
+
+    private static void playGateAcceptedSoundIfCooledDown(ServerPlayerEntity player, StudentIdGate gate) {
+        PlayerGateKey key = new PlayerGateKey(player.getUuid(), gate.id());
+        long currentTick = player.getWorld().getTime();
+        Long lastSoundTick = LAST_ACCEPT_SOUND_TICKS.get(key);
+        if (lastSoundTick != null && currentTick - lastSoundTick < ACCEPT_SOUND_COOLDOWN_TICKS) {
+            return;
+        }
+
+        LAST_ACCEPT_SOUND_TICKS.put(key, currentTick);
+        playGateAcceptedSound((ServerWorld) player.getWorld(), gate);
     }
 
     private static void playGateAcceptedSound(ServerWorld world, StudentIdGate gate) {
@@ -236,7 +274,12 @@ public final class StoryStudentIdGateService {
         }
     }
 
-    private record StudentIdGate(String id, GateRegion upperBarsRegion, GateRegion triggerRegion, List<BlockPos> barsToOpenPositions) {
+    private record StudentIdGate(
+        String id,
+        GateRegion upperBarsRegion,
+        GateRegion triggerRegion,
+        List<BlockPos> barsToOpenPositions
+    ) {
         private static StudentIdGate create(String id, int minX, int maxX) {
             return new StudentIdGate(
                 id,
@@ -257,5 +300,8 @@ public final class StoryStudentIdGateService {
                 world.setBlockState(entry.getKey(), entry.getValue(), BLOCK_UPDATE_FLAGS);
             }
         }
+    }
+
+    private record PlayerGateKey(UUID playerId, String gateId) {
     }
 }
