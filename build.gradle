@@ -69,8 +69,8 @@ tasks.register("syncDevWorld", Sync) {
         }
     }
 
-    from {
-        file(devWorldSourceDir)
+    if (devWorldSourceDir) {
+        from file(devWorldSourceDir)
     }
     into layout.projectDirectory.dir("run/saves/${devWorldName ?: '_unset'}")
 }

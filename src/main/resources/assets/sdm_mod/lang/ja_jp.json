@@ -1,5 +1,4 @@
 {
-  "item.sdm_mod.student_id": "学生証",
   "item.sdm_mod.icho_item": "イチョウ",
   "item.sdm_mod.key_book": "ゾンビの治し方",
   "block.sdm_mod.technical_book": "専門書",
@@ -18,5 +17,6 @@
   "screen.sdm_mod.warp.teleported": "%s にワープしました。",
   "warp.sdm_mod.destination.akamonmae": "赤門前",
   "warp.sdm_mod.destination.yasuda": "安田講堂",
-  "warp.sdm_mod.destination.library": "総合図書館"
+  "warp.sdm_mod.destination.library": "総合図書館",
+  "item.sdm_mod.student_id":"学生証"
 }
