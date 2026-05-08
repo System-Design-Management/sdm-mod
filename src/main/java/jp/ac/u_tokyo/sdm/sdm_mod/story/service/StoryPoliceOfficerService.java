@@ -11,8 +11,8 @@ import net.minecraft.util.math.ChunkPos;
 
 public final class StoryPoliceOfficerService {
     private static final double PHASE2_POLICE_OFFICER_X = -161.0;
-    private static final double PHASE2_POLICE_OFFICER_Y = 27.0;
-    private static final double PHASE2_POLICE_OFFICER_Z = -614.0;
+    private static final double PHASE2_POLICE_OFFICER_Y = 25.0;
+    private static final double PHASE2_POLICE_OFFICER_Z = -609.0;
 
     private StoryPoliceOfficerService() {
     }
@@ -37,7 +37,7 @@ public final class StoryPoliceOfficerService {
             PHASE2_POLICE_OFFICER_X,
             PHASE2_POLICE_OFFICER_Y,
             PHASE2_POLICE_OFFICER_Z,
-            90.0f,
+            0.0f,
             0.0f
         );
         world.spawnEntity(policeOfficer);

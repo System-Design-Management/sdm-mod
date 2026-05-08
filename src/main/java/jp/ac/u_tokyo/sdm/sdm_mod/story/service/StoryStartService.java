@@ -22,6 +22,8 @@ public final class StoryStartService {
     private static final double STORY_START_X = -160.5;
     private static final double STORY_START_Y = 25.0;
     private static final double STORY_START_Z = -599.0;
+    private static final float STORY_START_YAW = 180.0f;
+    private static final float STORY_START_PITCH = 0.0f;
 
     private StoryStartService() {
     }
@@ -87,8 +89,8 @@ public final class StoryStartService {
             STORY_START_Y,
             STORY_START_Z,
             Set.<PositionFlag>of(),
-            player.getYaw(),
-            player.getPitch(),
+            STORY_START_YAW,
+            STORY_START_PITCH,
             false
         );
     }
