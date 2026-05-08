@@ -87,6 +87,7 @@ public final class Phase3ZombieService {
 
     public static void register(ZombieEntity zombie) {
         zombie.addCommandTag(PHASE3_ZOMBIE_TAG);
+        zombie.setPersistent();
         StoryCombatService.configureStoryZombieCombat(zombie);
         HOME_POSITIONS.put(zombie.getUuid(), zombie.getBlockPos());
     }
