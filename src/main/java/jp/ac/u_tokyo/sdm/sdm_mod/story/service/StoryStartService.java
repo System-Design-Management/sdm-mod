@@ -19,9 +19,9 @@ import java.util.Set;
 
 public final class StoryStartService {
     private static final String STORY_START_CHAPTER_ID = "phase2";
-    private static final double STORY_START_X = -160.0;
-    private static final double STORY_START_Y = 27.0;
-    private static final double STORY_START_Z = -614.0;
+    private static final double STORY_START_X = -160.5;
+    private static final double STORY_START_Y = 25.0;
+    private static final double STORY_START_Z = -599.0;
 
     private StoryStartService() {
     }
@@ -75,13 +75,12 @@ public final class StoryStartService {
     }
 
     private static void preparePlayerForStory(ServerPlayerEntity player) {
-        // TODO: 開始地点の高さを再確認し、安全が確認できたら ADVENTURE に戻す。
         ServerWorld world = (ServerWorld) player.getWorld();
         ChunkPos destinationChunk = new ChunkPos(BlockPos.ofFloored(STORY_START_X, STORY_START_Y, STORY_START_Z));
 
         // Load the destination chunk before teleporting so the first command execution is not racing chunk load.
         world.getChunk(destinationChunk.x, destinationChunk.z);
-        player.changeGameMode(GameMode.CREATIVE);
+        player.changeGameMode(GameMode.ADVENTURE);
         player.teleport(
             world,
             STORY_START_X,
