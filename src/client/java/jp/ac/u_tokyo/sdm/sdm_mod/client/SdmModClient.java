@@ -1,14 +1,22 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PoliceOfficerEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TeacherDialogueScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TechnicalBookScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.warp.WarpSelectScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.story.StoryClientNetworking;
+import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialogueHudPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.util.Identifier;
 
 public class SdmModClient implements ClientModInitializer {
 
@@ -18,5 +26,25 @@ public class SdmModClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.TECHNICAL_BOOK, TechnicalBookScreen::new);
         HandledScreens.register(ModScreenHandlers.WARP_SELECT, WarpSelectScreen::new);
         StoryClientNetworking.initialize();
+        // サーバーから TeacherDialoguePayload が届いたらダイアログ画面を開く。
+        // execute() でメインスレッドに乗せてから setScreen を呼ぶ（スレッドセーフ対策）。
+        ClientPlayNetworking.registerGlobalReceiver(TeacherDialoguePayload.ID, (payload, context) ->
+            context.client().execute(() ->
+                context.client().setScreen(new TeacherDialogueScreen(payload.text()))
+            )
+        );
+        // HUD版: プレイを止めずにオーバーレイ表示する。
+        // HudElementRegistry に登録することで毎フレーム render() が呼ばれる。
+        HudElementRegistry.addLast(
+            Identifier.of("sdm_mod", "teacher_dialogue_hud"),
+            TeacherDialogueHud.INSTANCE
+        );
+        // HUD はフレームではなくティック単位で文字を進める必要があるため、
+        // ClientTickEvents でティックごとに tick() を呼び出す。
+        ClientTickEvents.END_CLIENT_TICK.register(client -> TeacherDialogueHud.INSTANCE.tick());
+        // サーバーから HUD パケットが届いたら HUD に表示する。
+        ClientPlayNetworking.registerGlobalReceiver(TeacherDialogueHudPayload.ID, (payload, context) ->
+            context.client().execute(() -> TeacherDialogueHud.INSTANCE.show(payload.text()))
+        );
     }
 }
