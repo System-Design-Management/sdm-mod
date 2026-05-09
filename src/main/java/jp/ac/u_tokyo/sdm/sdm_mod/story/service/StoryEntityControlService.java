@@ -36,6 +36,10 @@ public final class StoryEntityControlService {
     }
 
     private static boolean shouldRemove(Entity entity) {
+        if (StoryPoliceOfficerService.isManagedPoliceOfficer(entity)) {
+            return false;
+        }
+
         if (Phase3ZombieService.isManagedPhaseZombie(entity)) {
             return false;
         }

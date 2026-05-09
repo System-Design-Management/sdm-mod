@@ -1,4 +1,9 @@
 {
+  "student_id_gate_accept": {
+    "sounds": [
+      "sdm_mod:student_id_gate_accept"
+    ]
+  },
   "student_id_gate_reject": {
     "sounds": [
       "sdm_mod:student_id_gate_reject"
