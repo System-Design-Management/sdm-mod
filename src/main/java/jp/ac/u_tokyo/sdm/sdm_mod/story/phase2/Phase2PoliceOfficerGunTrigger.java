@@ -58,6 +58,7 @@ public final class Phase2PoliceOfficerGunTrigger {
             // 銃を受け取った直後に教授のセリフを HUD オーバーレイで表示する。
             // プレイを止めずに表示したいため showAsHud() を使う。
             TeacherDialogueService.showAsHud(serverPlayer, "お前さん、拳銃なんて使えるのか！？");
+            Phase2TutorialDialogueService.handleGunPickup(serverPlayer);
             LOGGER.info(
                 "Player {} received revolver from police officer during phase2.",
                 player.getName().getString()
