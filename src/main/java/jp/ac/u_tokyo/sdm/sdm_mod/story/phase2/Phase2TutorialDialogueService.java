@@ -4,6 +4,12 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
@@ -14,17 +20,24 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public final class Phase2TutorialDialogueService {
     private static final String PHASE2_ID = "phase2";
+    private static final Identifier REVOLVER_MODEL_ID = Identifier.of("minecraft", "guns/revolver");
+    private static final String GZ_DATA_KEY = "gz_data";
+    private static final String BULLETS_KEY = "bullets";
     private static final long INTRO_LOCK_TICKS = 20L;
     private static final long FOLLOW_UP_DELAY_TICKS = 120L;
     private static final long POST_GUN_DELAY_TICKS = 20L;
     private static final String INTRO_TEXT = "聞こえるか。落ち着いて周囲を見ろ。";
     private static final String GUN_PICKUP_TEXT = "そのままでは危険だ。警官から武器を受け取れ。";
-    private static final String USE_GUN_TEXT = "受け取ったな。前方の敵で試せ。";
+    private static final String RELOAD_GUN_TEXT = "受け取ったな。しゃがみながら使って、まずは弾を込めろ。";
+    private static final String FIRE_GUN_TEXT = "そうだ。弾は入った。今度はそのまま使ってみろ。";
     private static final String BLOCKED_BEFORE_GUN_TEXT = "焦るな。まずは警官のところへ行って武器を受け取れ。";
+    private static final String BLOCKED_BEFORE_RELOAD_TEXT = "落ち着け。しゃがみながら使って、先に弾を込めるんだ。";
+    private static final String BLOCKED_BEFORE_FIRST_SHOT_TEXT = "弾は入ったはずだ。そのまま使ってみろ。";
     private static final String BLOCKED_BEFORE_KILL_TEXT = "まだ先を急ぐな。前方の敵を片づけてから進め。";
     private static final String KILL_CONFIRMED_TEXT = "よし。その調子だ。";
     private static final String EXIT_GUIDE_TEXT = "準備はできた。先へ進め。";
@@ -72,12 +85,13 @@ public final class Phase2TutorialDialogueService {
 
     public static void handleGunPickup(ServerPlayerEntity player) {
         DialogueProgress progress = PROGRESS.computeIfAbsent(player.getUuid(), ignored -> new DialogueProgress());
-        if (progress.stage.ordinal() >= DialogueStage.WAITING_FOR_TUTORIAL_KILL.ordinal()) {
+        if (progress.stage.ordinal() >= DialogueStage.WAITING_FOR_RELOAD.ordinal()) {
             return;
         }
 
         progress.phase2Started = true;
-        progress.stage = DialogueStage.WAITING_FOR_TUTORIAL_KILL;
+        progress.stage = DialogueStage.WAITING_FOR_RELOAD;
+        progress.lastKnownBullets = findRevolverBullets(player);
         schedule(
             progress,
             DialogueCue.POST_GUN_INSTRUCTION,
@@ -94,6 +108,16 @@ public final class Phase2TutorialDialogueService {
 
         if (progress.stage == DialogueStage.WAITING_FOR_GUN_PICKUP) {
             TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_GUN_TEXT);
+            return;
+        }
+
+        if (progress.stage == DialogueStage.WAITING_FOR_RELOAD) {
+            TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_RELOAD_TEXT);
+            return;
+        }
+
+        if (progress.stage == DialogueStage.WAITING_FOR_FIRST_SHOT) {
+            TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_FIRST_SHOT_TEXT);
             return;
         }
 
@@ -143,6 +167,7 @@ public final class Phase2TutorialDialogueService {
                 schedule(progress, DialogueCue.GUN_PICKUP_PROMPT, currentTick + FOLLOW_UP_DELAY_TICKS);
             }
 
+            trackWeaponProgress(player, progress);
             if (progress.pendingCue == null || progress.pendingTick > currentTick) {
                 continue;
             }
@@ -163,10 +188,10 @@ public final class Phase2TutorialDialogueService {
                 TeacherDialogueService.showAsHud(player, GUN_PICKUP_TEXT);
             }
             case POST_GUN_INSTRUCTION -> {
-                if (progress.stage != DialogueStage.WAITING_FOR_TUTORIAL_KILL) {
+                if (progress.stage != DialogueStage.WAITING_FOR_RELOAD) {
                     return;
                 }
-                TeacherDialogueService.showAsHud(player, USE_GUN_TEXT);
+                TeacherDialogueService.showAsHud(player, RELOAD_GUN_TEXT);
             }
             case EXIT_GUIDE -> {
                 if (progress.stage != DialogueStage.READY_TO_EXIT) {
@@ -180,6 +205,72 @@ public final class Phase2TutorialDialogueService {
     private static void schedule(DialogueProgress progress, DialogueCue cue, long tick) {
         progress.pendingCue = cue;
         progress.pendingTick = tick;
+    }
+
+    private static void trackWeaponProgress(ServerPlayerEntity player, DialogueProgress progress) {
+        int bullets = findRevolverBullets(player);
+        switch (progress.stage) {
+            case WAITING_FOR_RELOAD -> {
+                if (bullets > 0) {
+                    progress.stage = DialogueStage.WAITING_FOR_FIRST_SHOT;
+                    progress.lastKnownBullets = bullets;
+                    progress.pendingCue = null;
+                    progress.pendingTick = Long.MAX_VALUE;
+                    TeacherDialogueService.showAsHud(player, FIRE_GUN_TEXT);
+                    return;
+                }
+                progress.lastKnownBullets = bullets;
+            }
+            case WAITING_FOR_FIRST_SHOT -> {
+                if (progress.lastKnownBullets > bullets && bullets >= 0) {
+                    progress.stage = DialogueStage.WAITING_FOR_TUTORIAL_KILL;
+                }
+                progress.lastKnownBullets = bullets;
+            }
+            case WAITING_FOR_TUTORIAL_KILL -> progress.lastKnownBullets = bullets;
+            case WAITING_FOR_GUN_PICKUP, READY_TO_EXIT -> {
+            }
+        }
+    }
+
+    private static int findRevolverBullets(ServerPlayerEntity player) {
+        for (int slot = 0; slot < player.getInventory().size(); slot++) {
+            int bullets = getRevolverBullets(player.getInventory().getStack(slot));
+            if (bullets >= 0) {
+                return bullets;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int getRevolverBullets(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return -1;
+        }
+
+        Identifier itemModel = stack.get(DataComponentTypes.ITEM_MODEL);
+        if (!REVOLVER_MODEL_ID.equals(itemModel)) {
+            return -1;
+        }
+
+        NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (customData == null) {
+            return -1;
+        }
+
+        NbtCompound root = customData.copyNbt();
+        NbtElement gzDataElement = root.get(GZ_DATA_KEY);
+        if (!(gzDataElement instanceof NbtCompound gzData)) {
+            return -1;
+        }
+
+        NbtElement bulletsElement = gzData.get(BULLETS_KEY);
+        if (!(bulletsElement instanceof AbstractNbtNumber number)) {
+            return -1;
+        }
+
+        return number.intValue();
     }
 
     private static void holdPlayerInPlace(ServerPlayerEntity player, Vec3d lockedPos) {
@@ -205,6 +296,8 @@ public final class Phase2TutorialDialogueService {
 
     private enum DialogueStage {
         WAITING_FOR_GUN_PICKUP,
+        WAITING_FOR_RELOAD,
+        WAITING_FOR_FIRST_SHOT,
         WAITING_FOR_TUTORIAL_KILL,
         READY_TO_EXIT
     }
@@ -222,5 +315,6 @@ public final class Phase2TutorialDialogueService {
         private long pendingTick = Long.MAX_VALUE;
         private Vec3d lockedPos;
         private long unlockTick = Long.MAX_VALUE;
+        private int lastKnownBullets = -1;
     }
 }
