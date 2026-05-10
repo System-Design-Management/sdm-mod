@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase2;
 
+import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -10,15 +11,20 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 public final class Phase2TutorialDialogueService {
     private static final String PHASE2_ID = "phase2";
+    private static final long INTRO_LOCK_TICKS = 20L;
     private static final long FOLLOW_UP_DELAY_TICKS = 120L;
     private static final String INTRO_TEXT = "聞こえるか。落ち着いて周囲を見ろ。";
     private static final String GUN_PICKUP_TEXT = "そのままでは危険だ。警官から武器を受け取れ。";
     private static final String USE_GUN_TEXT = "受け取ったな。前方の敵で試せ。";
+    private static final String BLOCKED_BEFORE_GUN_TEXT = "焦るな。まずは警官のところへ行って武器を受け取れ。";
+    private static final String BLOCKED_BEFORE_KILL_TEXT = "まだ先を急ぐな。前方の敵を片づけてから進め。";
     private static final String KILL_CONFIRMED_TEXT = "よし。その調子だ。";
     private static final String EXIT_GUIDE_TEXT = "準備はできた。先へ進め。";
     private static final Map<UUID, DialogueProgress> PROGRESS = new HashMap<>();
@@ -58,8 +64,8 @@ public final class Phase2TutorialDialogueService {
 
             progress.phase2Started = true;
             progress.stage = DialogueStage.WAITING_FOR_GUN_PICKUP;
-            TeacherDialogueService.showAsHud(player, INTRO_TEXT);
-            schedule(progress, DialogueCue.GUN_PICKUP_PROMPT, currentTick + FOLLOW_UP_DELAY_TICKS);
+            progress.lockedPos = player.getPos();
+            progress.unlockTick = currentTick + INTRO_LOCK_TICKS;
         }
     }
 
@@ -76,6 +82,23 @@ public final class Phase2TutorialDialogueService {
             DialogueCue.POST_GUN_INSTRUCTION,
             player.getWorld().getTime() + FOLLOW_UP_DELAY_TICKS
         );
+    }
+
+    public static void handleBlockedAdvance(ServerPlayerEntity player) {
+        DialogueProgress progress = PROGRESS.get(player.getUuid());
+        if (progress == null) {
+            TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_GUN_TEXT);
+            return;
+        }
+
+        if (progress.stage == DialogueStage.WAITING_FOR_GUN_PICKUP) {
+            TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_GUN_TEXT);
+            return;
+        }
+
+        if (progress.stage == DialogueStage.WAITING_FOR_TUTORIAL_KILL) {
+            TeacherDialogueService.showAsHud(player, BLOCKED_BEFORE_KILL_TEXT);
+        }
     }
 
     private static void handleTutorialZombieKilled(MinecraftServer server) {
@@ -103,7 +126,23 @@ public final class Phase2TutorialDialogueService {
         long currentTick = server.getOverworld().getTime();
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             DialogueProgress progress = PROGRESS.get(player.getUuid());
-            if (progress == null || progress.pendingCue == null || progress.pendingTick > currentTick) {
+            if (progress == null) {
+                continue;
+            }
+
+            if (progress.lockedPos != null) {
+                if (currentTick < progress.unlockTick) {
+                    holdPlayerInPlace(player, progress.lockedPos);
+                    continue;
+                }
+
+                progress.lockedPos = null;
+                progress.unlockTick = Long.MAX_VALUE;
+                TeacherDialogueService.showAsHud(player, INTRO_TEXT);
+                schedule(progress, DialogueCue.GUN_PICKUP_PROMPT, currentTick + FOLLOW_UP_DELAY_TICKS);
+            }
+
+            if (progress.pendingCue == null || progress.pendingTick > currentTick) {
                 continue;
             }
 
@@ -142,6 +181,23 @@ public final class Phase2TutorialDialogueService {
         progress.pendingTick = tick;
     }
 
+    private static void holdPlayerInPlace(ServerPlayerEntity player, Vec3d lockedPos) {
+        player.setVelocity(Vec3d.ZERO);
+        player.fallDistance = 0.0f;
+        if (player.squaredDistanceTo(lockedPos) > 0.0001D) {
+            player.teleport(
+                player.getWorld(),
+                lockedPos.x,
+                lockedPos.y,
+                lockedPos.z,
+                Set.<PositionFlag>of(),
+                player.getYaw(),
+                player.getPitch(),
+                false
+            );
+        }
+    }
+
     private static void clearState() {
         PROGRESS.clear();
     }
@@ -163,5 +219,7 @@ public final class Phase2TutorialDialogueService {
         private DialogueStage stage = DialogueStage.WAITING_FOR_GUN_PICKUP;
         private DialogueCue pendingCue;
         private long pendingTick = Long.MAX_VALUE;
+        private Vec3d lockedPos;
+        private long unlockTick = Long.MAX_VALUE;
     }
 }

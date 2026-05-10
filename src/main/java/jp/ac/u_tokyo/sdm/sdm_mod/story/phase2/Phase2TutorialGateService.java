@@ -13,7 +13,6 @@ import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -95,7 +94,7 @@ public final class Phase2TutorialGateService {
         }
 
         LAST_NOTIFICATION_TICKS.put(player.getUuid(), currentTick);
-        player.sendMessage(Text.literal("この先へ進むにはゾンビを倒してください。"), false);
+        Phase2TutorialDialogueService.handleBlockedAdvance(player);
     }
 
     private static void clearState() {
