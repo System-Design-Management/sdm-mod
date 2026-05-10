@@ -20,6 +20,7 @@ public final class Phase2TutorialDialogueService {
     private static final String PHASE2_ID = "phase2";
     private static final long INTRO_LOCK_TICKS = 20L;
     private static final long FOLLOW_UP_DELAY_TICKS = 120L;
+    private static final long POST_GUN_DELAY_TICKS = 20L;
     private static final String INTRO_TEXT = "聞こえるか。落ち着いて周囲を見ろ。";
     private static final String GUN_PICKUP_TEXT = "そのままでは危険だ。警官から武器を受け取れ。";
     private static final String USE_GUN_TEXT = "受け取ったな。前方の敵で試せ。";
@@ -80,7 +81,7 @@ public final class Phase2TutorialDialogueService {
         schedule(
             progress,
             DialogueCue.POST_GUN_INSTRUCTION,
-            player.getWorld().getTime() + FOLLOW_UP_DELAY_TICKS
+            player.getWorld().getTime() + POST_GUN_DELAY_TICKS
         );
     }
 
