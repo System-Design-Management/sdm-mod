@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.NpcPose;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -47,6 +48,10 @@ public final class StoryPoliceOfficerService {
             0.0f,
             0.0f
         );
+        policeOfficer.setBodyYaw(0.0f);
+        policeOfficer.setHeadYaw(0.0f);
+        // 警官は倒れている演出のため FACE_DOWN 姿勢を設定する。
+        policeOfficer.setNpcPose(NpcPose.FACE_DOWN);
         world.spawnEntity(policeOfficer);
 
         ItemStack revolver = new ItemStack(Items.CARROT_ON_A_STICK);

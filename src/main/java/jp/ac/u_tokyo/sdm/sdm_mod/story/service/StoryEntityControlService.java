@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.NpcEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
@@ -36,7 +37,8 @@ public final class StoryEntityControlService {
     }
 
     private static boolean shouldRemove(Entity entity) {
-        if (StoryPoliceOfficerService.isManagedPoliceOfficer(entity)) {
+        // NpcEntity（PoliceOfficer / Boy / Girl / Student など）は演出用 NPC なので保持する。
+        if (entity instanceof NpcEntity) {
             return false;
         }
 
