@@ -29,6 +29,10 @@ public final class Phase2PoliceOfficerGunTrigger {
         RECEIVED_PLAYERS.clear();
     }
 
+    public static boolean hasReceivedGun(ServerPlayerEntity player) {
+        return RECEIVED_PLAYERS.contains(player.getUuid());
+    }
+
     public static void initialize() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (world.isClient() || hand != Hand.MAIN_HAND) {
