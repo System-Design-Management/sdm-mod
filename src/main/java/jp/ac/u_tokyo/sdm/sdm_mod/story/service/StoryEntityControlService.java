@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -37,6 +38,10 @@ public final class StoryEntityControlService {
 
     private static boolean shouldRemove(Entity entity) {
         if (StoryPoliceOfficerService.isManagedPoliceOfficer(entity)) {
+            return false;
+        }
+
+        if (Phase2TutorialZombieService.isManagedTutorialZombie(entity)) {
             return false;
         }
 
