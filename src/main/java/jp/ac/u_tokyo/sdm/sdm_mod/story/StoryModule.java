@@ -9,6 +9,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAreaConstraintService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryDoorLockService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryEntityControlService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.Phase5GameOverService;
@@ -29,6 +30,7 @@ public final class StoryModule {
         storyManager = StoryManager.createDefault();
         StoryEntityControlService.initialize();
         StoryCombatService.initialize();
+        StoryAreaConstraintService.initialize();
         StoryDoorLockService.initialize();
         Phase5GameOverService.initialize();
         StoryRespawnService.initialize();
