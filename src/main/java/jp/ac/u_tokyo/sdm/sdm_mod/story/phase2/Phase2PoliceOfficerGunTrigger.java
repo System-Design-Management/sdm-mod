@@ -5,6 +5,8 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
@@ -49,7 +51,10 @@ public final class Phase2PoliceOfficerGunTrigger {
 
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
             RECEIVED_PLAYERS.add(player.getUuid());
+            // プレイヤーにリボルバーを渡す
             giveRevolver(serverPlayer);
+            // 銃を渡したので警官のメインハンドを空にする。
+            ((PoliceOfficerEntity) entity).equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
             // 銃を受け取った直後に教授のセリフを HUD オーバーレイで表示する。
             // プレイを止めずに表示したいため showAsHud() を使う。
             TeacherDialogueService.showAsHud(serverPlayer, "お前さん、拳銃なんて使えるのか！？");
