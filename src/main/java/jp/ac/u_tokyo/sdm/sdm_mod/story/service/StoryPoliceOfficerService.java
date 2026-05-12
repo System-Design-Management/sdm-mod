@@ -13,6 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -73,10 +76,14 @@ public final class StoryPoliceOfficerService {
     }
 
     private static void clearManagedPoliceOfficers(MinecraftServer server) {
-        server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
-            if (isManagedPoliceOfficer(entity)) {
-                entity.discard();
-            }
-        }));
+        server.getWorlds().forEach(world -> {
+            List<Entity> toRemove = new ArrayList<>();
+            world.iterateEntities().forEach(entity -> {
+                if (isManagedPoliceOfficer(entity)) {
+                    toRemove.add(entity);
+                }
+            });
+            toRemove.forEach(Entity::discard);
+        });
     }
 }

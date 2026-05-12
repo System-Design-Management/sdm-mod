@@ -6,9 +6,13 @@ import jp.ac.u_tokyo.sdm.sdm_mod.entity.GirlEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.NpcEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.NpcPose;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.StudentEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.MinecraftServer;
+
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -80,14 +84,16 @@ public final class StoryNpcSpawnService {
     }
 
     private static void clearAll(MinecraftServer server) {
-        server.getWorlds().forEach(world ->
+        server.getWorlds().forEach(world -> {
+            List<Entity> toRemove = new ArrayList<>();
             world.iterateEntities().forEach(entity -> {
                 if (entity instanceof BoyEntity
                     || entity instanceof GirlEntity
                     || entity instanceof StudentEntity) {
-                    entity.discard();
+                    toRemove.add(entity);
                 }
-            })
-        );
+            });
+            toRemove.forEach(Entity::discard);
+        });
     }
 }

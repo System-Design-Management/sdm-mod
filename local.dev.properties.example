@@ -1,9 +1,35 @@
-# Copy a local world into run/saves automatically before runClient / runServer.
-# Set devWorldSourceDir to the world folder you want to use in development.
-# Paths are resolved relative to the project root.
-# Example:
+# -----------------------------------------------------------------------
+# 開発用ローカル設定ファイル
+# このファイルをコピーして local.dev.properties という名前で保存し、
+# 各自の環境に合わせて値を設定してください。
+# local.dev.properties は .gitignore に含まれており、リポジトリには含まれません。
+# -----------------------------------------------------------------------
+
+# 【ワールド自動同期】
+# runClient / runServer 実行前に、指定したワールドフォルダを run/saves/ へ自動コピーします。
+# devWorldSourceDir: コピー元のワールドフォルダのパス（プロジェクトルートからの相対パス、または絶対パス）
+# devWorldName:      run/saves/ 内に作成されるフォルダ名（ゲーム内でのワールド名）
+# 例:
 # devWorldSourceDir=backup/20260329
-# devWorldName=MyWorld
+# devWorldName=SDM_Dev
 
 devWorldSourceDir=
 devWorldName=
+
+# 【OP・ED 動画再生】
+# /sdm_story start コマンド実行時に再生する OP 動画と、
+# ストーリー Phase 6 クリア時に再生する ED 動画のファイルパスを指定します。
+# 未設定の場合は動画再生をスキップしてゲームを開始します。
+# 例:
+# opVideoPath=/Users/yourname/videos/opening.mp4
+# edVideoPath=/Users/yourname/videos/ending.mp4
+
+opVideoPath=
+edVideoPath=
+
+# 【VLC ライブラリパス】
+# VLCJ が VLC のネイティブライブラリを自動検出できない場合に指定します。
+# macOS で VLC.app をインストールしている場合は以下のパスを設定してください。
+# vlcLibPath=/Applications/VLC.app/Contents/MacOS/lib
+
+vlcLibPath=
