@@ -22,15 +22,34 @@ public final class TeacherDialogueScreen extends Screen {
     private static final int PANEL_RIGHT_MARGIN = 16;
     private static final int TEXT_PADDING = 12;
     // 1文字進めるのに必要なティック数。大きいほど遅くなる（1=20字/秒、2=10字/秒、4=5字/秒）。
-    private static final int TICKS_PER_CHAR = 5;
+    private static final int TICKS_PER_CHAR = 3;
 
     private final String fullText;
+    private final Runnable afterClose;
+    // 0 = 手動で閉じる。正数 = 指定ティック後に自動で閉じる。
+    private final int autoCloseTicks;
     private int visibleChars = 0;
     private int tickCounter = 0;
+    private int autoCloseCounter = 0;
+    private boolean removedFired = false;
 
     public TeacherDialogueScreen(String text) {
+        this(text, null, 0);
+    }
+
+    public TeacherDialogueScreen(String text, Runnable afterClose) {
+        this(text, afterClose, 0);
+    }
+
+    public TeacherDialogueScreen(String text, Runnable afterClose, int autoCloseTicks) {
         super(Text.empty());
         this.fullText = text;
+        this.afterClose = afterClose;
+        this.autoCloseTicks = autoCloseTicks;
+        // 自動消去モードでは最初から全文を表示する
+        if (autoCloseTicks > 0) {
+            this.visibleChars = text.length();
+        }
     }
 
     // false にするとゲームのサーバーティックが止まらない。
@@ -40,9 +59,16 @@ public final class TeacherDialogueScreen extends Screen {
         return false;
     }
 
-    // 毎ティック呼ばれる。TICKS_PER_CHAR ティックごとに1文字進める。
+    // 毎ティック呼ばれる。TICKS_PER_CHAR ティックごとに1文字進める。自動消去モードではカウントダウンする。
     @Override
     public void tick() {
+        if (autoCloseTicks > 0) {
+            autoCloseCounter++;
+            if (autoCloseCounter >= autoCloseTicks) {
+                this.close();
+            }
+            return;
+        }
         if (visibleChars < fullText.length()) {
             tickCounter++;
             if (tickCounter >= TICKS_PER_CHAR) {
@@ -52,9 +78,12 @@ public final class TeacherDialogueScreen extends Screen {
         }
     }
 
-    // クリックで「全文即表示 → 閉じる」の2段階動作にする。
+    // クリックで「全文即表示 → 閉じる」の2段階動作にする。自動消去モードでは操作を受け付けない。
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (autoCloseTicks > 0) {
+            return false;
+        }
         if (visibleChars < fullText.length()) {
             visibleChars = fullText.length();
         } else {
@@ -63,9 +92,12 @@ public final class TeacherDialogueScreen extends Screen {
         return true;
     }
 
-    // Space / Enter / Escape でも同様に操作できるようにする。
+    // Space / Enter / Escape でも同様に操作できるようにする。自動消去モードでは操作を受け付けない。
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (autoCloseTicks > 0) {
+            return false;
+        }
         if (keyCode == GLFW.GLFW_KEY_SPACE
             || keyCode == GLFW.GLFW_KEY_ENTER
             || keyCode == GLFW.GLFW_KEY_ESCAPE) {
@@ -130,7 +162,7 @@ public final class TeacherDialogueScreen extends Screen {
 
         // 全文表示済みのとき、閉じ方のヒントを右下に表示する。
         if (visibleChars >= fullText.length()) {
-            String hint = "[ クリックまたは Space で閉じる ]";
+            String hint = autoCloseTicks > 0 ? "" : "[ クリックまたは Space で閉じる ]";
             int hintWidth = this.textRenderer.getWidth(hint);
             context.drawText(
                 this.textRenderer,
@@ -143,5 +175,14 @@ public final class TeacherDialogueScreen extends Screen {
         }
 
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        if (afterClose != null && !removedFired) {
+            removedFired = true;
+            afterClose.run();
+        }
     }
 }
