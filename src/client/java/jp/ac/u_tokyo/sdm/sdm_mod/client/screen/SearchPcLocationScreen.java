@@ -2,7 +2,6 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public final class SearchPcLocationScreen extends Screen {
@@ -16,11 +15,9 @@ public final class SearchPcLocationScreen extends Screen {
     private static final Text INFO_LINE_1_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_1");
     private static final Text INFO_LINE_2_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_2");
     private static final Text INFO_LINE_3_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_3");
-    private static final Text FLOOR_BADGE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.floor_badge");
     private static final Text FLOOR_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.floor_label");
     private static final Text MAP_STAIRS_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.stairs");
     private static final Text MAP_READING_ROOM_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.center");
-    private static final Text BACK_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.back");
 
     private static final int PANEL_WIDTH = 396;
     private static final int PANEL_HEIGHT = 248;
@@ -30,15 +27,6 @@ public final class SearchPcLocationScreen extends Screen {
     public SearchPcLocationScreen(Screen parent) {
         super(Text.empty());
         this.parent = parent;
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-
-        this.addDrawableChild(ButtonWidget.builder(BACK_TEXT, button -> this.close())
-            .dimensions(this.width / 2 - 54, this.height / 2 + 102, 108, 20)
-            .build());
     }
 
     @Override
@@ -133,11 +121,6 @@ public final class SearchPcLocationScreen extends Screen {
         context.fill(left + 108, top + 34, left + 126, top + 42, 0xFFF7E6B9);
         context.fill(left + 54, top + 34, left + 108, top + 64, 0xFFF7E6B9);
         context.fill(left + 36, top + 42, left + 126, top + 72, 0xFFF7E6B9);
-        context.drawBorder(left + 54, top + 34, 54, 30, 0xFF4C3418);
-        context.drawBorder(left + 36, top + 42, 90, 30, 0xFF4C3418);
-
-        context.fill(left + 44, top + 44, left + 58, top + 62, 0xFFFFFFFF);
-        context.drawBorder(left + 44, top + 44, 14, 18, 0xFF4C3418);
 
         context.fill(left + 14, top + 72, left + 146, top + 90, 0xFFD9C095);
         context.drawBorder(left + 14, top + 72, 132, 18, 0xFF8A7047);
@@ -146,9 +129,6 @@ public final class SearchPcLocationScreen extends Screen {
         drawStairsIcon(context, left + 80, top + 50);
         context.drawText(this.textRenderer, MAP_STAIRS_TEXT, left + 74, top + 63, 0xFF3B2510, false);
 
-        context.fill(left + 128, top + 52, left + 144, top + 68, 0xFF1260BD);
-        context.drawBorder(left + 128, top + 52, 16, 16, 0xFF0B4284);
-        context.drawText(this.textRenderer, FLOOR_BADGE_TEXT, left + 132, top + 57, 0xFFFFFFFF, false);
     }
 
     private void drawInfoBox(DrawContext context, int left, int top) {
