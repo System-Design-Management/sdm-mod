@@ -5,6 +5,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialogueHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.poster.PosterModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.command.StoryCommandInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.StoryNetworking;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryFlashlightLightService;
@@ -29,5 +30,6 @@ public class SdmMod implements ModInitializer {
         StoryModule.initialize();
         StoryFlashlightLightService.initialize();
         StoryCommandInitializer.initialize();
+        PosterModule.initialize();
     }
 }

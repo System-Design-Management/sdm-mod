@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.item.PosterItem;
 import jp.ac.u_tokyo.sdm.sdm_mod.item.SdmLogoSpawnItem;
 import jp.ac.u_tokyo.sdm.sdm_mod.item.TechnicalBookItem;
 import jp.ac.u_tokyo.sdm.sdm_mod.item.WarpItem;
@@ -44,6 +45,11 @@ public final class ModItems {
     public static final Item SDM_LOGO_SPAWN = register(
         "sdm_logo_spawn",
         SdmLogoSpawnItem::new
+    );
+
+    public static final Item POSTER_STICK = register(
+        "poster_stick",
+        PosterItem::new
     );
 
     private ModItems() {
