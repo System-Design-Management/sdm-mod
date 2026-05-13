@@ -2,9 +2,11 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public final class SearchPcLocationScreen extends Screen {
+    private static final Text CLOSE_BUTTON_TEXT = Text.literal("X");
     private static final Text HEADER_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.header_title");
     private static final Text SECTION_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.section_title");
     private static final Text PAGE_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.page_title");
@@ -27,6 +29,17 @@ public final class SearchPcLocationScreen extends Screen {
     public SearchPcLocationScreen(Screen parent) {
         super(Text.empty());
         this.parent = parent;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        int left = (this.width - PANEL_WIDTH) / 2;
+        int top = (this.height - PANEL_HEIGHT) / 2;
+        this.addDrawableChild(ButtonWidget.builder(CLOSE_BUTTON_TEXT, button -> this.close())
+            .dimensions(left + PANEL_WIDTH - 24, top + 6, 16, 16)
+            .build());
     }
 
     @Override

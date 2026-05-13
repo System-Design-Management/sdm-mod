@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
+    private static final Text CLOSE_BUTTON_TEXT = Text.literal("X");
     private static final Text TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.title");
     private static final Text SUBTITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.subtitle");
     private static final Text BANNER_TEXT = Text.translatable("screen.sdm_mod.search_pc.banner");
@@ -197,6 +198,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             .build());
         this.addDrawableChild(ButtonWidget.builder(CLEAR_TEXT, button -> clearQuery())
             .dimensions(this.x + 318, this.y + QUERY_BUTTON_Y, CLEAR_BUTTON_WIDTH, 20)
+            .build());
+        this.addDrawableChild(ButtonWidget.builder(CLOSE_BUTTON_TEXT, button -> this.close())
+            .dimensions(this.x + this.backgroundWidth - 24, this.y + 6, 16, 16)
             .build());
 
         addKeyboardButton("ぞ", 0);
