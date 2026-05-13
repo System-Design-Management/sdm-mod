@@ -50,6 +50,11 @@ public abstract class NpcEntityRenderer<T extends NpcEntity>
     }
 
     @Override
+    protected boolean hasLabel(T entity, double squaredDistanceToCamera) {
+        return false;
+    }
+
+    @Override
     public void updateRenderState(T entity, PlayerEntityRenderState state, float tickDelta) {
         super.updateRenderState(entity, state, tickDelta);
         // 手持ちアイテムを render state に反映する。

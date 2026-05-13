@@ -75,6 +75,11 @@ public abstract class NpcEntity extends ZombieEntity {
     }
 
     @Override
+    public boolean isCustomNameVisible() {
+        return false;
+    }
+
+    @Override
     protected void initGoals() {
     }
 
