@@ -35,11 +35,11 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final int QUERY_MAX_LENGTH = 64;
     private static final int QUERY_FIELD_HEIGHT = 20;
     private static final int RESULT_HEIGHT = 52;
-    private static final int KEYBOARD_HEIGHT = 36;
+    private static final int KEYBOARD_HEIGHT = 40;
     private static final int SEARCH_BUTTON_WIDTH = 58;
     private static final int CLEAR_BUTTON_WIDTH = 52;
     private static final int KEY_BUTTON_WIDTH = 110;
-    private static final int KEY_BUTTON_HEIGHT = 18;
+    private static final int KEY_BUTTON_HEIGHT = 20;
     private static final int TITLE_Y = 6;
     private static final int SUBTITLE_Y = 17;
     private static final int LIBRARY_LABEL_Y = 20;
@@ -49,10 +49,13 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final int SEARCH_AREA_Y = 92;
     private static final int MODE_TAB_Y = 96;
     private static final int QUERY_FIELD_Y = 114;
+    private static final int QUERY_TEXT_X = 16;
+    private static final int QUERY_TEXT_Y = 120;
+    private static final int QUERY_TEXT_WIDTH = 230;
     private static final int QUERY_BUTTON_Y = 113;
     private static final int RESULT_TOP = 138;
     private static final int KEYBOARD_TOP = 194;
-    private static final int KEYBOARD_BUTTON_Y = 210;
+    private static final int KEYBOARD_BUTTON_Y = 213;
     private static final CatalogEntry ZOMBIE_BOOK = new CatalogEntry(
         "utokyo",
         "ゾンビ病理学",
@@ -172,14 +175,15 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
 
         this.queryField = new TextFieldWidget(
             this.textRenderer,
-            this.x + 12,
-            this.y + QUERY_FIELD_Y,
-            238,
+            this.x + QUERY_TEXT_X,
+            this.y + QUERY_TEXT_Y,
+            QUERY_TEXT_WIDTH,
             QUERY_FIELD_HEIGHT,
             Text.empty()
         );
         this.queryField.setMaxLength(QUERY_MAX_LENGTH);
         this.queryField.setDrawsBackground(false);
+        this.queryField.setEditableColor(0xFF111111);
         this.queryField.setFocused(true);
         this.addDrawableChild(this.queryField);
 
@@ -226,8 +230,8 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             context.drawText(
                 this.textRenderer,
                 Text.translatable("screen.sdm_mod.search_pc.query_placeholder"),
-                16,
-                120,
+                QUERY_TEXT_X,
+                QUERY_TEXT_Y,
                 0xFF6E7E97,
                 false
             );
