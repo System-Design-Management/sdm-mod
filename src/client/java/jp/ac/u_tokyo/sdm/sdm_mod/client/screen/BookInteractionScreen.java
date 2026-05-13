@@ -5,11 +5,13 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
 
 public final class BookInteractionScreen extends Screen {
     private static final int PANEL_W = 280;
-    private static final int PANEL_H = 160;
+    private static final int PANEL_H = 180;
+    private static final float TITLE_SCALE = 2.0f;
     private static final int HEADER_H = 24;
     private static final int PANEL_PAD = 12;
     private static final int BTN_W = 110;
@@ -111,16 +113,17 @@ public final class BookInteractionScreen extends Screen {
         int headerW = textRenderer.getWidth(header);
         context.drawText(textRenderer, header, px + (PANEL_W - headerW) / 2, py + 7, 0xFF111111, false);
 
-        // book title
-        context.drawWrappedText(
-            textRenderer,
-            Text.literal(bookTitle),
-            paperL + 8,
-            paperT + 12,
-            paperR - paperL - 16,
-            0xFF111111,
-            false
-        );
+        // book title（太文字・中央揃え・拡大）
+        Text boldTitle = Text.literal(bookTitle).formatted(Formatting.BOLD);
+        int titleW = (int)(textRenderer.getWidth(boldTitle) * TITLE_SCALE);
+        int titleX = px + (PANEL_W - titleW) / 2;
+        int titleY = paperT + 16;
+        var matrices = context.getMatrices();
+        matrices.pushMatrix();
+        matrices.translate(titleX, titleY);
+        matrices.scale(TITLE_SCALE, TITLE_SCALE);
+        context.drawText(textRenderer, boldTitle, 0, 0, 0xFF111111, false);
+        matrices.popMatrix();
 
         // hint
         if (isKeyBook) {
