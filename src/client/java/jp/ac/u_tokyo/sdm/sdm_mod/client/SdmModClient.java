@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BoyEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.GirlEntityRenderer;
@@ -49,6 +50,10 @@ public class SdmModClient implements ClientModInitializer {
         HudElementRegistry.addLast(
             Identifier.of("sdm_mod", "teacher_dialogue_hud"),
             TeacherDialogueHud.INSTANCE
+        );
+        HudElementRegistry.addLast(
+            Identifier.of("sdm_mod", "door_arrow_hud"),
+            DoorArrowHud.INSTANCE
         );
         // HUD はフレームではなくティック単位で文字を進める必要があるため、
         // ClientTickEvents でティックごとに tick() を呼び出す。
