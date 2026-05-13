@@ -13,6 +13,7 @@ public final class StoryNetworking {
         PayloadTypeRegistry.playS2C().register(ShowOpVideoPayload.ID, ShowOpVideoPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ShowEdVideoPayload.ID, ShowEdVideoPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DoorArrowPayload.ID, DoorArrowPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(ShowBookUiPayload.ID, ShowBookUiPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(StoryVideoStartPayload.ID, StoryVideoStartPayload.CODEC);
         // 動画再生終了後にクライアントからこのパケットが届いたらストーリーを開始する
         ServerPlayNetworking.registerGlobalReceiver(StoryVideoStartPayload.ID, (payload, context) ->

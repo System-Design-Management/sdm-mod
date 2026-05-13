@@ -1,10 +1,12 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.story;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.BookInteractionScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.Phase5GameOverScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.video.EdVideoScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.video.OpVideoScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.DoorArrowPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowBookUiPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.Phase5GameOverPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowEdVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
@@ -26,6 +28,10 @@ public final class StoryClientNetworking {
         );
         ClientPlayNetworking.registerGlobalReceiver(DoorArrowPayload.ID, (payload, context) ->
             context.client().execute(() -> DoorArrowHud.INSTANCE.setEnabled(payload.visible()))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(ShowBookUiPayload.ID, (payload, context) ->
+            context.client().execute(() ->
+                context.client().setScreen(new BookInteractionScreen(payload.title(), payload.isKeyBook())))
         );
     }
 }
