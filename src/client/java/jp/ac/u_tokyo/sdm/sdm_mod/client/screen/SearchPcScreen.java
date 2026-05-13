@@ -14,10 +14,6 @@ import org.lwjgl.glfw.GLFW;
 public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final Text TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.title");
     private static final Text SUBTITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.subtitle");
-    private static final Text LOGIN_TEXT = Text.translatable("screen.sdm_mod.search_pc.login");
-    private static final Text HELP_LINK_TEXT = Text.translatable("screen.sdm_mod.search_pc.help");
-    private static final Text INPUT_ASSIST_TEXT = Text.translatable("screen.sdm_mod.search_pc.input_assist");
-    private static final Text ENGLISH_TEXT = Text.translatable("screen.sdm_mod.search_pc.english");
     private static final Text BANNER_TEXT = Text.translatable("screen.sdm_mod.search_pc.banner");
     private static final Text SIMPLE_MODE_TEXT = Text.translatable("screen.sdm_mod.search_pc.mode.simple");
     private static final Text ADVANCED_MODE_TEXT = Text.translatable("screen.sdm_mod.search_pc.mode.advanced");
@@ -175,8 +171,15 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         context.drawText(this.textRenderer, TITLE_TEXT, 48, 8, 0xFF121212, false);
         context.drawText(this.textRenderer, SUBTITLE_TEXT, 48, 20, 0xFF2B2B2B, false);
-        context.drawText(this.textRenderer, "UTokyo", this.backgroundWidth - 54, 9, 0xFF0F5AB4, false);
-        context.drawText(this.textRenderer, LOGIN_TEXT, this.backgroundWidth - 126, 12, 0xFFFFFFFF, false);
+        context.drawText(this.textRenderer, "UTokyo", this.backgroundWidth - 54, 11, 0xFF0F5AB4, false);
+        context.drawText(
+            this.textRenderer,
+            Text.translatable("screen.sdm_mod.search_pc.library_label"),
+            this.backgroundWidth - 88,
+            23,
+            0xFF5F7490,
+            false
+        );
 
         int navX = 10;
         for (Text navLabel : NAV_LABELS) {
@@ -211,9 +214,6 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             drawHelpPanel(context);
         }
 
-        context.drawText(this.textRenderer, HELP_LINK_TEXT, this.backgroundWidth - 128, 22, 0xFF0F5AB4, false);
-        context.drawText(this.textRenderer, INPUT_ASSIST_TEXT, this.backgroundWidth - 78, 22, 0xFF0F5AB4, false);
-        context.drawText(this.textRenderer, ENGLISH_TEXT, this.backgroundWidth - 32, 22, 0xFF0F5AB4, false);
         context.drawText(this.textRenderer, FOOTER_TEXT, 136, this.backgroundHeight - 14, 0xFF3F5A7A, false);
     }
 
@@ -298,8 +298,8 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         context.fill(left + 20, top + 14, left + 24, top + 26, 0xFF533A14);
         context.fill(left + 27, top + 14, left + 31, top + 26, 0xFF533A14);
         context.fill(left + 18, top + 18, left + 33, top + 20, 0xFF533A14);
-        context.fill(left + 260, top + 8, left + 348, top + 24, 0xFF1C6FD0);
-        context.drawBorder(left + 260, top + 8, 88, 16, 0xFF0D4A9D);
+        context.fill(left + 250, top + 7, left + 351, top + 29, 0x11A7C8F4);
+        context.fill(left + 250, top + 29, left + 351, top + 30, 0x334C85C6);
     }
 
     private void drawDatabaseTabs(DrawContext context) {
