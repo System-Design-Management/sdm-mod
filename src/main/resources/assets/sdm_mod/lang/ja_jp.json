@@ -7,6 +7,8 @@
   "item.sdm_mod.technical_book": "専門書",
   "item.sdm_mod.warp_tablet": "ワープアイテム",
   "entity.sdm_mod.police_officer": "警察官",
+  "entity.sdm_mod.sdm_logo": "SDMロゴ",
+  "item.sdm_mod.sdm_logo_spawn": "SDMロゴ召喚",
   "screen.sdm_mod.technical_book.left_page": "オイラーの公式は、指数関数と三角関数を結びつける公式である。",
   "screen.sdm_mod.technical_book.right_page": "x = π を代入すると、式は e^(iπ) = -1 に簡約される。",
   "screen.sdm_mod.technical_book.explanation": "したがって e^(iπ) + 1 = 0 が得られる。",

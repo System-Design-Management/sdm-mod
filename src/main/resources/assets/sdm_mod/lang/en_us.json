@@ -8,6 +8,8 @@
   "item.sdm_mod.technical_book": "Technical Book",
   "item.sdm_mod.warp_tablet": "Warp Tablet",
   "entity.sdm_mod.police_officer": "Police Officer",
+  "entity.sdm_mod.sdm_logo": "SDM Logo",
+  "item.sdm_mod.sdm_logo_spawn": "SDM Logo Spawn",
   "screen.sdm_mod.technical_book.left_page": "Euler's formula links exponential and trigonometric functions.",
   "screen.sdm_mod.technical_book.right_page": "Substituting x = π simplifies the expression to e^(iπ) = -1.",
   "screen.sdm_mod.technical_book.explanation": "Therefore, e^(iπ) + 1 = 0.",

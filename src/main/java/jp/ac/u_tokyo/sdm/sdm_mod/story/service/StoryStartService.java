@@ -3,6 +3,8 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialDialogueService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
@@ -51,6 +53,8 @@ public final class StoryStartService {
         notifyPhaseChange(server, STORY_START_CHAPTER_ID);
         // Mark the story as active last so entity-load hooks do not run during setup.
         storyManager.activate();
+        Phase2TutorialZombieService.spawnPhase2TutorialZombie(server.getOverworld());
+        Phase2TutorialDialogueService.start(server);
         Phase3ZombieService.spawnPhase2Zombies(server.getOverworld());
         return storyManager.getProgress();
     }
