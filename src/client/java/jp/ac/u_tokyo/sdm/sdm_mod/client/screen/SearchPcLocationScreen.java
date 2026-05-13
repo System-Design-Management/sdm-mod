@@ -12,16 +12,14 @@ public final class SearchPcLocationScreen extends Screen {
     private static final Text BREADCRUMB_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.breadcrumb");
     private static final Text LOCATION_MESSAGE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.message");
     private static final Text MAP_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map_title");
+    private static final Text MAP_DIAGRAM_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.diagram_title");
     private static final Text INFO_LINE_1_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_1");
     private static final Text INFO_LINE_2_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_2");
     private static final Text INFO_LINE_3_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.info_line_3");
     private static final Text FLOOR_BADGE_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.floor_badge");
     private static final Text FLOOR_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.floor_label");
-    private static final Text MAP_LEFT_TOP_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.left_top");
-    private static final Text MAP_LEFT_BOTTOM_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.left_bottom");
-    private static final Text MAP_CENTER_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.center");
-    private static final Text MAP_RIGHT_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.right");
-    private static final Text HIGHLIGHT_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.highlight");
+    private static final Text MAP_STAIRS_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.stairs");
+    private static final Text MAP_READING_ROOM_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.map.center");
     private static final Text BACK_TEXT = Text.translatable("screen.sdm_mod.search_pc.location.back");
 
     private static final int PANEL_WIDTH = 396;
@@ -114,21 +112,43 @@ public final class SearchPcLocationScreen extends Screen {
     }
 
     private void drawFloorMap(DrawContext context, int left, int top) {
-        context.fill(left, top, left + 150, top + 80, 0xFFF7E3B6);
-        context.drawBorder(left, top, 150, 80, 0xFF9A6A21);
-        context.fill(left + 16, top + 8, left + 42, top + 70, 0xFF5A3A15);
-        context.fill(left + 42, top + 44, left + 74, top + 58, 0xFF5A3A15);
-        context.fill(left + 108, top, left + 132, top + 80, 0xFF5A3A15);
-        context.fill(left + 12, top + 12, left + 39, top + 34, 0xFF6A4A1F);
-        context.fill(left + 16, top + 38, left + 39, top + 66, 0xFF6A4A1F);
-        context.fill(left + 112, top + 50, left + 128, top + 74, 0xFF1260BD);
-        context.drawBorder(left + 112, top + 50, 16, 24, 0xFF0B4284);
-        context.drawText(this.textRenderer, FLOOR_BADGE_TEXT, left + 116, top + 57, 0xFFFFFFFF, false);
-        context.drawText(this.textRenderer, MAP_LEFT_TOP_TEXT, left + 18, top + 16, 0xFFF5E9D4, false);
-        context.drawText(this.textRenderer, MAP_LEFT_BOTTOM_TEXT, left + 18, top + 46, 0xFFF5E9D4, false);
-        context.drawText(this.textRenderer, MAP_CENTER_TEXT, left + 56, top + 54, 0xFF5A3A15, false);
-        context.drawText(this.textRenderer, MAP_RIGHT_TEXT, left + 113, top + 34, 0xFFF5E9D4, false);
-        context.drawText(this.textRenderer, HIGHLIGHT_TEXT, left + 80, top + 8, 0xFF0D4A9D, false);
+        int outerWidth = 162;
+        int outerHeight = 96;
+        int titleWidth = 118;
+        int titleLeft = left + (outerWidth - titleWidth) / 2;
+
+        context.fill(left, top, left + outerWidth, top + outerHeight, 0xFFFFFFFF);
+        context.drawBorder(left, top, outerWidth, outerHeight, 0xFF4C3418);
+
+        context.fill(titleLeft, top + 4, titleLeft + titleWidth, top + 18, 0xFFFFFFFF);
+        context.drawBorder(titleLeft, top + 4, titleWidth, 14, 0xFF4C3418);
+        context.drawText(this.textRenderer, MAP_DIAGRAM_TITLE_TEXT, titleLeft + 10, top + 8, 0xFF3B2510, false);
+
+        context.fill(left + 8, top + 22, left + 36, top + 70, 0xFF5B4321);
+        context.fill(left + 126, top + 22, left + 154, top + 70, 0xFF5B4321);
+        context.drawBorder(left + 8, top + 22, 28, 48, 0xFF3F2B12);
+        context.drawBorder(left + 126, top + 22, 28, 48, 0xFF3F2B12);
+
+        context.fill(left + 36, top + 34, left + 54, top + 42, 0xFFF7E6B9);
+        context.fill(left + 108, top + 34, left + 126, top + 42, 0xFFF7E6B9);
+        context.fill(left + 54, top + 34, left + 108, top + 64, 0xFFF7E6B9);
+        context.fill(left + 36, top + 42, left + 126, top + 72, 0xFFF7E6B9);
+        context.drawBorder(left + 54, top + 34, 54, 30, 0xFF4C3418);
+        context.drawBorder(left + 36, top + 42, 90, 30, 0xFF4C3418);
+
+        context.fill(left + 44, top + 44, left + 58, top + 62, 0xFFFFFFFF);
+        context.drawBorder(left + 44, top + 44, 14, 18, 0xFF4C3418);
+
+        context.fill(left + 14, top + 72, left + 146, top + 90, 0xFFD9C095);
+        context.drawBorder(left + 14, top + 72, 132, 18, 0xFF8A7047);
+        context.drawText(this.textRenderer, MAP_READING_ROOM_TEXT, left + 62, top + 78, 0xFF3B2510, false);
+
+        drawStairsIcon(context, left + 80, top + 50);
+        context.drawText(this.textRenderer, MAP_STAIRS_TEXT, left + 74, top + 63, 0xFF3B2510, false);
+
+        context.fill(left + 128, top + 52, left + 144, top + 68, 0xFF1260BD);
+        context.drawBorder(left + 128, top + 52, 16, 16, 0xFF0B4284);
+        context.drawText(this.textRenderer, FLOOR_BADGE_TEXT, left + 132, top + 57, 0xFFFFFFFF, false);
     }
 
     private void drawInfoBox(DrawContext context, int left, int top) {
@@ -138,5 +158,18 @@ public final class SearchPcLocationScreen extends Screen {
         context.drawText(this.textRenderer, INFO_LINE_2_TEXT, left + 8, top + 24, 0xFF1C1C1C, false);
         context.drawText(this.textRenderer, INFO_LINE_3_TEXT, left + 8, top + 38, 0xFF1C1C1C, false);
         context.drawText(this.textRenderer, FLOOR_LABEL_TEXT, left + 47, top - 12, 0xFF0D4A9D, false);
+    }
+
+    private void drawStairsIcon(DrawContext context, int centerX, int top) {
+        int left = centerX - 6;
+        int right = centerX + 6;
+
+        context.fill(left, top, right, top + 12, 0xFFF7E6B9);
+        context.drawBorder(left, top, 12, 12, 0xFF4C3418);
+        for (int y = top + 2; y < top + 12; y += 2) {
+            context.fill(left + 2, y, right - 2, y + 1, 0xFF4C3418);
+        }
+        context.fill(left + 2, top + 12, right - 2, top + 14, 0xFFF7E6B9);
+        context.drawBorder(left + 2, top + 12, 8, 2, 0xFF4C3418);
     }
 }
