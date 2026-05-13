@@ -46,7 +46,7 @@
   "screen.sdm_mod.search_pc.location.message": "この資料は、総合図書館の開架3階にあります。",
   "screen.sdm_mod.search_pc.location.map_title": "資料配置マップ",
   "screen.sdm_mod.search_pc.location.map.diagram_title": "3F 簡易マップ",
-  "screen.sdm_mod.search_pc.location.info_line_1": "請求記号: B1",
+  "screen.sdm_mod.search_pc.location.info_line_1": "請求記号: 19",
   "screen.sdm_mod.search_pc.location.info_line_2": "配架: 総合図 3F",
   "screen.sdm_mod.search_pc.location.info_line_3": "状態: 開架資料",
   "screen.sdm_mod.search_pc.location.floor_label": "3階",

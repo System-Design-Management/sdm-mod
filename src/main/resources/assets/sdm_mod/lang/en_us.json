@@ -47,7 +47,7 @@
   "screen.sdm_mod.search_pc.location.message": "This item is on the open shelves of the Main Library, 3rd floor.",
   "screen.sdm_mod.search_pc.location.map_title": "Floor Map",
   "screen.sdm_mod.search_pc.location.map.diagram_title": "3F Map",
-  "screen.sdm_mod.search_pc.location.info_line_1": "Call No.: B1",
+  "screen.sdm_mod.search_pc.location.info_line_1": "Call No.: 19",
   "screen.sdm_mod.search_pc.location.info_line_2": "Shelf: Main Library 3F",
   "screen.sdm_mod.search_pc.location.info_line_3": "Status: Open Stack",
   "screen.sdm_mod.search_pc.location.floor_label": "3rd Floor",
