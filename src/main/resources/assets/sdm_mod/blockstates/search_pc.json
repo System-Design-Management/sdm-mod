@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "sdm_mod:block/search_pc"
-    }
+    "facing=north": { "model": "sdm_mod:block/search_pc" },
+    "facing=east":  { "model": "sdm_mod:block/search_pc", "y": 90 },
+    "facing=south": { "model": "sdm_mod:block/search_pc", "y": 180 },
+    "facing=west":  { "model": "sdm_mod:block/search_pc", "y": 270 }
   }
 }
