@@ -13,6 +13,10 @@ public final class ModScreenHandlers {
         "technical_book",
         TechnicalBookScreenHandler::new
     );
+    public static final ScreenHandlerType<SearchPcScreenHandler> SEARCH_PC = register(
+        "search_pc",
+        SearchPcScreenHandler::new
+    );
     public static final ScreenHandlerType<WarpSelectScreenHandler> WARP_SELECT = register(
         "warp_select",
         WarpSelectScreenHandler::new
