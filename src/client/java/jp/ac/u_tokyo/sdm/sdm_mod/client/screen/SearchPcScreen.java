@@ -26,17 +26,16 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final Text LOCATION_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.location");
     private static final Text STATUS_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.status");
     private static final Text KEYBOARD_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.keyboard_title");
-    private static final Text BACKSPACE_TEXT = Text.translatable("screen.sdm_mod.search_pc.keyboard.backspace");
     private static final Text ZOMBIE_QUERY_TEXT = Text.literal("ゾンビ");
 
     private static final int PANEL_WIDTH = 404;
-    private static final int PANEL_HEIGHT = 252;
+    private static final int PANEL_HEIGHT = 238;
     private static final int HEADER_HEIGHT = 28;
     private static final int NAV_HEIGHT = 15;
     private static final int QUERY_MAX_LENGTH = 64;
     private static final int QUERY_FIELD_HEIGHT = 20;
     private static final int RESULT_HEIGHT = 52;
-    private static final int KEYBOARD_HEIGHT = 50;
+    private static final int KEYBOARD_HEIGHT = 36;
     private static final int SEARCH_BUTTON_WIDTH = 58;
     private static final int CLEAR_BUTTON_WIDTH = 52;
     private static final int KEY_BUTTON_WIDTH = 110;
@@ -53,8 +52,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final int QUERY_BUTTON_Y = 113;
     private static final int RESULT_TOP = 138;
     private static final int KEYBOARD_TOP = 194;
-    private static final int KEYBOARD_BUTTON_Y = 214;
-    private static final int KEYBOARD_ROW_GAP = 18;
+    private static final int KEYBOARD_BUTTON_Y = 210;
     private static final CatalogEntry ZOMBIE_BOOK = new CatalogEntry(
         "utokyo",
         "ゾンビ病理学",
@@ -192,12 +190,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             .dimensions(this.x + 318, this.y + QUERY_BUTTON_Y, CLEAR_BUTTON_WIDTH, 20)
             .build());
 
-        addKeyboardButton("ぞ", 0, 0);
-        addKeyboardButton("ん", 1, 0);
-        addKeyboardButton("び", 2, 0);
-        addKeyboardActionButton(BACKSPACE_TEXT, 0, 1, this::backspaceQuery);
-        addKeyboardActionButton(CLEAR_TEXT, 1, 1, this::clearQuery);
-        addKeyboardActionButton(SEARCH_TEXT, 2, 1, this::performSearch);
+        addKeyboardButton("ぞ", 0);
+        addKeyboardButton("ん", 1);
+        addKeyboardButton("び", 2);
     }
 
     @Override
@@ -491,15 +486,15 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         return new ClickRect(currentX, this.y + DATABASE_TABS_Y, getDatabaseTabWidth(index), 18);
     }
 
-    private void addKeyboardButton(String key, int column, int row) {
-        addKeyboardActionButton(Text.literal(key), column, row, () -> appendToQuery(key));
+    private void addKeyboardButton(String key, int column) {
+        addKeyboardActionButton(Text.literal(key), column, () -> appendToQuery(key));
     }
 
-    private void addKeyboardActionButton(Text label, int column, int row, Runnable action) {
+    private void addKeyboardActionButton(Text label, int column, Runnable action) {
         this.addDrawableChild(ButtonWidget.builder(label, button -> action.run())
             .dimensions(
                 this.x + 22 + column * 120,
-                this.y + KEYBOARD_BUTTON_Y + row * KEYBOARD_ROW_GAP,
+                this.y + KEYBOARD_BUTTON_Y,
                 KEY_BUTTON_WIDTH,
                 KEY_BUTTON_HEIGHT
             )
@@ -512,16 +507,6 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             return;
         }
         this.queryField.setText(current + value);
-        this.queryField.setFocused(true);
-    }
-
-    private void backspaceQuery() {
-        String current = this.queryField.getText();
-        if (current.isEmpty()) {
-            return;
-        }
-        int endIndex = current.offsetByCodePoints(current.length(), -1);
-        this.queryField.setText(current.substring(0, endIndex));
         this.queryField.setFocused(true);
     }
 
