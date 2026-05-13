@@ -60,8 +60,8 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final CatalogEntry ZOMBIE_BOOK = new CatalogEntry(
         "utokyo",
         "ゾンビ病理学",
-        "神田 医学研究室",
-        "総合図書館 B1 医学資料",
+        "舞倉 存美",
+        "総合図書館・3F開架",
         "利用可",
         "ゾンビ化症例の病理と治療仮説をまとめた資料。"
     );
@@ -158,6 +158,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private List<CatalogEntry> searchResults = List.of();
     private String lastQuery = "";
     private String draftQuery = "";
+    private boolean resultSelected;
 
     public SearchPcScreen(
         SearchPcScreenHandler handler,
@@ -186,8 +187,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         this.queryField.setMaxLength(QUERY_MAX_LENGTH);
         this.queryField.setDrawsBackground(false);
         this.queryField.setEditableColor(0xFF111111);
+        this.queryField.setTextShadow(false);
         this.queryField.setText(this.draftQuery);
-        this.queryField.setFocused(true);
+        this.queryField.setFocused(!this.resultSelected);
         this.addDrawableChild(this.queryField);
 
         this.addDrawableChild(ButtonWidget.builder(SEARCH_TEXT, button -> performSearch())
@@ -281,6 +283,25 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (hasSelectableResult()) {
+            if (keyCode == GLFW.GLFW_KEY_DOWN || keyCode == GLFW.GLFW_KEY_TAB) {
+                this.resultSelected = true;
+                this.queryField.setFocused(false);
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_UP && this.resultSelected) {
+                this.resultSelected = false;
+                this.queryField.setFocused(true);
+                return true;
+            }
+            if (this.resultSelected && (keyCode == GLFW.GLFW_KEY_ENTER
+                || keyCode == GLFW.GLFW_KEY_KP_ENTER
+                || keyCode == GLFW.GLFW_KEY_SPACE)) {
+                openLocationScreen();
+                return true;
+            }
+        }
+
         if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
             performSearch();
             return true;
@@ -388,6 +409,10 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         int visibleCount = 1;
         for (int i = 0; i < visibleCount; i++) {
             CatalogEntry entry = this.searchResults.get(i);
+            if (hasSelectableResult() && this.resultSelected) {
+                context.fill(12, currentY - 2, this.backgroundWidth - 12, currentY + 29, 0x1A1B67C2);
+                context.drawBorder(12, currentY - 2, this.backgroundWidth - 24, 31, 0xFF1B67C2);
+            }
             context.drawText(this.textRenderer, Text.literal(entry.title()), 16, currentY, 0xFF0D4A9D, false);
 
             String authorAndStatus = AUTHOR_LABEL_TEXT.getString() + ": " + entry.author()
@@ -419,6 +444,8 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         String query = this.queryField.getText().trim();
         this.lastQuery = query;
         this.searched = true;
+        this.resultSelected = false;
+        this.queryField.setFocused(true);
 
         if (query.isEmpty()) {
             this.searchResults = List.of();
@@ -533,6 +560,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         this.searchResults = List.of();
         this.lastQuery = "";
         this.draftQuery = "";
+        this.resultSelected = false;
         this.queryField.setFocused(true);
     }
 
