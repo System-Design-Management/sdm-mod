@@ -210,13 +210,18 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
 
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        Text libraryLabel = Text.translatable("screen.sdm_mod.search_pc.library_label");
+        int headerRight = this.backgroundWidth - 32;
+        int utokyoX = headerRight - this.textRenderer.getWidth("UTokyo");
+        int libraryLabelX = headerRight - this.textRenderer.getWidth(libraryLabel);
+
         context.drawText(this.textRenderer, TITLE_TEXT, 48, TITLE_Y, 0xFF121212, false);
         context.drawText(this.textRenderer, SUBTITLE_TEXT, 48, SUBTITLE_Y, 0xFF2B2B2B, false);
-        context.drawText(this.textRenderer, "UTokyo", this.backgroundWidth - 54, 11, 0xFF0F5AB4, false);
+        context.drawText(this.textRenderer, "UTokyo", utokyoX, 11, 0xFF0F5AB4, false);
         context.drawText(
             this.textRenderer,
-            Text.translatable("screen.sdm_mod.search_pc.library_label"),
-            this.backgroundWidth - 88,
+            libraryLabel,
+            libraryLabelX,
             LIBRARY_LABEL_Y,
             0xFF5F7490,
             false
