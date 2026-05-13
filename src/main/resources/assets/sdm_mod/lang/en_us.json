@@ -61,7 +61,6 @@
   "screen.sdm_mod.search_pc.location.sidebar.guide": "Guide",
   "screen.sdm_mod.search_pc.location.sidebar.collection": "Collection",
   "screen.sdm_mod.search_pc.location.sidebar.access": "Access",
-  "screen.sdm_mod.search_pc.location.sidebar.hours_value": "Weekdays",
   "screen.sdm_mod.search_pc.location.sidebar.hours_time": "9:00-22:30",
   "screen.sdm_mod.technical_book.left_page": "Euler's formula links exponential and trigonometric functions.",
   "screen.sdm_mod.technical_book.right_page": "Substituting x = π simplifies the expression to e^(iπ) = -1.",

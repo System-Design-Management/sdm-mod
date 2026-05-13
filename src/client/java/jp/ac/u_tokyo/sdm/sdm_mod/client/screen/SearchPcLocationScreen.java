@@ -86,11 +86,10 @@ public final class SearchPcLocationScreen extends Screen {
         drawSidebarItem(context, left + 12, top + 86, 70, 18, 0xFF1B67C2, 0xFF0D4A9D, Text.translatable("screen.sdm_mod.search_pc.location.sidebar.guide"));
         drawSidebarItem(context, left + 12, top + 106, 70, 18, 0xFF1B67C2, 0xFF0D4A9D, Text.translatable("screen.sdm_mod.search_pc.location.sidebar.collection"));
         drawSidebarItem(context, left + 12, top + 126, 70, 18, 0xFF1B67C2, 0xFF0D4A9D, Text.translatable("screen.sdm_mod.search_pc.location.sidebar.access"));
-        context.drawText(this.textRenderer, Text.translatable("screen.sdm_mod.search_pc.location.sidebar.hours_value"), left + 18, top + 66, 0xFFFFFFFF, false);
         context.drawText(this.textRenderer, Text.translatable("screen.sdm_mod.search_pc.location.sidebar.hours_time"), left + 18, top + 74, 0xFFFFFFFF, false);
 
         context.drawText(this.textRenderer, PAGE_TITLE_TEXT, left + 100, top + 64, 0xFF222222, false);
-        context.drawBorder(left + 98, top + 80, 186, 16, 0xFF7AA0D6);
+        context.drawBorder(left + 98, top + 80, 246, 16, 0xFF7AA0D6);
         context.drawText(this.textRenderer, BREADCRUMB_TEXT, left + 104, top + 85, 0xFF2E5A94, false);
 
         context.drawText(this.textRenderer, LOCATION_MESSAGE_TEXT, left + 100, top + 106, 0xFF161616, false);

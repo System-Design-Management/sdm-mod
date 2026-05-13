@@ -60,7 +60,6 @@
   "screen.sdm_mod.search_pc.location.sidebar.guide": "利用案内",
   "screen.sdm_mod.search_pc.location.sidebar.collection": "資料案内",
   "screen.sdm_mod.search_pc.location.sidebar.access": "アクセス",
-  "screen.sdm_mod.search_pc.location.sidebar.hours_value": "平日",
   "screen.sdm_mod.search_pc.location.sidebar.hours_time": "9:00-22:30",
   "screen.sdm_mod.technical_book.left_page": "オイラーの公式は、指数関数と三角関数を結びつける公式である。",
   "screen.sdm_mod.technical_book.right_page": "x = π を代入すると、式は e^(iπ) = -1 に簡約される。",
