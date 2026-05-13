@@ -1,8 +1,10 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModBlocks;
+import jp.ac.u_tokyo.sdm.sdm_mod.block.SearchPcBlock;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialZombieService;
@@ -18,6 +20,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 
 import java.util.Set;
@@ -36,6 +39,7 @@ public final class StoryStartService {
     private static final int LIBRARY_PC_FLOOR_END_X = -145;
     private static final BlockPos LEFT_LIBRARY_PC_POS = new BlockPos(-149, 31, LIBRARY_PC_Z);
     private static final BlockPos RIGHT_LIBRARY_PC_POS = new BlockPos(-147, 31, LIBRARY_PC_Z);
+    private static final Direction LIBRARY_PC_FACING = Direction.SOUTH;
 
     private StoryStartService() {
     }
@@ -48,6 +52,7 @@ public final class StoryStartService {
         StoryPoliceOfficerService.spawnPhase2PoliceOfficer(server);
         StoryNpcSpawnService.spawnAll(server);
         StoryTorchCleanupService.removeTorchesInStoryArea(server);
+        Phase2DoorArrowService.resetProgress();
         placeLibrarySearchPcs(server.getOverworld());
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
@@ -119,8 +124,16 @@ public final class StoryStartService {
             );
         }
 
-        world.setBlockState(LEFT_LIBRARY_PC_POS, ModBlocks.SEARCH_PC.getDefaultState(), BLOCK_UPDATE_FLAGS);
-        world.setBlockState(RIGHT_LIBRARY_PC_POS, ModBlocks.SEARCH_PC.getDefaultState(), BLOCK_UPDATE_FLAGS);
+        world.setBlockState(
+            LEFT_LIBRARY_PC_POS,
+            ModBlocks.SEARCH_PC.getDefaultState().with(SearchPcBlock.FACING, LIBRARY_PC_FACING),
+            BLOCK_UPDATE_FLAGS
+        );
+        world.setBlockState(
+            RIGHT_LIBRARY_PC_POS,
+            ModBlocks.SEARCH_PC.getDefaultState().with(SearchPcBlock.FACING, LIBRARY_PC_FACING),
+            BLOCK_UPDATE_FLAGS
+        );
     }
 
     private static void executePlayerCommand(MinecraftServer server, ServerPlayerEntity player, String command) {

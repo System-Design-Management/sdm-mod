@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.SearchPcScreenHandler;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SearchPcLocationOpenedPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -586,6 +588,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             return;
         }
         this.draftQuery = this.queryField.getText();
+        ClientPlayNetworking.send(SearchPcLocationOpenedPayload.INSTANCE);
         this.client.setScreen(new SearchPcLocationScreen(this));
     }
 
