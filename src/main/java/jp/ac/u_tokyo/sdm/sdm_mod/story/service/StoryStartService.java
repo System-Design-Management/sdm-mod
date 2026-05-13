@@ -4,6 +4,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.ModBlocks;
 import jp.ac.u_tokyo.sdm.sdm_mod.block.SearchPcBlock;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialZombieService;
@@ -51,6 +52,7 @@ public final class StoryStartService {
         StoryPoliceOfficerService.spawnPhase2PoliceOfficer(server);
         StoryNpcSpawnService.spawnAll(server);
         StoryTorchCleanupService.removeTorchesInStoryArea(server);
+        Phase2DoorArrowService.resetProgress();
         placeLibrarySearchPcs(server.getOverworld());
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
