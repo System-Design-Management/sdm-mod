@@ -26,6 +26,11 @@ public class SdmLogoEntity extends Entity {
     protected void writeCustomData(WriteView view) {}
 
     @Override
+    public boolean isCollidable(Entity other) {
+        return true;
+    }
+
+    @Override
     public boolean damage(ServerWorld world, DamageSource source, float amount) {
         return false;
     }
