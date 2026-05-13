@@ -73,5 +73,7 @@
   "screen.sdm_mod.warp.teleported": "Teleported to %s.",
   "warp.sdm_mod.destination.akamonmae": "Akamonmae",
   "warp.sdm_mod.destination.yasuda": "Yasuda",
-  "warp.sdm_mod.destination.library": "Library"
+  "warp.sdm_mod.destination.library": "Library",
+  "item.sdm_mod.poster_stick": "Poster Stick",
+  "entity.sdm_mod.poster": "Poster"
 }

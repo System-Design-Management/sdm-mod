@@ -73,5 +73,7 @@
   "warp.sdm_mod.destination.akamonmae": "赤門前",
   "warp.sdm_mod.destination.yasuda": "安田講堂",
   "warp.sdm_mod.destination.library": "総合図書館",
-  "item.sdm_mod.student_id":"学生証"
+  "item.sdm_mod.student_id":"学生証",
+  "item.sdm_mod.poster_stick": "ポスター設置棒",
+  "entity.sdm_mod.poster": "ポスター"
 }

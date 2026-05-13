@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.BoyEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.GirlEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.PosterEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.StudentEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -52,6 +53,14 @@ public final class ModEntities {
             .create(SdmLogoEntity::new, SpawnGroup.MISC)
             .dimensions(2.0f, 2.0f)
             .maxTrackingRange(8)
+    );
+
+    public static final EntityType<PosterEntity> POSTER = register(
+        "poster",
+        EntityType.Builder
+            .create(PosterEntity::new, SpawnGroup.MISC)
+            .dimensions(1.5f, 0.5f)
+            .maxTrackingRange(16)
     );
 
     private ModEntities() {

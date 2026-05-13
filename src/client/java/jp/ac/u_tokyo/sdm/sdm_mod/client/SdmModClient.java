@@ -5,6 +5,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BoyEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.GirlEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PosterEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.StudentEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PoliceOfficerEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.SdmLogoEntityRenderer;
@@ -35,6 +36,7 @@ public class SdmModClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.BOY, BoyEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.POLICE_OFFICER, PoliceOfficerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.SDM_LOGO, SdmLogoEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.POSTER, PosterEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(SdmLogoEntityModel.LAYER, SdmLogoEntityModel::getTexturedModelData);
         HandledScreens.register(ModScreenHandlers.SEARCH_PC, SearchPcScreen::new);
         HandledScreens.register(ModScreenHandlers.TECHNICAL_BOOK, TechnicalBookScreen::new);
