@@ -10,6 +10,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class StoryEntityControlService {
     private StoryEntityControlService() {
     }
@@ -29,11 +32,16 @@ public final class StoryEntityControlService {
 
     public static void clearNonPlayerLivingEntities(MinecraftServer server) {
         // Sweep every loaded world once at story start so pre-existing mobs are also removed.
-        server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
-            if (shouldRemove(entity)) {
-                entity.discard();
-            }
-        }));
+        // Collect to list first to avoid ConcurrentModificationException during iteration.
+        server.getWorlds().forEach(world -> {
+            List<Entity> toRemove = new ArrayList<>();
+            world.iterateEntities().forEach(entity -> {
+                if (shouldRemove(entity)) {
+                    toRemove.add(entity);
+                }
+            });
+            toRemove.forEach(Entity::discard);
+        });
     }
 
     private static boolean shouldRemove(Entity entity) {
