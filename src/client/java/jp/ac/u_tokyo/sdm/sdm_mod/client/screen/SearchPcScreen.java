@@ -6,6 +6,7 @@ import java.util.Locale;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.SearchPcScreenHandler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -20,23 +21,34 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final Text SEARCH_TEXT = Text.translatable("screen.sdm_mod.search_pc.search");
     private static final Text CLEAR_TEXT = Text.translatable("screen.sdm_mod.search_pc.clear");
     private static final Text RESULTS_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.results_title");
-    private static final Text HELP_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.help_title");
-    private static final Text EMPTY_QUERY_TEXT = Text.translatable("screen.sdm_mod.search_pc.prompt");
     private static final Text NO_RESULTS_TEXT = Text.translatable("screen.sdm_mod.search_pc.no_results");
-    private static final Text HINT_TEXT = Text.translatable("screen.sdm_mod.search_pc.hint_enter");
     private static final Text AUTHOR_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.author");
     private static final Text LOCATION_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.location");
     private static final Text STATUS_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.status");
-    private static final Text FOOTER_TEXT = Text.translatable("screen.sdm_mod.search_pc.footer");
+    private static final Text KEYBOARD_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.keyboard_title");
+    private static final Text BACKSPACE_TEXT = Text.translatable("screen.sdm_mod.search_pc.keyboard.backspace");
+    private static final Text ZOMBIE_QUERY_TEXT = Text.literal("ゾンビ");
 
     private static final int PANEL_WIDTH = 404;
-    private static final int PANEL_HEIGHT = 254;
+    private static final int PANEL_HEIGHT = 292;
     private static final int HEADER_HEIGHT = 34;
     private static final int NAV_HEIGHT = 16;
+    private static final int QUERY_MAX_LENGTH = 64;
     private static final int QUERY_FIELD_HEIGHT = 22;
-    private static final int BODY_HEIGHT = 78;
-    private static final int SEARCH_BUTTON_WIDTH = 54;
-    private static final int CLEAR_BUTTON_WIDTH = 46;
+    private static final int RESULT_HEIGHT = 58;
+    private static final int KEYBOARD_HEIGHT = 58;
+    private static final int SEARCH_BUTTON_WIDTH = 58;
+    private static final int CLEAR_BUTTON_WIDTH = 52;
+    private static final int KEY_BUTTON_WIDTH = 110;
+    private static final int KEY_BUTTON_HEIGHT = 20;
+    private static final CatalogEntry ZOMBIE_BOOK = new CatalogEntry(
+        "utokyo",
+        "ゾンビ病理学",
+        "神田 医学研究室",
+        "総合図書館 B1 医学資料",
+        "利用可",
+        "ゾンビ化症例の病理と治療仮説をまとめた資料。"
+    );
 
     private static final List<Text> NAV_LABELS = List.of(
         Text.translatable("screen.sdm_mod.search_pc.nav.home"),
@@ -54,13 +66,6 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.irdb"), "irdb"),
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.ndl"), "ndl"),
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.worldcat"), "worldcat")
-    );
-
-    private static final List<Text> HELP_LINES = List.of(
-        Text.translatable("screen.sdm_mod.search_pc.help_line_1"),
-        Text.translatable("screen.sdm_mod.search_pc.help_line_2"),
-        Text.translatable("screen.sdm_mod.search_pc.help_line_3"),
-        Text.translatable("screen.sdm_mod.search_pc.help_line_4")
     );
 
     private static final List<CatalogEntry> CATALOG = List.of(
@@ -161,10 +166,24 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             QUERY_FIELD_HEIGHT,
             Text.empty()
         );
-        this.queryField.setMaxLength(64);
+        this.queryField.setMaxLength(QUERY_MAX_LENGTH);
         this.queryField.setDrawsBackground(false);
         this.queryField.setFocused(true);
         this.addDrawableChild(this.queryField);
+
+        this.addDrawableChild(ButtonWidget.builder(SEARCH_TEXT, button -> performSearch())
+            .dimensions(this.x + 254, this.y + 129, SEARCH_BUTTON_WIDTH, 20)
+            .build());
+        this.addDrawableChild(ButtonWidget.builder(CLEAR_TEXT, button -> clearQuery())
+            .dimensions(this.x + 318, this.y + 129, CLEAR_BUTTON_WIDTH, 20)
+            .build());
+
+        addKeyboardButton("ぞ", 0, 0);
+        addKeyboardButton("ん", 1, 0);
+        addKeyboardButton("び", 2, 0);
+        addKeyboardActionButton(BACKSPACE_TEXT, 0, 1, this::backspaceQuery);
+        addKeyboardActionButton(CLEAR_TEXT, 1, 1, this::clearQuery);
+        addKeyboardActionButton(SEARCH_TEXT, 2, 1, this::performSearch);
     }
 
     @Override
@@ -204,17 +223,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
                 false
             );
         }
-        context.drawText(this.textRenderer, SEARCH_TEXT, 270, 137, 0xFFFFFFFF, false);
-        context.drawText(this.textRenderer, CLEAR_TEXT, 331, 137, 0xFF0F4B9D, false);
-        context.drawText(this.textRenderer, HINT_TEXT, 12, 156, 0xFF50627B, false);
+        drawSearchResults(context);
 
-        if (this.searched) {
-            drawSearchResults(context);
-        } else {
-            drawHelpPanel(context);
-        }
-
-        context.drawText(this.textRenderer, FOOTER_TEXT, 136, this.backgroundHeight - 14, 0xFF3F5A7A, false);
+        context.drawText(this.textRenderer, KEYBOARD_TITLE_TEXT, 16, 228, 0xFFFFFFFF, false);
     }
 
     @Override
@@ -240,17 +251,6 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             if (clickModeTab(mouseX, mouseY) || clickDatabaseTab(mouseX, mouseY)) {
                 return true;
             }
-            if (getSearchButtonRect().contains(mouseX, mouseY)) {
-                performSearch();
-                return true;
-            }
-            if (getClearButtonRect().contains(mouseX, mouseY)) {
-                this.queryField.setText("");
-                this.searched = false;
-                this.searchResults = List.of();
-                this.lastQuery = "";
-                return true;
-            }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -270,6 +270,8 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         int left = this.x;
         int top = this.y;
         int right = left + this.backgroundWidth;
+        int resultTop = top + 160;
+        int keyboardTop = top + 222;
         int bottom = top + this.backgroundHeight;
 
         context.fill(left + 4, top + 4, right + 4, bottom + 4, 0x33000000);
@@ -278,20 +280,17 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         context.fill(left + 8, top + 52, right - 8, top + 70, 0xFFF5F8FE);
         context.fillGradient(left + 8, top + 74, right - 8, top + 98, 0xFF1B69C3, 0xFF0D56A7);
         context.fill(left + 8, top + 102, right - 8, top + 150, 0xFFEAF2FD);
-        context.fill(left + 8, top + 164, right - 8, top + 164 + BODY_HEIGHT, 0xFFFDFEFF);
         context.fill(left + 12, top + 130, left + 250, top + 130 + QUERY_FIELD_HEIGHT, 0xFFFFFFFF);
-        context.fillGradient(left + 256, top + 130, left + 256 + SEARCH_BUTTON_WIDTH, top + 130 + QUERY_FIELD_HEIGHT, 0xFF1E74D7, 0xFF0D5CB7);
-        context.fill(left + 316, top + 130, left + 316 + CLEAR_BUTTON_WIDTH, top + 130 + QUERY_FIELD_HEIGHT, 0xFFF9FCFF);
-        context.fill(left + 8, top + this.backgroundHeight - 18, right - 8, bottom - 8, 0xFFF0F6FF);
+        context.fill(left + 8, resultTop, right - 8, resultTop + RESULT_HEIGHT, 0xFFFDFEFF);
+        context.fill(left + 8, keyboardTop, right - 8, keyboardTop + KEYBOARD_HEIGHT, 0xFFF4F8FE);
 
         context.drawBorder(left, top, this.backgroundWidth, this.backgroundHeight, 0xFF0D4A9D);
         context.drawBorder(left + 8, top + 52, this.backgroundWidth - 16, 18, 0xFF0D4A9D);
         context.drawBorder(left + 8, top + 74, this.backgroundWidth - 16, 24, 0xFF0D4A9D);
         context.drawBorder(left + 8, top + 102, this.backgroundWidth - 16, 48, 0xFF0D4A9D);
-        context.drawBorder(left + 8, top + 164, this.backgroundWidth - 16, BODY_HEIGHT, 0xFF0D4A9D);
+        context.drawBorder(left + 8, resultTop, this.backgroundWidth - 16, RESULT_HEIGHT, 0xFF0D4A9D);
+        context.drawBorder(left + 8, keyboardTop, this.backgroundWidth - 16, KEYBOARD_HEIGHT, 0xFF0D4A9D);
         context.drawBorder(left + 12, top + 130, 238, QUERY_FIELD_HEIGHT, 0xFF0D4A9D);
-        context.drawBorder(left + 256, top + 130, SEARCH_BUTTON_WIDTH, QUERY_FIELD_HEIGHT, 0xFF0D4A9D);
-        context.drawBorder(left + 316, top + 130, CLEAR_BUTTON_WIDTH, QUERY_FIELD_HEIGHT, 0xFF0D4A9D);
 
         context.fill(left + 14, top + 10, left + 38, top + 30, 0xFFD7A84D);
         context.drawBorder(left + 14, top + 10, 24, 20, 0xFF533A14);
@@ -300,6 +299,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         context.fill(left + 18, top + 18, left + 33, top + 20, 0xFF533A14);
         context.fill(left + 250, top + 7, left + 351, top + 29, 0x11A7C8F4);
         context.fill(left + 250, top + 29, left + 351, top + 30, 0x334C85C6);
+
+        context.fill(left + 8, resultTop, right - 8, resultTop + 18, 0xFF135DB4);
+        context.fill(left + 8, keyboardTop, right - 8, keyboardTop + 18, 0xFF135DB4);
     }
 
     private void drawDatabaseTabs(DrawContext context) {
@@ -339,55 +341,19 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         context.drawText(this.textRenderer, label, labelX, labelY, textColor, false);
     }
 
-    private void drawHelpPanel(DrawContext context) {
-        context.fill(8, 164, this.backgroundWidth - 8, 182, 0xFF135DB4);
-        context.drawText(this.textRenderer, HELP_TITLE_TEXT, 16, 170, 0xFFFFFFFF, false);
-
-        int currentY = 188;
-        for (Text helpLine : HELP_LINES) {
-            context.drawWrappedText(
-                this.textRenderer,
-                helpLine,
-                16,
-                currentY,
-                this.backgroundWidth - 32,
-                0xFF1F2B3A,
-                false
-            );
-            currentY += 12;
-        }
-    }
-
     private void drawSearchResults(DrawContext context) {
-        context.fill(8, 164, this.backgroundWidth - 8, 182, 0xFF135DB4);
-        context.drawText(this.textRenderer, RESULTS_TITLE_TEXT, 16, 170, 0xFFFFFFFF, false);
+        context.drawText(this.textRenderer, RESULTS_TITLE_TEXT, 16, 168, 0xFFFFFFFF, false);
 
-        if (this.lastQuery.isEmpty()) {
-            context.drawWrappedText(
-                this.textRenderer,
-                EMPTY_QUERY_TEXT,
-                16,
-                188,
-                this.backgroundWidth - 32,
-                0xFF1F2B3A,
-                false
-            );
+        if (!this.searched) {
             return;
         }
-
-        Text summaryText = Text.translatable(
-            "screen.sdm_mod.search_pc.summary",
-            this.lastQuery,
-            this.searchResults.size()
-        );
-        context.drawText(this.textRenderer, summaryText, 16, 186, 0xFF1F2B3A, false);
 
         if (this.searchResults.isEmpty()) {
             context.drawWrappedText(
                 this.textRenderer,
                 NO_RESULTS_TEXT,
                 16,
-                202,
+                184,
                 this.backgroundWidth - 32,
                 0xFF1F2B3A,
                 false
@@ -395,24 +361,31 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             return;
         }
 
-        int currentY = 198;
-        int visibleCount = Math.min(2, this.searchResults.size());
+        int currentY = 184;
+        int visibleCount = 1;
         for (int i = 0; i < visibleCount; i++) {
             CatalogEntry entry = this.searchResults.get(i);
             context.drawText(this.textRenderer, Text.literal(entry.title()), 16, currentY, 0xFF0D4A9D, false);
 
-            String metadata = AUTHOR_LABEL_TEXT.getString() + ": " + entry.author()
-                + " / " + entry.status();
-            context.drawText(this.textRenderer, metadata, 22, currentY + 10, 0xFF33465E, false);
-            currentY += 22;
+            String authorAndStatus = AUTHOR_LABEL_TEXT.getString() + ": " + entry.author()
+                + " / " + STATUS_LABEL_TEXT.getString() + ": " + entry.status();
+            context.drawText(this.textRenderer, authorAndStatus, 22, currentY + 11, 0xFF33465E, false);
+            context.drawText(
+                this.textRenderer,
+                LOCATION_LABEL_TEXT.getString() + ": " + entry.location(),
+                22,
+                currentY + 21,
+                0xFF4C607A,
+                false
+            );
         }
 
-        if (this.searchResults.size() > visibleCount) {
+        if (this.searchResults.size() > 1) {
             Text moreText = Text.translatable(
                 "screen.sdm_mod.search_pc.more_results",
-                this.searchResults.size() - visibleCount
+                this.searchResults.size() - 1
             );
-            context.drawText(this.textRenderer, moreText, 16, 234, 0xFF0F5AB4, false);
+            context.drawText(this.textRenderer, moreText, 16, 206, 0xFF0F5AB4, false);
         }
     }
 
@@ -426,7 +399,12 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             return;
         }
 
-        String normalizedQuery = query.toLowerCase(Locale.ROOT);
+        String normalizedQuery = normalizeKana(query).toLowerCase(Locale.ROOT);
+        if (normalizedQuery.equals(normalizeKana(ZOMBIE_QUERY_TEXT.getString()).toLowerCase(Locale.ROOT))) {
+            this.searchResults = List.of(ZOMBIE_BOOK);
+            return;
+        }
+
         DatabaseTab selectedDatabase = DATABASE_TABS.get(this.selectedDatabaseIndex);
         List<CatalogEntry> matches = new ArrayList<>();
         for (CatalogEntry entry : CATALOG) {
@@ -442,7 +420,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     }
 
     private boolean matchesEntry(CatalogEntry entry, String normalizedQuery) {
-        String searchableText = (
+        String searchableText = normalizeKana(
             entry.title() + " "
                 + entry.author() + " "
                 + entry.location() + " "
@@ -499,12 +477,59 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         return new ClickRect(currentX, this.y + 52, getDatabaseTabWidth(index), 18);
     }
 
-    private ClickRect getSearchButtonRect() {
-        return new ClickRect(this.x + 256, this.y + 130, SEARCH_BUTTON_WIDTH, QUERY_FIELD_HEIGHT);
+    private void addKeyboardButton(String key, int column, int row) {
+        addKeyboardActionButton(Text.literal(key), column, row, () -> appendToQuery(key));
     }
 
-    private ClickRect getClearButtonRect() {
-        return new ClickRect(this.x + 316, this.y + 130, CLEAR_BUTTON_WIDTH, QUERY_FIELD_HEIGHT);
+    private void addKeyboardActionButton(Text label, int column, int row, Runnable action) {
+        this.addDrawableChild(ButtonWidget.builder(label, button -> action.run())
+            .dimensions(
+                this.x + 22 + column * 120,
+                this.y + 244 + row * 22,
+                KEY_BUTTON_WIDTH,
+                KEY_BUTTON_HEIGHT
+            )
+            .build());
+    }
+
+    private void appendToQuery(String value) {
+        String current = this.queryField.getText();
+        if (current.length() + value.length() > QUERY_MAX_LENGTH) {
+            return;
+        }
+        this.queryField.setText(current + value);
+        this.queryField.setFocused(true);
+    }
+
+    private void backspaceQuery() {
+        String current = this.queryField.getText();
+        if (current.isEmpty()) {
+            return;
+        }
+        int endIndex = current.offsetByCodePoints(current.length(), -1);
+        this.queryField.setText(current.substring(0, endIndex));
+        this.queryField.setFocused(true);
+    }
+
+    private void clearQuery() {
+        this.queryField.setText("");
+        this.searched = false;
+        this.searchResults = List.of();
+        this.lastQuery = "";
+        this.queryField.setFocused(true);
+    }
+
+    private String normalizeKana(String value) {
+        StringBuilder builder = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char character = value.charAt(i);
+            if (character >= 'ぁ' && character <= 'ゖ') {
+                builder.append((char) (character + 0x60));
+            } else {
+                builder.append(character);
+            }
+        }
+        return builder.toString();
     }
 
     private int getDatabaseTabWidth(int index) {
