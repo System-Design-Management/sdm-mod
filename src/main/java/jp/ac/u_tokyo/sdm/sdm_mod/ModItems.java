@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.item.SdmLogoSpawnItem;
 import jp.ac.u_tokyo.sdm.sdm_mod.item.TechnicalBookItem;
 import jp.ac.u_tokyo.sdm.sdm_mod.item.WarpItem;
 import net.minecraft.item.BlockItem;
@@ -38,6 +39,11 @@ public final class ModItems {
     public static final Item SEARCH_PC = register(
         "search_pc",
         settings -> new BlockItem(ModBlocks.SEARCH_PC, settings)
+    );
+
+    public static final Item SDM_LOGO_SPAWN = register(
+        "sdm_logo_spawn",
+        SdmLogoSpawnItem::new
     );
 
     private ModItems() {

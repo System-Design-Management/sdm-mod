@@ -3,6 +3,8 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PoliceOfficerEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.SdmLogoEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.model.SdmLogoEntityModel;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TeacherDialogueScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TechnicalBookScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.warp.WarpSelectScreen;
@@ -13,6 +15,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -23,6 +26,8 @@ public class SdmModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         EntityRendererRegistry.register(ModEntities.POLICE_OFFICER, PoliceOfficerEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SDM_LOGO, SdmLogoEntityRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(SdmLogoEntityModel.LAYER, SdmLogoEntityModel::getTexturedModelData);
         HandledScreens.register(ModScreenHandlers.TECHNICAL_BOOK, TechnicalBookScreen::new);
         HandledScreens.register(ModScreenHandlers.WARP_SELECT, WarpSelectScreen::new);
         StoryClientNetworking.initialize();
