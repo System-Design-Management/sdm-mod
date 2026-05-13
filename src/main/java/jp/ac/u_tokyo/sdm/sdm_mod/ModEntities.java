@@ -1,6 +1,9 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.BoyEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.GirlEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.StudentEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
@@ -11,6 +14,30 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 public final class ModEntities {
+    public static final EntityType<StudentEntity> STUDENT = register(
+        "student",
+        EntityType.Builder
+            .create(StudentEntity::new, SpawnGroup.MONSTER)
+            .dimensions(0.6f, 1.95f)
+            .maxTrackingRange(8)
+    );
+
+    public static final EntityType<GirlEntity> GIRL = register(
+        "girl",
+        EntityType.Builder
+            .create(GirlEntity::new, SpawnGroup.MONSTER)
+            .dimensions(0.6f, 1.95f)
+            .maxTrackingRange(8)
+    );
+
+    public static final EntityType<BoyEntity> BOY = register(
+        "boy",
+        EntityType.Builder
+            .create(BoyEntity::new, SpawnGroup.MONSTER)
+            .dimensions(0.6f, 1.95f)
+            .maxTrackingRange(8)
+    );
+
     public static final EntityType<PoliceOfficerEntity> POLICE_OFFICER = register(
         "police_officer",
         EntityType.Builder
@@ -37,6 +64,9 @@ public final class ModEntities {
     }
 
     public static void initialize() {
+        FabricDefaultAttributeRegistry.register(STUDENT, StudentEntity.createStudentAttributes());
+        FabricDefaultAttributeRegistry.register(GIRL, GirlEntity.createGirlAttributes());
+        FabricDefaultAttributeRegistry.register(BOY, BoyEntity.createBoyAttributes());
         FabricDefaultAttributeRegistry.register(POLICE_OFFICER, PoliceOfficerEntity.createPoliceOfficerAttributes());
     }
 }

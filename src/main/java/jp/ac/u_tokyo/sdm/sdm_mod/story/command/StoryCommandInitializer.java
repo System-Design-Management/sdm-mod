@@ -3,9 +3,9 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.command;
 import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.context.CommandContext;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStartService;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
@@ -28,15 +28,18 @@ public final class StoryCommandInitializer {
 
     private static int executeStart(CommandContext<ServerCommandSource> context) {
         try {
-            StoryProgress progress = StoryStartService.start(context.getSource().getServer());
+            // OP 動画をクライアントに表示させる。動画終了後にクライアントが StoryVideoStartPayload を送信し
+            // サーバー側で StoryStartService.start() が呼ばれる。
+            context.getSource().getServer().getPlayerManager().getPlayerList()
+                .forEach(player -> ServerPlayNetworking.send(player, ShowOpVideoPayload.INSTANCE));
             context.getSource().sendFeedback(
-                () -> Text.literal("Story started at chapter '" + progress.currentChapterId() + "'."),
+                () -> Text.literal("OP video triggered. Story will start after playback."),
                 true
             );
             return 1;
         } catch (RuntimeException exception) {
-            LOGGER.error("Failed to start story.", exception);
-            context.getSource().sendError(Text.literal("Failed to start story. Check the log for details."));
+            LOGGER.error("Failed to trigger OP video.", exception);
+            context.getSource().sendError(Text.literal("Failed to trigger OP video. Check the log for details."));
             return 0;
         }
     }

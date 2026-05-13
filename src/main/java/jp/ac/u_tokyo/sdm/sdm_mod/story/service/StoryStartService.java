@@ -37,6 +37,7 @@ public final class StoryStartService {
         // Remove existing hostile/passive mobs before players are reset into the story state.
         StoryEntityControlService.clearNonPlayerLivingEntities(server);
         StoryPoliceOfficerService.spawnPhase2PoliceOfficer(server);
+        StoryNpcSpawnService.spawnAll(server);
         StoryTorchCleanupService.removeTorchesInStoryArea(server);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);

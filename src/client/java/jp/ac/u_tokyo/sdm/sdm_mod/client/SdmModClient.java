@@ -2,6 +2,9 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BoyEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.GirlEntityRenderer;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.StudentEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PoliceOfficerEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.SdmLogoEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.model.SdmLogoEntityModel;
@@ -25,6 +28,9 @@ public class SdmModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        EntityRendererRegistry.register(ModEntities.STUDENT, StudentEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.GIRL, GirlEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.BOY, BoyEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.POLICE_OFFICER, PoliceOfficerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.SDM_LOGO, SdmLogoEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(SdmLogoEntityModel.LAYER, SdmLogoEntityModel::getTexturedModelData);

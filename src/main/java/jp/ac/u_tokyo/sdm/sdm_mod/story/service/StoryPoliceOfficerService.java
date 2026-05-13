@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.NpcPose;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -12,6 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -47,6 +51,10 @@ public final class StoryPoliceOfficerService {
             0.0f,
             0.0f
         );
+        policeOfficer.setBodyYaw(0.0f);
+        policeOfficer.setHeadYaw(0.0f);
+        // 警官は倒れている演出のため FACE_DOWN 姿勢を設定する。
+        policeOfficer.setNpcPose(NpcPose.FACE_DOWN);
         world.spawnEntity(policeOfficer);
 
         ItemStack revolver = new ItemStack(Items.CARROT_ON_A_STICK);
@@ -68,10 +76,14 @@ public final class StoryPoliceOfficerService {
     }
 
     private static void clearManagedPoliceOfficers(MinecraftServer server) {
-        server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
-            if (isManagedPoliceOfficer(entity)) {
-                entity.discard();
-            }
-        }));
+        server.getWorlds().forEach(world -> {
+            List<Entity> toRemove = new ArrayList<>();
+            world.iterateEntities().forEach(entity -> {
+                if (isManagedPoliceOfficer(entity)) {
+                    toRemove.add(entity);
+                }
+            });
+            toRemove.forEach(Entity::discard);
+        });
     }
 }
