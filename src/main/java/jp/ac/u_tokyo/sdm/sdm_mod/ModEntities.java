@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -15,6 +16,14 @@ public final class ModEntities {
         EntityType.Builder
             .create(PoliceOfficerEntity::new, SpawnGroup.MONSTER)
             .dimensions(0.6f, 1.95f)
+            .maxTrackingRange(8)
+    );
+
+    public static final EntityType<SdmLogoEntity> SDM_LOGO = register(
+        "sdm_logo",
+        EntityType.Builder
+            .create(SdmLogoEntity::new, SpawnGroup.MISC)
+            .dimensions(2.0f, 2.0f)
             .maxTrackingRange(8)
     );
 
