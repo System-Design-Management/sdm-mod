@@ -26,6 +26,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private static final Text LOCATION_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.location");
     private static final Text STATUS_LABEL_TEXT = Text.translatable("screen.sdm_mod.search_pc.label.status");
     private static final Text KEYBOARD_TITLE_TEXT = Text.translatable("screen.sdm_mod.search_pc.keyboard_title");
+    private static final Text RESULT_ACTION_TEXT = Text.translatable("screen.sdm_mod.search_pc.result_action");
     private static final Text ZOMBIE_QUERY_TEXT = Text.literal("ゾンビ");
 
     private static final int PANEL_WIDTH = 404;
@@ -156,6 +157,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     private boolean searched;
     private List<CatalogEntry> searchResults = List.of();
     private String lastQuery = "";
+    private String draftQuery = "";
 
     public SearchPcScreen(
         SearchPcScreenHandler handler,
@@ -184,6 +186,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         this.queryField.setMaxLength(QUERY_MAX_LENGTH);
         this.queryField.setDrawsBackground(false);
         this.queryField.setEditableColor(0xFF111111);
+        this.queryField.setText(this.draftQuery);
         this.queryField.setFocused(true);
         this.addDrawableChild(this.queryField);
 
@@ -248,6 +251,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.queryField != null) {
+            this.draftQuery = this.queryField.getText();
+        }
         this.renderBackground(context, mouseX, mouseY, delta);
         this.drawPanel(context);
         super.render(context, mouseX, mouseY, delta);
@@ -262,6 +268,10 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (clickModeTab(mouseX, mouseY) || clickDatabaseTab(mouseX, mouseY)) {
+                return true;
+            }
+            if (getSelectableResultRect().contains(mouseX, mouseY) && hasSelectableResult()) {
+                openLocationScreen();
                 return true;
             }
         }
@@ -391,6 +401,9 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
                 0xFF4C607A,
                 false
             );
+            if (hasSelectableResult()) {
+                context.drawText(this.textRenderer, RESULT_ACTION_TEXT, 300, currentY + 10, 0xFF0D4A9D, false);
+            }
         }
 
         if (this.searchResults.size() > 1) {
@@ -519,7 +532,24 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         this.searched = false;
         this.searchResults = List.of();
         this.lastQuery = "";
+        this.draftQuery = "";
         this.queryField.setFocused(true);
+    }
+
+    private boolean hasSelectableResult() {
+        return !this.searchResults.isEmpty() && this.searchResults.getFirst().title().equals(ZOMBIE_BOOK.title());
+    }
+
+    private ClickRect getSelectableResultRect() {
+        return new ClickRect(this.x + 12, this.y + 154, 372, 28);
+    }
+
+    private void openLocationScreen() {
+        if (this.client == null) {
+            return;
+        }
+        this.draftQuery = this.queryField.getText();
+        this.client.setScreen(new SearchPcLocationScreen(this));
     }
 
     private String normalizeKana(String value) {
