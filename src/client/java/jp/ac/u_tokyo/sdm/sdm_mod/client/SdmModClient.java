@@ -9,6 +9,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.StudentEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PoliceOfficerEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.SdmLogoEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.model.SdmLogoEntityModel;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.SearchPcScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TeacherDialogueScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TechnicalBookScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.warp.WarpSelectScreen;
@@ -35,6 +36,7 @@ public class SdmModClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.POLICE_OFFICER, PoliceOfficerEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.SDM_LOGO, SdmLogoEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(SdmLogoEntityModel.LAYER, SdmLogoEntityModel::getTexturedModelData);
+        HandledScreens.register(ModScreenHandlers.SEARCH_PC, SearchPcScreen::new);
         HandledScreens.register(ModScreenHandlers.TECHNICAL_BOOK, TechnicalBookScreen::new);
         HandledScreens.register(ModScreenHandlers.WARP_SELECT, WarpSelectScreen::new);
         StoryClientNetworking.initialize();
