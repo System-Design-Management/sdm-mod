@@ -1,5 +1,8 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.client.ScreenScheduler;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -69,7 +72,7 @@ public final class BookInteractionScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (isKeyBook) {
-            MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！"));
+            openKeyBookDialogue();
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
@@ -78,10 +81,23 @@ public final class BookInteractionScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (isKeyBook && (keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_ENTER)) {
-            MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！"));
+            openKeyBookDialogue();
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void openKeyBookDialogue() {
+        MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！",
+            // removed() 内で setScreen() を呼ぶと外側の setScreen(null) に上書きされるため、
+            // ScreenScheduler に積んで END_CLIENT_TICK で開く。
+            () -> ScreenScheduler.schedule(new TeacherDialogueScreen(
+                "私が花火を打ち上げてゾンビたちを部屋の隅におびきよせる。その間に部屋から出て、図書館の外に逃げろ！",
+                // removed() 内での ClientPlayNetworking.send() が失敗するケースを回避するため、
+                // scheduleAction に積んで END_CLIENT_TICK で送信する。
+                () -> ScreenScheduler.scheduleAction(() -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload()))
+            ))
+        ));
     }
 
     @Override

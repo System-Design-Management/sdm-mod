@@ -2,11 +2,13 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.phase3;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowBookUiPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -24,7 +26,7 @@ public final class Phase3BookshelfService {
     private static final String PHASE4_ID = "phase4";
 
     private static final BlockPos CORRECT_BOOKSHELF_POS = new BlockPos(-120, 42, -636);
-    private static final String KEY_BOOK_TITLE = "ゾンビの治し方";
+    private static final String KEY_BOOK_TITLE = "ゾンビ病理学";
 
     // X座標 → CATEGORIESのインデックス。座標が小さい順にインデックス0から割り当て、
     // X=-120（正解本棚）のみインデックス19（医学・薬学）に対応させる。
@@ -220,10 +222,10 @@ public final class Phase3BookshelfService {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
 
             if (pos.equals(CORRECT_BOOKSHELF_POS)) {
-                storyManager.advanceToChapter(PHASE4_ID);
-                Phase4ZombieService.spawnPhase4Zombies((ServerWorld) world);
+                Phase4FireworkService.reset();
+                giveKeyBook(serverPlayer);
                 ServerPlayNetworking.send(serverPlayer, new ShowBookUiPayload(KEY_BOOK_TITLE, true));
-                LOGGER.info("Correct bookshelf clicked at {}. Story advanced to {}.", pos, PHASE4_ID);
+                LOGGER.info("Correct bookshelf clicked at {}. Awaiting player dialogue to advance to {}.", pos, PHASE4_ID);
             } else {
                 Integer categoryIndex = BOOKSHELF_CATEGORY_MAP.get(pos.getX());
                 if (categoryIndex == null) {
@@ -236,5 +238,13 @@ public final class Phase3BookshelfService {
 
             return ActionResult.SUCCESS;
         });
+    }
+
+    private static void giveKeyBook(ServerPlayerEntity player) {
+        ServerCommandSource source = player.getServer().getCommandSource()
+            .withLevel(2)
+            .withEntity(player)
+            .withPosition(player.getPos());
+        player.getServer().getCommandManager().executeWithPrefix(source, "give " + player.getNameForScoreboard() + " sdm_mod:key_book 1");
     }
 }

@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.util.Identifier;
 
@@ -61,7 +62,17 @@ public class SdmModClient implements ClientModInitializer {
         );
         // HUD はフレームではなくティック単位で文字を進める必要があるため、
         // ClientTickEvents でティックごとに tick() を呼び出す。
-        ClientTickEvents.END_CLIENT_TICK.register(client -> TeacherDialogueHud.INSTANCE.tick());
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            TeacherDialogueHud.INSTANCE.tick();
+            // afterClose 内で setScreen() を呼べないため、ScheduledScreen に積まれた画面をここで開く
+            Screen scheduled = ScreenScheduler.poll();
+            if (scheduled != null) {
+                client.setScreen(scheduled);
+            }
+            // afterClose 内で ClientPlayNetworking.send() が失敗する場合の保険として
+            // アクションも END_CLIENT_TICK で実行する
+            ScreenScheduler.runPendingAction();
+        });
         // サーバーから HUD パケットが届いたら HUD に表示する。
         ClientPlayNetworking.registerGlobalReceiver(TeacherDialogueHudPayload.ID, (payload, context) ->
             context.client().execute(() -> TeacherDialogueHud.INSTANCE.show(payload.text()))
