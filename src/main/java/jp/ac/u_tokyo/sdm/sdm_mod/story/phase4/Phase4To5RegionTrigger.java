@@ -55,7 +55,6 @@ public final class Phase4To5RegionTrigger {
         }
 
         storyManager.advanceToChapter(PHASE5_ID);
-        Phase4ZombieService.spawnPhase4Zombies(server.getOverworld());
         notifyTriggered(server);
         LOGGER.info(logMessage, logArguments);
         return true;

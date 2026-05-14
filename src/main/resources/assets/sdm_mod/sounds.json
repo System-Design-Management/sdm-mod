@@ -13,5 +13,10 @@
     "sounds": [
       "sdm_mod:firework"
     ]
+  },
+  "onara": {
+    "sounds": [
+      "sdm_mod:onara"
+    ]
   }
 }
