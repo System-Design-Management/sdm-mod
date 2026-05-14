@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.entity.BloodZombieEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.BoyEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.GirlEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
@@ -63,6 +64,14 @@ public final class ModEntities {
             .maxTrackingRange(16)
     );
 
+    public static final EntityType<BloodZombieEntity> BLOOD_ZOMBIE = register(
+        "blood_zombie",
+        EntityType.Builder
+            .create(BloodZombieEntity::new, SpawnGroup.MONSTER)
+            .dimensions(0.6f, 1.95f)
+            .maxTrackingRange(8)
+    );
+
     private ModEntities() {
     }
 
@@ -77,5 +86,6 @@ public final class ModEntities {
         FabricDefaultAttributeRegistry.register(GIRL, GirlEntity.createGirlAttributes());
         FabricDefaultAttributeRegistry.register(BOY, BoyEntity.createBoyAttributes());
         FabricDefaultAttributeRegistry.register(POLICE_OFFICER, PoliceOfficerEntity.createPoliceOfficerAttributes());
+        FabricDefaultAttributeRegistry.register(BLOOD_ZOMBIE, BloodZombieEntity.createBloodZombieAttributes());
     }
 }

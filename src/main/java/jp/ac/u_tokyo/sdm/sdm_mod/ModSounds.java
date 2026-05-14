@@ -8,6 +8,8 @@ import net.minecraft.util.Identifier;
 public final class ModSounds {
     public static final SoundEvent STUDENT_ID_GATE_ACCEPT = register("student_id_gate_accept");
     public static final SoundEvent STUDENT_ID_GATE_REJECT = register("student_id_gate_reject");
+    public static final SoundEvent FIREWORK = register("firework");
+    public static final SoundEvent ONARA = register("onara");
 
     private ModSounds() {
     }

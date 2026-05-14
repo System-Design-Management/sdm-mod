@@ -8,5 +8,15 @@
     "sounds": [
       "sdm_mod:student_id_gate_reject"
     ]
+  },
+  "firework": {
+    "sounds": [
+      "sdm_mod:firework"
+    ]
+  },
+  "onara": {
+    "sounds": [
+      "sdm_mod:onara"
+    ]
   }
 }

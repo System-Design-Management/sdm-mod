@@ -103,6 +103,7 @@ public final class Phase3ZombieService {
         boolean phase4Active = storyManager.isActive() && storyManager.isAtChapter(PHASE4_ID);
         boolean phase5Active = storyManager.isActive() && storyManager.isAtChapter(PHASE5_ID);
 
+        List<ZombieEntity> toCleanup = new java.util.ArrayList<>();
         server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
             if (!(entity instanceof ZombieEntity zombie) || !zombie.getCommandTags().contains(PHASE3_ZOMBIE_TAG)) {
                 return;
@@ -113,23 +114,23 @@ public final class Phase3ZombieService {
                 return;
             }
 
+            if (phase3Active) {
+                tickPhase3Zombie(zombie);
+                return;
+            }
+
             if (phase5Active) {
                 tickPhase5Zombie(zombie);
                 return;
             }
 
-            if (phase3Active || phase4Active) {
-                tickPhase3Zombie(zombie);
-                return;
-            }
-
-            if (!storyManager.isActive()) {
-                cleanup(zombie);
-                return;
-            }
-
-            cleanup(zombie);
+            // phase4以降またはストーリー非アクティブ時は消去
+            toCleanup.add(zombie);
         }));
+
+        for (ZombieEntity zombie : toCleanup) {
+            cleanup(zombie);
+        }
 
         pruneMissingHomes(server);
     }
