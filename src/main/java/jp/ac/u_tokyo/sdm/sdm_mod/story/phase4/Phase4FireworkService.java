@@ -48,6 +48,9 @@ public final class Phase4FireworkService {
                 playFireworkSound(server.getOverworld());
                 soundPlaysRemaining--;
                 soundTicksUntilNext = SOUND_INTERVAL_TICKS;
+                if (soundPlaysRemaining <= 0) {
+                    Phase4ZombieService.cleanup(server);
+                }
             }
         });
     }

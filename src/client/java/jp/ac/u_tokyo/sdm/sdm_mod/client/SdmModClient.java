@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BloodZombieEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BoyEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.GirlEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.PosterEntityRenderer;
@@ -32,6 +33,7 @@ public class SdmModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        EntityRendererRegistry.register(ModEntities.BLOOD_ZOMBIE, BloodZombieEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.STUDENT, StudentEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.GIRL, GirlEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BOY, BoyEntityRenderer::new);

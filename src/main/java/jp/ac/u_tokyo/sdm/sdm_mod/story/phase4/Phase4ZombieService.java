@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase4;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
@@ -8,7 +9,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -122,7 +122,7 @@ public final class Phase4ZombieService {
     }
 
     private static ZombieEntity spawn(ServerWorld world, Vec3d pos, BlockPos destinationPos) {
-        ZombieEntity zombie = EntityType.ZOMBIE.create(world, SpawnReason.EVENT);
+        ZombieEntity zombie = ModEntities.BLOOD_ZOMBIE.create(world, SpawnReason.EVENT);
         if (zombie == null) {
             throw new IllegalStateException("Failed to create phase4 zombie entity.");
         }
@@ -173,13 +173,15 @@ public final class Phase4ZombieService {
     }
 
     public static void cleanup(MinecraftServer server) {
+        List<ZombieEntity> toDiscard = new ArrayList<>();
         server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
-            if (!isManagedPhaseZombie(entity)) {
-                return;
+            if (isManagedPhaseZombie(entity)) {
+                toDiscard.add((ZombieEntity) entity);
             }
-
-            cleanup((ZombieEntity) entity);
         }));
+        for (ZombieEntity zombie : toDiscard) {
+            cleanup(zombie);
+        }
         Iterator<Map.Entry<UUID, BlockPos>> iterator = DESTINATIONS.entrySet().iterator();
         while (iterator.hasNext()) {
             iterator.next();
