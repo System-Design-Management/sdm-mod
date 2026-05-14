@@ -8,6 +8,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.poster.PosterModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.command.StoryCommandInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.StoryNetworking;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryFlashlightLightService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -28,6 +29,7 @@ public class SdmMod implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(TeacherDialogueHudPayload.ID, TeacherDialogueHudPayload.CODEC);
         CommandPermissionInitializer.initialize();
         StoryModule.initialize();
+        Phase4FireworkService.initialize();
         StoryFlashlightLightService.initialize();
         StoryCommandInitializer.initialize();
         PosterModule.initialize();

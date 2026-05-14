@@ -1,15 +1,15 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase4;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.EntityType;
+import net.minecraft.component.type.FireworksComponent;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.component.type.FireworksComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,11 +21,35 @@ public final class Phase4FireworkService {
     private static final int FIREWORK_COUNT = 10;
     private static final int FLIGHT_DURATION = 3;
     private static final float SOUND_VOLUME = 10.0f;
-    private static final float BLAST_SOUND_VOLUME = 100.0f;
+
+    // サウンドを4回、1秒（20tick）おきに再生する
+    private static final int SOUND_TOTAL_PLAYS = 4;
+    private static final int SOUND_INTERVAL_TICKS = 20;
 
     private static final AtomicBoolean launched = new AtomicBoolean(false);
 
+    // 残り再生回数（0 = 再生なし）
+    private static volatile int soundPlaysRemaining = 0;
+    // 次の再生までの残りティック
+    private static volatile int soundTicksUntilNext = 0;
+    // サウンドを再生するサーバーインスタンス
+    private static volatile MinecraftServer pendingServer = null;
+
     private Phase4FireworkService() {
+    }
+
+    public static void initialize() {
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (soundPlaysRemaining <= 0) {
+                return;
+            }
+            soundTicksUntilNext--;
+            if (soundTicksUntilNext <= 0) {
+                playFireworkSound(server.getOverworld());
+                soundPlaysRemaining--;
+                soundTicksUntilNext = SOUND_INTERVAL_TICKS;
+            }
+        });
     }
 
     /**
@@ -56,11 +80,15 @@ public final class Phase4FireworkService {
             world.spawnEntity(firework);
         }
 
+        // 1回目を即座に再生し、残り3回を1秒おきに予約する
+        playFireworkSound(world);
+        soundPlaysRemaining = SOUND_TOTAL_PLAYS - 1;
+        soundTicksUntilNext = SOUND_INTERVAL_TICKS;
+    }
+
+    private static void playFireworkSound(ServerWorld world) {
         world.playSound(null, LAUNCH_X, LAUNCH_Y, LAUNCH_Z,
-            SoundEvents.ENTITY_FIREWORK_ROCKET_SHOOT, SoundCategory.AMBIENT,
+            ModSounds.FIREWORK, SoundCategory.AMBIENT,
             SOUND_VOLUME, 1.0f);
-        world.playSound(null, LAUNCH_X, LAUNCH_Y, LAUNCH_Z,
-            SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST_FAR, SoundCategory.AMBIENT,
-            BLAST_SOUND_VOLUME, 1.0f);
     }
 }
