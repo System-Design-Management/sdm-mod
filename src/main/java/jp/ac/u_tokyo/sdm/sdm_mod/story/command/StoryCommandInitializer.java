@@ -7,11 +7,14 @@ import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
+import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -55,9 +58,12 @@ public final class StoryCommandInitializer {
                 .forEach(player -> {
                     player.getInventory().clear();
                     player.changeGameMode(GameMode.ADVENTURE);
+                    player.addStatusEffect(new StatusEffectInstance(
+                        StatusEffects.NIGHT_VISION, StatusEffectInstance.INFINITE, 0, false, false));
                     ServerWorld world = (ServerWorld) player.getWorld();
                     player.teleport(world, SETUP_X, SETUP_Y, SETUP_Z, Set.<PositionFlag>of(), player.getYaw(), player.getPitch(), false);
                 });
+            GameRulesInitializer.applySetupDefaults(context.getSource().getServer());
             spawnSdmLogo(context.getSource().getServer().getOverworld());
             StoryAutoStartService.enable();
             context.getSource().getServer().getPlayerManager().getPlayerList()

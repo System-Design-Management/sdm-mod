@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModBlocks;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PosterEntity;
@@ -61,9 +62,9 @@ public final class StoryStartService {
         placeLibrarySearchPcs(server.getOverworld());
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::resetPlayerState);
         server.getPlayerManager().getPlayerList().forEach(StoryStartService::preparePlayerForStory);
-        server.getPlayerManager().getPlayerList().forEach(player -> {
-            executePlayerCommand(server, player, "give @s sdm_mod:student_id 1");
-        });
+        server.getPlayerManager().getPlayerList().forEach(player ->
+            CommandLockState.runUnlocked(() -> executePlayerCommand(server, player, "give @s sdm_mod:student_id 1"))
+        );
         StoryFlashlightLightService.enable(server);
 
         Phase2PoliceOfficerGunTrigger.reset();

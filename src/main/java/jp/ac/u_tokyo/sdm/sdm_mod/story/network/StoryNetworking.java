@@ -4,7 +4,6 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ProfessorDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraPayload;
@@ -28,7 +27,6 @@ public final class StoryNetworking {
         PayloadTypeRegistry.playS2C().register(ShowEdVideoPayload.ID, ShowEdVideoPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DoorArrowPayload.ID, DoorArrowPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ShowBookUiPayload.ID, ShowBookUiPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Phase4ProfessorDialoguePayload.ID, Phase4ProfessorDialoguePayload.CODEC);
         PayloadTypeRegistry.playC2S().register(StoryVideoStartPayload.ID, StoryVideoStartPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(SearchPcLocationOpenedPayload.ID, SearchPcLocationOpenedPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase4DialogueClosedPayload.ID, Phase4DialogueClosedPayload.CODEC);
