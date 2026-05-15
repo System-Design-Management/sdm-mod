@@ -12,7 +12,6 @@ import net.minecraft.block.LightBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
@@ -49,7 +48,6 @@ public final class Phase3To4BookTrigger {
             storyManager.advanceToChapter(PHASE4_ID);
             Phase4ZombieService.spawnPhase4Zombies((ServerWorld) world);
             removeMarkerLight((ServerWorld) world);
-            notifyTriggered((ServerPlayerEntity) player);
             LOGGER.info("Story advanced from {} to {} by right-clicking block at {}.", PHASE3_ID, PHASE4_ID, BOOK_TRIGGER_POS);
             return ActionResult.SUCCESS;
         });
@@ -104,10 +102,5 @@ public final class Phase3To4BookTrigger {
         return state.isOf(Blocks.LIGHT)
             && state.contains(LightBlock.LEVEL_15)
             && state.get(LightBlock.LEVEL_15) == BOOK_MARKER_LIGHT_LEVEL;
-    }
-
-    private static void notifyTriggered(ServerPlayerEntity player) {
-        // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        player.getServer().getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + PHASE4_ID + " に切り替わりました。"), false);
     }
 }

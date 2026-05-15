@@ -11,7 +11,6 @@ import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
@@ -137,8 +136,6 @@ public final class Phase2To3RegionTrigger {
     }
 
     private static void notifyTriggered(ServerPlayerEntity player) {
-        // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        player.getServer().getPlayerManager().broadcast(Text.literal("[DEBUG] ストーリーのフェーズが " + PHASE3_ID + " に切り替わりました。"), false);
         TeacherDialogueService.showAsHud(player, PHASE3_START_TEXT1);
         long futureTick = player.getWorld().getTime() + SECOND_DIALOGUE_DELAY_TICKS;
         PENDING_SECOND_DIALOGUE_TICK.put(player.getUuid(), futureTick);
