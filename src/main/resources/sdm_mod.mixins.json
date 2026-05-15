@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftClientScreenMixin"
+    "MinecraftClientScreenMixin",
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1

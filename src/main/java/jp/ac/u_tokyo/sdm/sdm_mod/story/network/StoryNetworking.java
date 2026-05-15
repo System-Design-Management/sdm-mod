@@ -5,6 +5,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.FireworkShakePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
@@ -31,6 +32,7 @@ public final class StoryNetworking {
         PayloadTypeRegistry.playC2S().register(SearchPcLocationOpenedPayload.ID, SearchPcLocationOpenedPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase4DialogueClosedPayload.ID, Phase4DialogueClosedPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Phase5OnaraPayload.ID, Phase5OnaraPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(FireworkShakePayload.ID, FireworkShakePayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase5OnaraClosedPayload.ID, Phase5OnaraClosedPayload.CODEC);
         // 動画再生終了後にクライアントからこのパケットが届いたらストーリーを開始する
         ServerPlayNetworking.registerGlobalReceiver(StoryVideoStartPayload.ID, (payload, context) ->
@@ -48,6 +50,8 @@ public final class StoryNetworking {
                 }
                 storyManager.advanceToChapter(PHASE4_ID);
                 Phase4FireworkService.launchOnce(context.server());
+                context.server().getPlayerManager().getPlayerList()
+                    .forEach(p -> ServerPlayNetworking.send(p, FireworkShakePayload.INSTANCE));
             })
         );
         // おならダイアログを閉じたプレイヤーからパケットが届いたらゾンビをスポーンさせる

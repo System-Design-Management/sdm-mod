@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.CameraShakeState;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.SetupGuideHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BloodZombieEntityRenderer;
@@ -82,6 +83,7 @@ public class SdmModClient implements ClientModInitializer {
         // HUD はフレームではなくティック単位で文字を進める必要があるため、
         // ClientTickEvents でティックごとに tick() を呼び出す。
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            CameraShakeState.tick();
             TeacherDialogueHud.INSTANCE.tick();
             // afterClose 内で setScreen() を呼べないため、ScheduledScreen に積まれた画面をここで開く
             Screen scheduled = ScreenScheduler.poll();

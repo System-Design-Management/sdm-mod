@@ -14,6 +14,8 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowBookUiPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.Phase5GameOverPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowEdVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.render.CameraShakeState;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.FireworkShakePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraPayload;
@@ -40,6 +42,9 @@ public final class StoryClientNetworking {
         ClientPlayNetworking.registerGlobalReceiver(ShowBookUiPayload.ID, (payload, context) ->
             context.client().execute(() ->
                 context.client().setScreen(new BookInteractionScreen(payload.title(), payload.isKeyBook())))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(FireworkShakePayload.ID, (payload, context) ->
+            context.client().execute(CameraShakeState::start)
         );
         // phase5のおなら演出: 音を再生 → 動き停止 → 音終了後に教授UI → 閉じたらゾンビスポーン
         ClientPlayNetworking.registerGlobalReceiver(Phase5OnaraPayload.ID, (payload, context) ->
