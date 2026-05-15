@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +49,6 @@ public final class Phase5To6RegionTrigger {
     private static void advanceToPhase6(MinecraftServer server) {
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.advanceToChapter(PHASE6_ID);
-        // TODO: Remove this debug notification once phase transitions are verified in playtesting.
-        server.getPlayerManager().broadcast(
-            Text.literal("[DEBUG] ストーリーのフェーズが " + PHASE6_ID + " に切り替わりました。"),
-            false
-        );
         server.getPlayerManager().getPlayerList()
             .forEach(player -> ServerPlayNetworking.send(player, ShowEdVideoPayload.INSTANCE));
     }
