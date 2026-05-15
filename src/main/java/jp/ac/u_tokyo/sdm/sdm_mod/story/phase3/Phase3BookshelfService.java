@@ -25,7 +25,10 @@ public final class Phase3BookshelfService {
     private static final String PHASE3_ID = "phase3";
     private static final String PHASE4_ID = "phase4";
 
-    private static final BlockPos CORRECT_BOOKSHELF_POS = new BlockPos(-120, 42, -636);
+    private static final int CORRECT_BOOKSHELF_X = -120;
+    private static final int CORRECT_BOOKSHELF_Y_MIN = 41;
+    private static final int CORRECT_BOOKSHELF_Y_MAX = 44;
+    private static final int CORRECT_BOOKSHELF_Z = -636;
     private static final String KEY_BOOK_TITLE = "ゾンビ病理学";
 
     // X座標 → CATEGORIESのインデックス。座標が小さい順にインデックス0から割り当て、
@@ -221,7 +224,7 @@ public final class Phase3BookshelfService {
 
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
 
-            if (pos.equals(CORRECT_BOOKSHELF_POS)) {
+            if (isCorrectBookshelfPos(pos)) {
                 Phase4FireworkService.reset();
                 giveKeyBook(serverPlayer);
                 ServerPlayNetworking.send(serverPlayer, new ShowBookUiPayload(KEY_BOOK_TITLE, true));
@@ -238,6 +241,13 @@ public final class Phase3BookshelfService {
 
             return ActionResult.SUCCESS;
         });
+    }
+
+    private static boolean isCorrectBookshelfPos(BlockPos pos) {
+        return pos.getX() == CORRECT_BOOKSHELF_X
+            && pos.getY() >= CORRECT_BOOKSHELF_Y_MIN
+            && pos.getY() <= CORRECT_BOOKSHELF_Y_MAX
+            && pos.getZ() == CORRECT_BOOKSHELF_Z;
     }
 
     private static void giveKeyBook(ServerPlayerEntity player) {
