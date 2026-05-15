@@ -11,6 +11,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -89,7 +90,7 @@ public final class StoryStudentIdGateService {
 
         boolean hasStudentId = player.getMainHandStack().isOf(ModItems.STUDENT_ID);
         ServerWorld world = (ServerWorld) player.getWorld();
-        boolean gateClosed = gate.isUpperRegionFilledWithIronBars(world);
+        boolean gateClosed = gate.isUpperRegionFilledWithStainedGlassPanes(world);
         if (gateClosed) {
             if (hasStudentId) {
                 openGateIfNeeded(player, world, gate);
@@ -140,7 +141,7 @@ public final class StoryStudentIdGateService {
         }
 
         Map<BlockPos, BlockState> originalStates = new HashMap<>();
-        for (BlockPos pos : gate.barsToOpenPositions()) {
+        for (BlockPos pos : gate.gateBlocksToOpenPositions()) {
             originalStates.put(pos, world.getBlockState(pos));
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), BLOCK_UPDATE_FLAGS);
         }
@@ -156,7 +157,7 @@ public final class StoryStudentIdGateService {
 
         INITIAL_GATE_CLOSED_STATES.clear();
         for (StudentIdGate gate : STUDENT_ID_GATES) {
-            INITIAL_GATE_CLOSED_STATES.put(gate.id(), gate.isUpperRegionFilledWithIronBars(world));
+            INITIAL_GATE_CLOSED_STATES.put(gate.id(), gate.isUpperRegionFilledWithStainedGlassPanes(world));
         }
     }
 
@@ -246,11 +247,13 @@ public final class StoryStudentIdGateService {
                 && pos.getZ() <= Math.max(cornerA.getZ(), cornerB.getZ());
         }
 
-        private boolean isFilledWith(ServerWorld world, net.minecraft.block.Block block) {
+        private boolean isFilledWithStainedGlassPanes(ServerWorld world) {
             for (int x = Math.min(cornerA.getX(), cornerB.getX()); x <= Math.max(cornerA.getX(), cornerB.getX()); x++) {
                 for (int y = Math.min(cornerA.getY(), cornerB.getY()); y <= Math.max(cornerA.getY(), cornerB.getY()); y++) {
                     for (int z = Math.min(cornerA.getZ(), cornerB.getZ()); z <= Math.max(cornerA.getZ(), cornerB.getZ()); z++) {
-                        if (!world.getBlockState(new BlockPos(x, y, z)).isOf(block)) {
+                        BlockState state = world.getBlockState(new BlockPos(x, y, z));
+                        if (!state.isIn(ConventionalBlockTags.GLASS_PANES)
+                            || state.isIn(ConventionalBlockTags.GLASS_PANES_COLORLESS)) {
                             return false;
                         }
                     }
@@ -276,9 +279,9 @@ public final class StoryStudentIdGateService {
 
     private record StudentIdGate(
         String id,
-        GateRegion upperBarsRegion,
+        GateRegion upperGateRegion,
         GateRegion triggerRegion,
-        List<BlockPos> barsToOpenPositions
+        List<BlockPos> gateBlocksToOpenPositions
     ) {
         private static StudentIdGate create(String id, int minX, int maxX) {
             return new StudentIdGate(
@@ -289,8 +292,8 @@ public final class StoryStudentIdGateService {
             );
         }
 
-        private boolean isUpperRegionFilledWithIronBars(ServerWorld world) {
-            return upperBarsRegion.isFilledWith(world, Blocks.IRON_BARS);
+        private boolean isUpperRegionFilledWithStainedGlassPanes(ServerWorld world) {
+            return upperGateRegion.isFilledWithStainedGlassPanes(world);
         }
     }
 
