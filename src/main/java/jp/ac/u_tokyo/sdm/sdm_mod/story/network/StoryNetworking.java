@@ -4,8 +4,8 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ProfessorDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.FireworkShakePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
@@ -24,14 +24,16 @@ public final class StoryNetworking {
     public static void initialize() {
         PayloadTypeRegistry.playS2C().register(Phase5GameOverPayload.ID, Phase5GameOverPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ShowOpVideoPayload.ID, ShowOpVideoPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(SetupGuideHudPayload.ID, SetupGuideHudPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ShowEdVideoPayload.ID, ShowEdVideoPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DoorArrowPayload.ID, DoorArrowPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ShowBookUiPayload.ID, ShowBookUiPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Phase4ProfessorDialoguePayload.ID, Phase4ProfessorDialoguePayload.CODEC);
         PayloadTypeRegistry.playC2S().register(StoryVideoStartPayload.ID, StoryVideoStartPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(SearchPcLocationOpenedPayload.ID, SearchPcLocationOpenedPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(SearchPcLocationClosedPayload.ID, SearchPcLocationClosedPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase4DialogueClosedPayload.ID, Phase4DialogueClosedPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Phase5OnaraPayload.ID, Phase5OnaraPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(FireworkShakePayload.ID, FireworkShakePayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase5OnaraClosedPayload.ID, Phase5OnaraClosedPayload.CODEC);
         // 動画再生終了後にクライアントからこのパケットが届いたらストーリーを開始する
         ServerPlayNetworking.registerGlobalReceiver(StoryVideoStartPayload.ID, (payload, context) ->
@@ -39,6 +41,9 @@ public final class StoryNetworking {
         );
         ServerPlayNetworking.registerGlobalReceiver(SearchPcLocationOpenedPayload.ID, (payload, context) ->
             context.server().execute(() -> Phase2DoorArrowService.recordLocationScreenOpened(context.player()))
+        );
+        ServerPlayNetworking.registerGlobalReceiver(SearchPcLocationClosedPayload.ID, (payload, context) ->
+            context.server().execute(() -> Phase2DoorArrowService.recordLocationScreenClosed(context.player(), context.server()))
         );
         // 教授ダイアログを閉じたプレイヤーからパケットが届いたら、花火を打ち上げてからphase4へ進む
         ServerPlayNetworking.registerGlobalReceiver(Phase4DialogueClosedPayload.ID, (payload, context) ->
@@ -49,6 +54,8 @@ public final class StoryNetworking {
                 }
                 storyManager.advanceToChapter(PHASE4_ID);
                 Phase4FireworkService.launchOnce(context.server());
+                context.server().getPlayerManager().getPlayerList()
+                    .forEach(p -> ServerPlayNetworking.send(p, FireworkShakePayload.INSTANCE));
             })
         );
         // おならダイアログを閉じたプレイヤーからパケットが届いたらゾンビをスポーンさせる

@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase3;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowBookUiPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
@@ -241,10 +242,12 @@ public final class Phase3BookshelfService {
     }
 
     private static void giveKeyBook(ServerPlayerEntity player) {
-        ServerCommandSource source = player.getServer().getCommandSource()
-            .withLevel(2)
-            .withEntity(player)
-            .withPosition(player.getPos());
-        player.getServer().getCommandManager().executeWithPrefix(source, "give " + player.getNameForScoreboard() + " sdm_mod:key_book 1");
+        CommandLockState.runUnlocked(() -> {
+            ServerCommandSource source = player.getServer().getCommandSource()
+                .withLevel(2)
+                .withEntity(player)
+                .withPosition(player.getPos());
+            player.getServer().getCommandManager().executeWithPrefix(source, "give " + player.getNameForScoreboard() + " sdm_mod:key_book 1");
+        });
     }
 }

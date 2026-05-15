@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -80,12 +81,14 @@ public final class StoryRespawnService {
     }
 
     private static void executePlayerCommand(MinecraftServer server, ServerPlayerEntity player, String command) {
-        ServerCommandSource commandSource = server.getCommandSource()
-            .withLevel(2)
-            .withEntity(player)
-            .withPosition(player.getPos())
-            .withRotation(player.getRotationClient());
-        server.getCommandManager().executeWithPrefix(commandSource, command);
+        CommandLockState.runUnlocked(() -> {
+            ServerCommandSource commandSource = server.getCommandSource()
+                .withLevel(2)
+                .withEntity(player)
+                .withPosition(player.getPos())
+                .withRotation(player.getRotationClient());
+            server.getCommandManager().executeWithPrefix(commandSource, command);
+        });
     }
 
     private record RespawnPoint(double x, double y, double z) {

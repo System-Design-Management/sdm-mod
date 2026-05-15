@@ -39,8 +39,7 @@ public final class Phase2TutorialDialogueService {
     private static final String BLOCKED_BEFORE_RELOAD_TEXT = "落ち着け。しゃがみながら使って、先に弾を込めるんだ。";
     private static final String BLOCKED_BEFORE_FIRST_SHOT_TEXT = "弾は入ったはずだ。そのまま使ってみろ。";
     private static final String BLOCKED_BEFORE_KILL_TEXT = "まだ先を急ぐな。図書館前のゾンビを片づけてから進め。";
-    private static final String KILL_CONFIRMED_TEXT = "よし。その調子だ。";
-    private static final String EXIT_GUIDE_TEXT = "準備はできた。先へ進め。";
+    private static final String KILL_CONFIRMED_TEXT = "よし。その調子だ。学生証を持って中に入るぞ！";
     private static final String GATE_PASSED_TEXT = "まずは目当ての本がどこにあるか調べよう。右側にあるパソコンが使えそうだ。……画面に集中しすぎて、背後を取られないように気をつけろよ！";
     private static final String GATE_PASSED_TEXT2 = "ゾンビと入力して検索すれば、本がヒットするはずだ。場所を確認してくれ。";
     // GATE_PASSED_TEXT（66文字）の表示 + 自動消去（40tick）に余裕を持たせた遅延
@@ -142,7 +141,6 @@ public final class Phase2TutorialDialogueService {
             progress.phase2Started = true;
             progress.stage = DialogueStage.READY_TO_EXIT;
             TeacherDialogueService.showAsHud(player, KILL_CONFIRMED_TEXT);
-            schedule(progress, DialogueCue.EXIT_GUIDE, currentTick + FOLLOW_UP_DELAY_TICKS);
         }
     }
 
@@ -208,12 +206,6 @@ public final class Phase2TutorialDialogueService {
                     return;
                 }
                 TeacherDialogueService.showAsHud(player, RELOAD_GUN_TEXT);
-            }
-            case EXIT_GUIDE -> {
-                if (progress.stage != DialogueStage.READY_TO_EXIT) {
-                    return;
-                }
-                TeacherDialogueService.showAsHud(player, EXIT_GUIDE_TEXT);
             }
         }
     }
@@ -320,8 +312,7 @@ public final class Phase2TutorialDialogueService {
 
     private enum DialogueCue {
         GUN_PICKUP_PROMPT,
-        POST_GUN_INSTRUCTION,
-        EXIT_GUIDE
+        POST_GUN_INSTRUCTION
     }
 
     private static final class DialogueProgress {
