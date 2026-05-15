@@ -5,11 +5,12 @@ import static net.minecraft.server.command.CommandManager.literal;
 import com.mojang.brigadier.context.CommandContext;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.command.ServerCommandSource;
@@ -61,6 +62,15 @@ public final class StoryCommandInitializer {
             StoryAutoStartService.enable();
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> ServerPlayNetworking.send(player, new SetupGuideHudPayload(true)));
+            CommandPermissionInitializer.revokeModGrantedOps(context.getSource().getServer());
+            ServerPlayerEntity executor = context.getSource().getPlayer();
+            if (executor != null) {
+                context.getSource().getServer().getCommandManager().executeWithPrefix(
+                    context.getSource().getServer().getCommandSource(),
+                    "deop " + executor.getName().getString()
+                );
+            }
+            CommandLockState.lock();
             context.getSource().sendFeedback(
                 () -> Text.literal("Setup complete: inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
                 true

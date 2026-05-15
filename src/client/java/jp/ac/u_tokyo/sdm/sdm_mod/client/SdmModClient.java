@@ -69,7 +69,15 @@ public class SdmModClient implements ClientModInitializer {
             SetupGuideHud.INSTANCE
         );
         ClientPlayNetworking.registerGlobalReceiver(SetupGuideHudPayload.ID, (payload, context) ->
-            context.client().execute(() -> SetupGuideHud.INSTANCE.setVisible(payload.visible()))
+            context.client().execute(() -> {
+                SetupGuideHud.INSTANCE.setVisible(payload.visible());
+                if (payload.visible()) {
+                    ClientCommandLockState.lock();
+                }
+            })
+        );
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
+            ClientCommandLockState.unlock()
         );
         // HUD はフレームではなくティック単位で文字を進める必要があるため、
         // ClientTickEvents でティックごとに tick() を呼び出す。
