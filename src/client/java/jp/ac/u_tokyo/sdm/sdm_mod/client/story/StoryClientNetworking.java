@@ -5,7 +5,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.client.ScreenScheduler;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.BookInteractionScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.FreezeScreen;
-import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.Phase5GameOverScreen;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.video.BadEdVideoScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.TeacherDialogueScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.video.EdVideoScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.video.OpVideoScreen;
@@ -26,9 +26,9 @@ public final class StoryClientNetworking {
     }
 
     public static void initialize() {
-        ClientPlayNetworking.registerGlobalReceiver(Phase5GameOverPayload.ID, (payload, context) -> {
-            context.client().setScreen(new Phase5GameOverScreen());
-        });
+        ClientPlayNetworking.registerGlobalReceiver(Phase5GameOverPayload.ID, (payload, context) ->
+            context.client().execute(() -> context.client().setScreen(new BadEdVideoScreen()))
+        );
         ClientPlayNetworking.registerGlobalReceiver(ShowOpVideoPayload.ID, (payload, context) ->
             context.client().execute(() -> context.client().setScreen(new OpVideoScreen()))
         );
