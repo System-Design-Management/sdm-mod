@@ -4,6 +4,7 @@
   "package": "jp.ac.u_tokyo.sdm.sdm_mod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
     "MinecraftClientScreenMixin",
