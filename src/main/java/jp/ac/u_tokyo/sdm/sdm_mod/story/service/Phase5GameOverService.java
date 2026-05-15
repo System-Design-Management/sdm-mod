@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.Phase5GameOverPayload;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -20,7 +21,12 @@ public final class Phase5GameOverService {
             }
 
             StoryManager storyManager = StoryModule.getStoryManager();
-            if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE5_ID)) {
+            if (!storyManager.isActive()) {
+                return;
+            }
+
+            String currentChapterId = storyManager.getProgress().currentChapterId();
+            if (StoryChapterRegistry.getOrder(currentChapterId) < StoryChapterRegistry.getOrder(PHASE5_ID)) {
                 return;
             }
 

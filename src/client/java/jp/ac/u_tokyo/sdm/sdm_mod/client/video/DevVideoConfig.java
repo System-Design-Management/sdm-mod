@@ -10,6 +10,7 @@ import java.util.Properties;
 public final class DevVideoConfig {
     private static final String OP_VIDEO_PATH;
     private static final String ED_VIDEO_PATH;
+    private static final String BAD_ED_VIDEO_PATH;
 
     static {
         Properties props = new Properties();
@@ -26,6 +27,7 @@ public final class DevVideoConfig {
         }
         OP_VIDEO_PATH = props.getProperty("opVideoPath", "").trim();
         ED_VIDEO_PATH = props.getProperty("edVideoPath", "").trim();
+        BAD_ED_VIDEO_PATH = props.getProperty("bad_edVideoPath", "").trim();
     }
 
     private DevVideoConfig() {
@@ -37,5 +39,9 @@ public final class DevVideoConfig {
 
     public static String getEdVideoPath() {
         return ED_VIDEO_PATH;
+    }
+
+    public static String getBadEdVideoPath() {
+        return BAD_ED_VIDEO_PATH;
     }
 }

@@ -26,6 +26,7 @@ devWorldName=
 
 opVideoPath=
 edVideoPath=
+bad_edVideoPath=
 
 # 【VLC ライブラリパス】
 # VLCJ が VLC のネイティブライブラリを自動検出できない場合に指定します。
