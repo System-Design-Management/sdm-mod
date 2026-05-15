@@ -10,7 +10,6 @@ import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +42,9 @@ public final class StoryCommandInitializer {
                     ServerWorld world = (ServerWorld) player.getWorld();
                     player.teleport(world, -93, 24, -451, Set.<PositionFlag>of(), player.getYaw(), player.getPitch(), false);
                 });
-            context.getSource().sendFeedback(
-                () -> Text.literal("Setup complete: inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
-                true
-            );
             return 1;
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to execute setup.", exception);
-            context.getSource().sendError(Text.literal("Failed to execute setup. Check the log for details."));
             return 0;
         }
     }
@@ -61,14 +55,9 @@ public final class StoryCommandInitializer {
             // サーバー側で StoryStartService.start() が呼ばれる。
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> ServerPlayNetworking.send(player, ShowOpVideoPayload.INSTANCE));
-            context.getSource().sendFeedback(
-                () -> Text.literal("OP video triggered. Story will start after playback."),
-                true
-            );
             return 1;
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to trigger OP video.", exception);
-            context.getSource().sendError(Text.literal("Failed to trigger OP video. Check the log for details."));
             return 0;
         }
     }
