@@ -1,6 +1,5 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.SearchPcScreenHandler;
@@ -85,73 +84,6 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.irdb"), "irdb"),
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.ndl"), "ndl"),
         new DatabaseTab(Text.translatable("screen.sdm_mod.search_pc.database.worldcat"), "worldcat")
-    );
-
-    private static final List<CatalogEntry> CATALOG = List.of(
-        new CatalogEntry(
-            "utokyo",
-            "学術情報リテラシー入門",
-            "東京大学附属図書館",
-            "総合図書館 3F 開架",
-            "利用可",
-            "検索キーワードの組み立て方と OPAC の使い方を解説。"
-        ),
-        new CatalogEntry(
-            "utokyo",
-            "東京大学百年史 部局史",
-            "東京大学百年史編集委員会",
-            "総合図書館 B1 書庫",
-            "館内利用",
-            "東京大学の沿革をまとめた学内所蔵資料。"
-        ),
-        new CatalogEntry(
-            "cinii_books",
-            "情報探索演習",
-            "山田 太郎",
-            "学外共同利用資料 / CiNii Books",
-            "取り寄せ可",
-            "日本語資料の横断検索を想定した演習書。"
-        ),
-        new CatalogEntry(
-            "cinii_research",
-            "大学図書館における検索行動の分析",
-            "佐藤 花子",
-            "CiNii Research",
-            "オンライン",
-            "検索語と行動ログの関係を扱う論文。"
-        ),
-        new CatalogEntry(
-            "irdb",
-            "学術成果公開のワークフロー設計",
-            "UTokyo Repository Team",
-            "IRDB",
-            "オンライン",
-            "機関リポジトリ連携の整理。"
-        ),
-        new CatalogEntry(
-            "ndl",
-            "近代日本の大学図書館",
-            "国立国会図書館デジタルコレクション",
-            "国立国会図書館サーチ",
-            "オンライン",
-            "国立国会図書館経由で参照できる関連資料。"
-        ),
-        new CatalogEntry(
-            "worldcat",
-            "Discovery Systems in Academic Libraries",
-            "Emily Carter",
-            "WorldCat",
-            "ILL 候補",
-            "海外図書館の蔵書検索 UI 事例集。"
-        ),
-        new CatalogEntry(
-            "utokyo",
-            "データサイエンス概論",
-            "松本 恒一",
-            "総合図書館 2F 開架",
-            "貸出中",
-            "データサイエンス基礎の教科書。"
-        )
     );
 
     private TextFieldWidget queryField;
@@ -469,38 +401,7 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
             return;
         }
 
-        DatabaseTab selectedDatabase = DATABASE_TABS.get(this.selectedDatabaseIndex);
-        List<CatalogEntry> matches = new ArrayList<>();
-        for (CatalogEntry entry : CATALOG) {
-            if (!entry.databaseId().equals(selectedDatabase.id())) {
-                continue;
-            }
-            if (matchesEntry(entry, normalizedQuery)) {
-                matches.add(entry);
-            }
-        }
-
-        this.searchResults = matches;
-    }
-
-    private boolean matchesEntry(CatalogEntry entry, String normalizedQuery) {
-        String searchableText = normalizeKana(
-            entry.title() + " "
-                + entry.author() + " "
-                + entry.location() + " "
-                + entry.summary()
-        ).toLowerCase(Locale.ROOT);
-
-        if (!this.advancedMode) {
-            return searchableText.contains(normalizedQuery);
-        }
-
-        for (String token : normalizedQuery.split("\\s+")) {
-            if (!token.isBlank() && !searchableText.contains(token)) {
-                return false;
-            }
-        }
-        return true;
+        this.searchResults = List.of();
     }
 
     private boolean clickModeTab(double mouseX, double mouseY) {
