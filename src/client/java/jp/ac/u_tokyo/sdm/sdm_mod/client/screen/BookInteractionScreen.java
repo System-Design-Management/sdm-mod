@@ -60,7 +60,7 @@ public final class BookInteractionScreen extends Screen {
             MinecraftClient.getInstance().setScreen(
                 new TeacherDialogueScreen("おいおい、それじゃないぞ",
                     () -> MinecraftClient.getInstance().setScreen(new BookInteractionScreen(title, false)),
-                    40)
+                    20)
             );
         }).dimensions(btn1X, btnY, BTN_W, BTN_H).build());
 
@@ -88,7 +88,7 @@ public final class BookInteractionScreen extends Screen {
     }
 
     private void openKeyBookDialogue() {
-        MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！",
+        MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！よく見つけた！！",
             // removed() 内で setScreen() を呼ぶと外側の setScreen(null) に上書きされるため、
             // ScreenScheduler に積んで END_CLIENT_TICK で開く。
             () -> ScreenScheduler.schedule(new TeacherDialogueScreen(

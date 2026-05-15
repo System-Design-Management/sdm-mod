@@ -32,15 +32,20 @@ public final class Phase2TutorialDialogueService {
     private static final long FOLLOW_UP_DELAY_TICKS = 120L;
     private static final long POST_GUN_DELAY_TICKS = 20L;
     private static final String INTRO_TEXT = "聞こえるか。落ち着いて周囲を見ろ。";
-    private static final String GUN_PICKUP_TEXT = "そのままでは危険だ。警官から武器を受け取れ。";
+    private static final String GUN_PICKUP_TEXT = "警官が倒れている!? 拳銃を持っているかもしれない。使わせてもらおう。";
     private static final String RELOAD_GUN_TEXT = "受け取ったな。しゃがみながら使って、まずは弾を込めろ。";
-    private static final String FIRE_GUN_TEXT = "そうだ。弾は入った。今度はそのまま使ってみろ。";
+    private static final String FIRE_GUN_TEXT = "そうだ。弾は入った。図書館の前にゾンビがいるな。使って倒してみろ。";
     private static final String BLOCKED_BEFORE_GUN_TEXT = "焦るな。まずは警官のところへ行って武器を受け取れ。";
     private static final String BLOCKED_BEFORE_RELOAD_TEXT = "落ち着け。しゃがみながら使って、先に弾を込めるんだ。";
     private static final String BLOCKED_BEFORE_FIRST_SHOT_TEXT = "弾は入ったはずだ。そのまま使ってみろ。";
-    private static final String BLOCKED_BEFORE_KILL_TEXT = "まだ先を急ぐな。前方の敵を片づけてから進め。";
+    private static final String BLOCKED_BEFORE_KILL_TEXT = "まだ先を急ぐな。図書館前のゾンビを片づけてから進め。";
     private static final String KILL_CONFIRMED_TEXT = "よし。その調子だ。";
     private static final String EXIT_GUIDE_TEXT = "準備はできた。先へ進め。";
+    private static final String GATE_PASSED_TEXT = "まずは目当ての本がどこにあるか調べよう。右側にあるパソコンが使えそうだ。……画面に集中しすぎて、背後を取られないように気をつけろよ！";
+    private static final String GATE_PASSED_TEXT2 = "ゾンビと入力して検索すれば、本がヒットするはずだ。場所を確認してくれ。";
+    // GATE_PASSED_TEXT（66文字）の表示 + 自動消去（40tick）に余裕を持たせた遅延
+    private static final long GATE_PASSED_FOLLOW_UP_DELAY_TICKS = 110L;
+    private static final double GATE_PASSED_Z_THRESHOLD = -634.0;
     private static final Map<UUID, DialogueProgress> PROGRESS = new HashMap<>();
 
     private Phase2TutorialDialogueService() {
@@ -165,6 +170,17 @@ public final class Phase2TutorialDialogueService {
                 progress.unlockTick = Long.MAX_VALUE;
                 TeacherDialogueService.showAsHud(player, INTRO_TEXT);
                 schedule(progress, DialogueCue.GUN_PICKUP_PROMPT, currentTick + FOLLOW_UP_DELAY_TICKS);
+            }
+
+            if (!progress.gatePassedDialogueShown && player.getZ() < GATE_PASSED_Z_THRESHOLD) {
+                progress.gatePassedDialogueShown = true;
+                TeacherDialogueService.showAsHud(player, GATE_PASSED_TEXT);
+                progress.gatePassedFollowUpTick = currentTick + GATE_PASSED_FOLLOW_UP_DELAY_TICKS;
+            }
+
+            if (progress.gatePassedFollowUpTick > 0 && currentTick >= progress.gatePassedFollowUpTick) {
+                progress.gatePassedFollowUpTick = 0;
+                TeacherDialogueService.showAsHud(player, GATE_PASSED_TEXT2);
             }
 
             trackWeaponProgress(player, progress);
@@ -316,5 +332,7 @@ public final class Phase2TutorialDialogueService {
         private Vec3d lockedPos;
         private long unlockTick = Long.MAX_VALUE;
         private int lastKnownBullets = -1;
+        private boolean gatePassedDialogueShown;
+        private long gatePassedFollowUpTick = 0;
     }
 }
