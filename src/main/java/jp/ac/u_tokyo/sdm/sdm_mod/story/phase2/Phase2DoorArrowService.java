@@ -24,10 +24,13 @@ public final class Phase2DoorArrowService {
     private static final int LINE_02_14_TICKS = 140;
     private static final int LINE_02_15_TICKS = 220;
     private static final int THIRD_FLOOR_MIN_Y = 41;
+    private static final long PC_USED_DELAY_TICKS = 20L;
     private static final Set<UUID> LOCATION_SCREEN_VIEWERS = new HashSet<>();
+    private static final Set<UUID> PC_USED_TEXT_SHOWN = new HashSet<>();
     private static final Set<UUID> THIRD_FLOOR_REACHED_AFTER_MAP = new HashSet<>();
     private static final Map<UUID, Boolean> LAST_ARROW_VISIBILITY = new HashMap<>();
     private static final Map<UUID, Boolean> LAST_THIRD_FLOOR_STATE = new HashMap<>();
+    private static final Map<UUID, Long> PENDING_PC_USED_TICK = new HashMap<>();
 
     private Phase2DoorArrowService() {
     }
@@ -43,14 +46,18 @@ public final class Phase2DoorArrowService {
             return;
         }
 
-        if (LOCATION_SCREEN_VIEWERS.add(player.getUuid())) {
-            Phase2DialogueVoiceService.enqueue(
-                player,
-                "phase2_pc_used",
-                PC_USED_TEXT,
-                ModSounds.PHASE2_LINE_02_13,
-                LINE_02_13_TICKS
-            );
+        LOCATION_SCREEN_VIEWERS.add(player.getUuid());
+    }
+
+    public static void recordLocationScreenClosed(ServerPlayerEntity player, MinecraftServer server) {
+        StoryManager storyManager = StoryModule.getStoryManager();
+        if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE2_ID)) {
+            return;
+        }
+
+        UUID playerId = player.getUuid();
+        if (LOCATION_SCREEN_VIEWERS.contains(playerId) && PC_USED_TEXT_SHOWN.add(playerId)) {
+            PENDING_PC_USED_TICK.put(playerId, server.getOverworld().getTime() + PC_USED_DELAY_TICKS);
         }
     }
 
@@ -67,8 +74,19 @@ public final class Phase2DoorArrowService {
                 && sm.isAtChapter(PHASE2_ID)
                 && THIRD_FLOOR_REACHED_AFTER_MAP.contains(player.getUuid())
                 && isOnThirdFloor(player);
-            updateArrowVisibility(player, visible, currentTick);
+            updateArrowVisibility(player, visible);
 
+            Long pendingPcUsed = PENDING_PC_USED_TICK.get(player.getUuid());
+            if (pendingPcUsed != null && currentTick >= pendingPcUsed) {
+                PENDING_PC_USED_TICK.remove(player.getUuid());
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_pc_used",
+                    PC_USED_TEXT,
+                    ModSounds.PHASE2_LINE_02_13,
+                    LINE_02_13_TICKS
+                );
+            }
         }
     }
 
@@ -102,7 +120,7 @@ public final class Phase2DoorArrowService {
         return player.getY() >= THIRD_FLOOR_MIN_Y;
     }
 
-    private static void updateArrowVisibility(ServerPlayerEntity player, boolean visible, long currentTick) {
+    private static void updateArrowVisibility(ServerPlayerEntity player, boolean visible) {
         UUID playerId = player.getUuid();
         Boolean lastVisible = LAST_ARROW_VISIBILITY.get(playerId);
         if (lastVisible != null && lastVisible == visible) {
@@ -115,8 +133,10 @@ public final class Phase2DoorArrowService {
 
     private static void clearState() {
         LOCATION_SCREEN_VIEWERS.clear();
+        PC_USED_TEXT_SHOWN.clear();
         THIRD_FLOOR_REACHED_AFTER_MAP.clear();
         LAST_ARROW_VISIBILITY.clear();
         LAST_THIRD_FLOOR_STATE.clear();
+        PENDING_PC_USED_TICK.clear();
     }
 }

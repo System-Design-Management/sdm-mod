@@ -5,6 +5,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
+  "client": [
+    "MinecraftClientScreenMixin",
+    "CameraMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase2;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.PoliceOfficerEntity;
+import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -122,12 +123,14 @@ public final class Phase2PoliceOfficerGunTrigger {
     }
 
     private static void giveRevolver(ServerPlayerEntity player) {
-        ServerCommandSource source = player.getServer().getCommandSource()
-            .withLevel(2)
-            .withEntity(player)
-            .withPosition(player.getPos())
-            .withRotation(player.getRotationClient());
-        player.getServer().getCommandManager().executeWithPrefix(source, "function thepa:give/revolver");
-        player.getServer().getCommandManager().executeWithPrefix(source, "function thepa:give/bullets");
+        CommandLockState.runUnlocked(() -> {
+            ServerCommandSource source = player.getServer().getCommandSource()
+                .withLevel(2)
+                .withEntity(player)
+                .withPosition(player.getPos())
+                .withRotation(player.getRotationClient());
+            player.getServer().getCommandManager().executeWithPrefix(source, "function thepa:give/revolver");
+            player.getServer().getCommandManager().executeWithPrefix(source, "function thepa:give/bullets");
+        });
     }
 }

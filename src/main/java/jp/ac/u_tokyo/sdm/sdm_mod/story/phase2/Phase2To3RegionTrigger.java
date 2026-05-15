@@ -27,7 +27,7 @@ public final class Phase2To3RegionTrigger {
     private static final String PHASE3_ID = "phase3";
     private static final String PHASE3_START_TEXT1 = "大閲覧室に入ったな。ゾンビがたくさんいるかもしれん。";
     private static final String PHASE3_START_TEXT2 = "本の場所は覚えているな？素早く探すんだぞ！";
-    private static final String PHASE3_START_TEXT3 = "さっき確認した本棚にある本を１冊ずつ確認するしかないな。";
+    private static final String PHASE3_START_TEXT3 = "さっき確認した番号の本棚にある本を１冊ずつ確認するしかないな。";
     private static final String PHASE3_START_TEXT4 = "おい！まだ見つからないのか！！本棚の番号は19だったよな。そこを探しに行け！";
     private static final int LINE_03_01_TICKS = 100;
     private static final int LINE_03_02_TICKS = 80;

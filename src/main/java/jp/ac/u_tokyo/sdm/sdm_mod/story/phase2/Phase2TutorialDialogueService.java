@@ -287,12 +287,6 @@ public final class Phase2TutorialDialogueService {
                     Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
                 );
             }
-            case EXIT_GUIDE -> {
-                if (progress.stage != DialogueStage.READY_TO_EXIT) {
-                    return;
-                }
-                Phase2DialogueVoiceService.enqueueText(player, "phase2_exit_guide", EXIT_GUIDE_TEXT);
-            }
         }
     }
 
@@ -405,8 +399,7 @@ public final class Phase2TutorialDialogueService {
 
     private enum DialogueCue {
         GUN_PICKUP_PROMPT,
-        POST_GUN_INSTRUCTION,
-        EXIT_GUIDE
+        POST_GUN_INSTRUCTION
     }
 
     private static final class DialogueProgress {

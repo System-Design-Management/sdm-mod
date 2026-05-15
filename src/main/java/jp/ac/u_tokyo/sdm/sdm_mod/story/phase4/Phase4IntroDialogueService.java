@@ -10,6 +10,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DialogueVoiceService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -77,6 +78,8 @@ public final class Phase4IntroDialogueService {
 
             storyManager.advanceToChapter(PHASE4_ID);
             Phase4FireworkService.launchOnce(server);
+            server.getPlayerManager().getPlayerList()
+                .forEach(player -> ServerPlayNetworking.send(player, FireworkShakePayload.INSTANCE));
         }
     }
 }

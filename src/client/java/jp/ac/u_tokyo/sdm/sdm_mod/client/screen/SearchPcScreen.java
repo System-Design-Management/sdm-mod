@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 import java.util.List;
 import java.util.Locale;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.SearchPcScreenHandler;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SearchPcLocationClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SearchPcLocationOpenedPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
@@ -140,6 +141,12 @@ public final class SearchPcScreen extends HandledScreen<SearchPcScreenHandler> {
         addKeyboardButton("ぞ", 0);
         addKeyboardButton("ん", 1);
         addKeyboardButton("び", 2);
+    }
+
+    @Override
+    public void close() {
+        ClientPlayNetworking.send(SearchPcLocationClosedPayload.INSTANCE);
+        super.close();
     }
 
     @Override
