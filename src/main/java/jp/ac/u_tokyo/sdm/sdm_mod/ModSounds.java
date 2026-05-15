@@ -27,6 +27,10 @@ public final class ModSounds {
     public static final SoundEvent PHASE2_LINE_02_13 = register("phase2_line_02_13");
     public static final SoundEvent PHASE2_LINE_02_14 = register("phase2_line_02_14");
     public static final SoundEvent PHASE2_LINE_02_15 = register("phase2_line_02_15");
+    public static final SoundEvent PHASE3_LINE_03_01 = register("phase3_line_03_01");
+    public static final SoundEvent PHASE3_LINE_03_02 = register("phase3_line_03_02");
+    public static final SoundEvent PHASE3_LINE_03_03 = register("phase3_line_03_03");
+    public static final SoundEvent PHASE3_LINE_03_04 = register("phase3_line_03_04");
 
     private ModSounds() {
     }

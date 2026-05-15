@@ -1,8 +1,8 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.phase2;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -29,6 +29,10 @@ public final class Phase2To3RegionTrigger {
     private static final String PHASE3_START_TEXT2 = "本の場所は覚えているな？素早く探すんだぞ！";
     private static final String PHASE3_START_TEXT3 = "さっき確認した本棚にある本を１冊ずつ確認するしかないな。";
     private static final String PHASE3_START_TEXT4 = "おい！まだ見つからないのか！！本棚の番号は19だったよな。そこを探しに行け！";
+    private static final int LINE_03_01_TICKS = 100;
+    private static final int LINE_03_02_TICKS = 80;
+    private static final int LINE_03_03_TICKS = 120;
+    private static final int LINE_03_04_TICKS = 140;
     // PHASE3_START_TEXT1（26文字）の表示 + 自動消去（30tick）に余裕を持たせた遅延
     private static final long SECOND_DIALOGUE_DELAY_TICKS = 65L;
     // PHASE3_START_TEXT2（21文字）の表示 + 自動消去（30tick）に余裕を持たせた遅延
@@ -103,7 +107,13 @@ public final class Phase2To3RegionTrigger {
             }
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player != null) {
-                Phase2DialogueVoiceService.enqueueText(player, "phase3_start_2", PHASE3_START_TEXT2);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase3_start_2",
+                    PHASE3_START_TEXT2,
+                    ModSounds.PHASE3_LINE_03_02,
+                    LINE_03_02_TICKS
+                );
                 PENDING_THIRD_DIALOGUE_TICK.put(entry.getKey(), currentTick + THIRD_DIALOGUE_DELAY_TICKS);
             }
             return true;
@@ -114,7 +124,13 @@ public final class Phase2To3RegionTrigger {
             }
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player != null) {
-                Phase2DialogueVoiceService.enqueueText(player, "phase3_start_3", PHASE3_START_TEXT3);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase3_start_3",
+                    PHASE3_START_TEXT3,
+                    ModSounds.PHASE3_LINE_03_03,
+                    LINE_03_03_TICKS
+                );
                 PENDING_FOURTH_DIALOGUE_TICK.put(entry.getKey(), currentTick + FOURTH_DIALOGUE_DELAY_TICKS);
             }
             return true;
@@ -129,17 +145,26 @@ public final class Phase2To3RegionTrigger {
             }
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player != null) {
-                TeacherDialogueService.show(player, PHASE3_START_TEXT4);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase3_start_4",
+                    PHASE3_START_TEXT4,
+                    ModSounds.PHASE3_LINE_03_04,
+                    LINE_03_04_TICKS,
+                    Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+                );
             }
             return true;
         });
     }
 
     private static void notifyTriggered(ServerPlayerEntity player) {
-        Phase2DialogueVoiceService.enqueueText(
+        Phase2DialogueVoiceService.enqueue(
             player,
             "phase3_start_1",
             PHASE3_START_TEXT1,
+            ModSounds.PHASE3_LINE_03_01,
+            LINE_03_01_TICKS,
             Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
         );
         long futureTick = player.getWorld().getTime() + SECOND_DIALOGUE_DELAY_TICKS;

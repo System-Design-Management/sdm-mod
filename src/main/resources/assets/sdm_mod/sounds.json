@@ -103,5 +103,25 @@
     "sounds": [
       "sdm_mod:phase2/lines_02_15_natural_clean"
     ]
+  },
+  "phase3_line_03_01": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_01_natural_clean"
+    ]
+  },
+  "phase3_line_03_02": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_02_natural_clean"
+    ]
+  },
+  "phase3_line_03_03": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_03_natural_clean"
+    ]
+  },
+  "phase3_line_03_04": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_04_natural_clean"
+    ]
   }
 }
