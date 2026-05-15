@@ -1,11 +1,13 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.video;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
@@ -26,6 +28,11 @@ import java.nio.ByteBuffer;
 
 public final class BadEdVideoScreen extends Screen {
     private static final Identifier VIDEO_TEXTURE_ID = Identifier.of("sdm_mod", "bad_ed_video_frame");
+    // scream.ogg が終わってから動画を開始するまでの待機tick数。screamの長さに合わせて調整すること。
+    private static final int SCREAM_WAIT_TICKS = 60;
+
+    private int screamTicksRemaining = SCREAM_WAIT_TICKS;
+    private boolean videoStarted;
 
     // VLCJ
     private MediaPlayerFactory mediaPlayerFactory;
@@ -54,7 +61,18 @@ public final class BadEdVideoScreen extends Screen {
 
     @Override
     protected void init() {
-        startVideo();
+        client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.SCREAM, 1.0f, 1.0f));
+    }
+
+    @Override
+    public void tick() {
+        if (videoStarted) {
+            return;
+        }
+        if (--screamTicksRemaining <= 0) {
+            videoStarted = true;
+            startVideo();
+        }
     }
 
     @Override

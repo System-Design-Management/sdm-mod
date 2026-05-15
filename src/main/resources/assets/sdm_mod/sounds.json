@@ -18,5 +18,15 @@
     "sounds": [
       "sdm_mod:onara"
     ]
+  },
+  "dead_people_voice": {
+    "sounds": [
+      "sdm_mod:dead_people_voice"
+    ]
+  },
+  "scream": {
+    "sounds": [
+      "sdm_mod:scream"
+    ]
   }
 }

@@ -10,6 +10,8 @@ public final class ModSounds {
     public static final SoundEvent STUDENT_ID_GATE_REJECT = register("student_id_gate_reject");
     public static final SoundEvent FIREWORK = register("firework");
     public static final SoundEvent ONARA = register("onara");
+    public static final SoundEvent DEAD_PEOPLE_VOICE = register("dead_people_voice");
+    public static final SoundEvent SCREAM = register("scream");
 
     private ModSounds() {
     }
