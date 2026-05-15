@@ -13,7 +13,6 @@ import net.minecraft.nbt.NbtElement;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -44,8 +43,17 @@ public final class Phase2TutorialDialogueService {
     private static final String EXIT_GUIDE_TEXT = "準備はできた。先へ進め。";
     private static final String GATE_PASSED_TEXT = "まずは目当ての本がどこにあるか調べよう。右側にあるパソコンが使えそうだ。……画面に集中しすぎて、背後を取られないように気をつけろよ！";
     private static final String GATE_PASSED_TEXT2 = "ゾンビと入力して検索すれば、本がヒットするはずだ。場所を確認してくれ。";
-    // GATE_PASSED_TEXT（66文字）の表示 + 自動消去（40tick）に余裕を持たせた遅延
-    private static final long GATE_PASSED_FOLLOW_UP_DELAY_TICKS = 110L;
+    private static final int LINE_02_01_TICKS = 100;
+    private static final int LINE_02_02_TICKS = 120;
+    private static final int LINE_02_03_TICKS = 100;
+    private static final int LINE_02_05_TICKS = 120;
+    private static final int LINE_02_06_TICKS = 80;
+    private static final int LINE_02_07_TICKS = 100;
+    private static final int LINE_02_08_TICKS = 80;
+    private static final int LINE_02_09_TICKS = 100;
+    private static final int LINE_02_10_TICKS = 100;
+    private static final int LINE_02_11_TICKS = 200;
+    private static final int LINE_02_12_TICKS = 120;
     private static final double GATE_PASSED_Z_THRESHOLD = -634.0;
     private static final Map<UUID, DialogueProgress> PROGRESS = new HashMap<>();
 
@@ -53,6 +61,7 @@ public final class Phase2TutorialDialogueService {
     }
 
     public static void initialize() {
+        Phase2DialogueVoiceService.initialize();
         ServerTickEvents.END_SERVER_TICK.register(Phase2TutorialDialogueService::tick);
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (!Phase2TutorialZombieService.isManagedTutorialZombie(entity)) {
@@ -108,32 +117,66 @@ public final class Phase2TutorialDialogueService {
     public static void handleBlockedAdvance(ServerPlayerEntity player) {
         DialogueProgress progress = PROGRESS.get(player.getUuid());
         if (progress == null) {
-            Phase2DialogueVoiceService.showAsHud(player, BLOCKED_BEFORE_GUN_TEXT, ModSounds.PHASE2_LINE_02_06);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_blocked_before_gun",
+                BLOCKED_BEFORE_GUN_TEXT,
+                ModSounds.PHASE2_LINE_02_06,
+                LINE_02_06_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
             return;
         }
 
         if (progress.stage == DialogueStage.WAITING_FOR_GUN_PICKUP) {
-            Phase2DialogueVoiceService.showAsHud(player, BLOCKED_BEFORE_GUN_TEXT, ModSounds.PHASE2_LINE_02_06);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_blocked_before_gun",
+                BLOCKED_BEFORE_GUN_TEXT,
+                ModSounds.PHASE2_LINE_02_06,
+                LINE_02_06_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
             return;
         }
 
         if (progress.stage == DialogueStage.WAITING_FOR_RELOAD) {
-            Phase2DialogueVoiceService.showAsHud(player, BLOCKED_BEFORE_RELOAD_TEXT, ModSounds.PHASE2_LINE_02_07);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_blocked_before_reload",
+                BLOCKED_BEFORE_RELOAD_TEXT,
+                ModSounds.PHASE2_LINE_02_07,
+                LINE_02_07_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
             return;
         }
 
         if (progress.stage == DialogueStage.WAITING_FOR_FIRST_SHOT) {
-            Phase2DialogueVoiceService.showAsHud(player, BLOCKED_BEFORE_FIRST_SHOT_TEXT, ModSounds.PHASE2_LINE_02_08);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_blocked_before_first_shot",
+                BLOCKED_BEFORE_FIRST_SHOT_TEXT,
+                ModSounds.PHASE2_LINE_02_08,
+                LINE_02_08_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
             return;
         }
 
         if (progress.stage == DialogueStage.WAITING_FOR_TUTORIAL_KILL) {
-            Phase2DialogueVoiceService.showAsHud(player, BLOCKED_BEFORE_KILL_TEXT, ModSounds.PHASE2_LINE_02_09);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_blocked_before_kill",
+                BLOCKED_BEFORE_KILL_TEXT,
+                ModSounds.PHASE2_LINE_02_09,
+                LINE_02_09_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
         }
     }
 
     private static void handleTutorialZombieKilled(MinecraftServer server) {
-        long currentTick = server.getOverworld().getTime();
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             DialogueProgress progress = PROGRESS.computeIfAbsent(player.getUuid(), ignored -> new DialogueProgress());
             if (progress.stage == DialogueStage.READY_TO_EXIT) {
@@ -142,8 +185,15 @@ public final class Phase2TutorialDialogueService {
 
             progress.phase2Started = true;
             progress.stage = DialogueStage.READY_TO_EXIT;
-            Phase2DialogueVoiceService.showAsHud(player, KILL_CONFIRMED_TEXT, ModSounds.PHASE2_LINE_02_10);
-            schedule(progress, DialogueCue.EXIT_GUIDE, currentTick + FOLLOW_UP_DELAY_TICKS);
+            Phase2DialogueVoiceService.enqueue(
+                player,
+                "phase2_kill_confirmed",
+                KILL_CONFIRMED_TEXT,
+                ModSounds.PHASE2_LINE_02_10,
+                LINE_02_10_TICKS,
+                Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+            );
+            Phase2DialogueVoiceService.enqueueText(player, "phase2_exit_guide", EXIT_GUIDE_TEXT);
         }
     }
 
@@ -169,19 +219,32 @@ public final class Phase2TutorialDialogueService {
 
                 progress.lockedPos = null;
                 progress.unlockTick = Long.MAX_VALUE;
-                Phase2DialogueVoiceService.showAsHud(player, INTRO_TEXT, ModSounds.PHASE2_LINE_02_01);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_intro",
+                    INTRO_TEXT,
+                    ModSounds.PHASE2_LINE_02_01,
+                    LINE_02_01_TICKS
+                );
                 schedule(progress, DialogueCue.GUN_PICKUP_PROMPT, currentTick + FOLLOW_UP_DELAY_TICKS);
             }
 
             if (!progress.gatePassedDialogueShown && player.getZ() < GATE_PASSED_Z_THRESHOLD) {
                 progress.gatePassedDialogueShown = true;
-                Phase2DialogueVoiceService.showAsHud(player, GATE_PASSED_TEXT, ModSounds.PHASE2_LINE_02_11);
-                progress.gatePassedFollowUpTick = currentTick + GATE_PASSED_FOLLOW_UP_DELAY_TICKS;
-            }
-
-            if (progress.gatePassedFollowUpTick > 0 && currentTick >= progress.gatePassedFollowUpTick) {
-                progress.gatePassedFollowUpTick = 0;
-                Phase2DialogueVoiceService.showAsHud(player, GATE_PASSED_TEXT2, ModSounds.PHASE2_LINE_02_12);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_gate_passed",
+                    GATE_PASSED_TEXT,
+                    ModSounds.PHASE2_LINE_02_11,
+                    LINE_02_11_TICKS
+                );
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_gate_passed_follow_up",
+                    GATE_PASSED_TEXT2,
+                    ModSounds.PHASE2_LINE_02_12,
+                    LINE_02_12_TICKS
+                );
             }
 
             trackWeaponProgress(player, progress);
@@ -202,19 +265,33 @@ public final class Phase2TutorialDialogueService {
                 if (progress.stage != DialogueStage.WAITING_FOR_GUN_PICKUP) {
                     return;
                 }
-                Phase2DialogueVoiceService.showAsHud(player, GUN_PICKUP_TEXT, ModSounds.PHASE2_LINE_02_02);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_gun_pickup_prompt",
+                    GUN_PICKUP_TEXT,
+                    ModSounds.PHASE2_LINE_02_02,
+                    LINE_02_02_TICKS,
+                    Phase2DialogueVoiceService.DeliveryMode.COALESCE
+                );
             }
             case POST_GUN_INSTRUCTION -> {
                 if (progress.stage != DialogueStage.WAITING_FOR_RELOAD) {
                     return;
                 }
-                Phase2DialogueVoiceService.showAsHud(player, RELOAD_GUN_TEXT, ModSounds.PHASE2_LINE_02_03);
+                Phase2DialogueVoiceService.enqueue(
+                    player,
+                    "phase2_reload_instruction",
+                    RELOAD_GUN_TEXT,
+                    ModSounds.PHASE2_LINE_02_03,
+                    LINE_02_03_TICKS,
+                    Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+                );
             }
             case EXIT_GUIDE -> {
                 if (progress.stage != DialogueStage.READY_TO_EXIT) {
                     return;
                 }
-                TeacherDialogueService.showAsHud(player, EXIT_GUIDE_TEXT);
+                Phase2DialogueVoiceService.enqueueText(player, "phase2_exit_guide", EXIT_GUIDE_TEXT);
             }
         }
     }
@@ -233,7 +310,14 @@ public final class Phase2TutorialDialogueService {
                     progress.lastKnownBullets = bullets;
                     progress.pendingCue = null;
                     progress.pendingTick = Long.MAX_VALUE;
-                    Phase2DialogueVoiceService.showAsHud(player, FIRE_GUN_TEXT, ModSounds.PHASE2_LINE_02_05);
+                    Phase2DialogueVoiceService.enqueue(
+                        player,
+                        "phase2_fire_gun",
+                        FIRE_GUN_TEXT,
+                        ModSounds.PHASE2_LINE_02_05,
+                        LINE_02_05_TICKS,
+                        Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+                    );
                     return;
                 }
                 progress.lastKnownBullets = bullets;
@@ -334,6 +418,5 @@ public final class Phase2TutorialDialogueService {
         private long unlockTick = Long.MAX_VALUE;
         private int lastKnownBullets = -1;
         private boolean gatePassedDialogueShown;
-        private long gatePassedFollowUpTick = 0;
     }
 }

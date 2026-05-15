@@ -103,7 +103,7 @@ public final class Phase2To3RegionTrigger {
             }
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player != null) {
-                TeacherDialogueService.showAsHud(player, PHASE3_START_TEXT2);
+                Phase2DialogueVoiceService.enqueueText(player, "phase3_start_2", PHASE3_START_TEXT2);
                 PENDING_THIRD_DIALOGUE_TICK.put(entry.getKey(), currentTick + THIRD_DIALOGUE_DELAY_TICKS);
             }
             return true;
@@ -114,7 +114,7 @@ public final class Phase2To3RegionTrigger {
             }
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player != null) {
-                TeacherDialogueService.showAsHud(player, PHASE3_START_TEXT3);
+                Phase2DialogueVoiceService.enqueueText(player, "phase3_start_3", PHASE3_START_TEXT3);
                 PENDING_FOURTH_DIALOGUE_TICK.put(entry.getKey(), currentTick + FOURTH_DIALOGUE_DELAY_TICKS);
             }
             return true;
@@ -136,7 +136,12 @@ public final class Phase2To3RegionTrigger {
     }
 
     private static void notifyTriggered(ServerPlayerEntity player) {
-        TeacherDialogueService.showAsHud(player, PHASE3_START_TEXT1);
+        Phase2DialogueVoiceService.enqueueText(
+            player,
+            "phase3_start_1",
+            PHASE3_START_TEXT1,
+            Phase2DialogueVoiceService.DeliveryMode.INTERRUPT
+        );
         long futureTick = player.getWorld().getTime() + SECOND_DIALOGUE_DELAY_TICKS;
         PENDING_SECOND_DIALOGUE_TICK.put(player.getUuid(), futureTick);
     }

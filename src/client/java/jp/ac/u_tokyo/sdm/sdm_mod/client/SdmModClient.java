@@ -77,7 +77,7 @@ public class SdmModClient implements ClientModInitializer {
         });
         // サーバーから HUD パケットが届いたら HUD に表示する。
         ClientPlayNetworking.registerGlobalReceiver(TeacherDialogueHudPayload.ID, (payload, context) ->
-            context.client().execute(() -> TeacherDialogueHud.INSTANCE.show(payload.text()))
+            context.client().execute(() -> TeacherDialogueHud.INSTANCE.show(payload.text(), payload.minDisplayTicks()))
         );
     }
 }
