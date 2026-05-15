@@ -12,6 +12,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3To4BookTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4IntroDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4To5RegionTrigger;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5To6RegionTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.registry.StoryChapterRegistry;
@@ -56,6 +57,7 @@ public final class StoryModule {
         Phase4IntroDialogueService.initialize();
         Phase4ZombieService.initialize();
         Phase4To5RegionTrigger.initialize();
+        Phase5OnaraDialogueService.initialize();
         Phase5To6RegionTrigger.initialize();
         LOGGER.info("Story module initialized with {} chapter(s).", StoryChapterRegistry.size());
     }

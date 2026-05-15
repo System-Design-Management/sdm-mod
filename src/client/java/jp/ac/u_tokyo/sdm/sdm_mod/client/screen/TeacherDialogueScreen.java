@@ -113,7 +113,7 @@ public final class TeacherDialogueScreen extends Screen {
         }
     }
 
-    // クリックで「全文即表示 → 閉じる」の2段階動作にする。自動消去モードでは操作を受け付けない。
+    // 決定操作で「全文即表示 → 閉じる」の2段階動作にする。自動消去モードでは操作を受け付けない。
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (autoCloseTicks > 0) {
@@ -129,7 +129,7 @@ public final class TeacherDialogueScreen extends Screen {
         return true;
     }
 
-    // Space / Enter / Escape でも同様に操作できるようにする。自動消去モードでは操作を受け付けない。
+    // キーボード操作でも同様に操作できるようにする。自動消去モードでは操作を受け付けない。
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (autoCloseTicks > 0) {
@@ -201,7 +201,7 @@ public final class TeacherDialogueScreen extends Screen {
 
         // 全文表示済みのとき、閉じ方のヒントを右下に表示する。
         if (visibleChars >= fullText.length()) {
-            String hint = autoCloseTicks > 0 || !canClose() ? "" : "[ クリックまたは Space で閉じる ]";
+            String hint = autoCloseTicks > 0 || !canClose() ? "" : "[ 決定で閉じる ]";
             int hintWidth = this.textRenderer.getWidth(hint);
             context.drawText(
                 this.textRenderer,

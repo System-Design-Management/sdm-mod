@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.lwjgl.glfw.GLFW;
 
 public final class BookInteractionScreen extends Screen {
     private static final int PANEL_W = 280;
@@ -44,14 +43,18 @@ public final class BookInteractionScreen extends Screen {
     protected void init() {
         super.init();
 
+        int panelBottom = (height - PANEL_H) / 2 + PANEL_H;
+        int btnY = panelBottom + 8;
+
         if (isKeyBook) {
+            int btnX = (width - BTN_W) / 2;
+            addDrawableChild(ButtonWidget.builder(Text.literal("持っていく"), btn ->
+                openKeyBookDialogue()
+            ).dimensions(btnX, btnY, BTN_W, BTN_H).build());
             return;
         }
 
-        int panelLeft = (width - PANEL_W) / 2;
-        int panelBottom = (height - PANEL_H) / 2 + PANEL_H;
         int totalBtnW = BTN_W * 2 + BTN_GAP;
-        int btnY = panelBottom + 8;
         int btn1X = (width - totalBtnW) / 2;
         int btn2X = btn1X + BTN_W + BTN_GAP;
 
@@ -63,24 +66,6 @@ public final class BookInteractionScreen extends Screen {
         addDrawableChild(ButtonWidget.builder(Text.literal("いらない"), btn ->
             this.close()
         ).dimensions(btn2X, btnY, BTN_W, BTN_H).build());
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isKeyBook) {
-            openKeyBookDialogue();
-            return true;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (isKeyBook && (keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_ENTER)) {
-            openKeyBookDialogue();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void openKeyBookDialogue() {
@@ -128,13 +113,6 @@ public final class BookInteractionScreen extends Screen {
         matrices.scale(TITLE_SCALE, TITLE_SCALE);
         context.drawText(textRenderer, boldTitle, 0, 0, 0xFF111111, false);
         matrices.popMatrix();
-
-        // hint
-        if (isKeyBook) {
-            String hint = "[ クリックまたは Space で教授の声を聞く ]";
-            int hintW = textRenderer.getWidth(hint);
-            context.drawText(textRenderer, hint, px + (PANEL_W - hintW) / 2, py + PANEL_H + 8, 0xAAFFFFFF, false);
-        }
 
         super.render(context, mouseX, mouseY, delta);
     }

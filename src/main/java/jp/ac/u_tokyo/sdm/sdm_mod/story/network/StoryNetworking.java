@@ -5,17 +5,14 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4IntroDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ProfessorDialoguePayload;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraPayload;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStartService;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public final class StoryNetworking {
-    private static final String PHASE5_ID = "phase5";
-
     private StoryNetworking() {
     }
 
@@ -42,15 +39,9 @@ public final class StoryNetworking {
         ServerPlayNetworking.registerGlobalReceiver(Phase4DialogueClosedPayload.ID, (payload, context) ->
             context.server().execute(() -> Phase4IntroDialogueService.start(context.player()))
         );
-        // おならダイアログを閉じたプレイヤーからパケットが届いたらゾンビをスポーンさせる
+        // おなら音が終わったらHUDセリフを流し、その後にゾンビをスポーンさせる
         ServerPlayNetworking.registerGlobalReceiver(Phase5OnaraClosedPayload.ID, (payload, context) ->
-            context.server().execute(() -> {
-                StoryManager storyManager = StoryModule.getStoryManager();
-                if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE5_ID)) {
-                    return;
-                }
-                Phase4ZombieService.spawnPhase4Zombies(context.server().getOverworld());
-            })
+            context.server().execute(() -> Phase5OnaraDialogueService.start(context.player()))
         );
     }
 }
