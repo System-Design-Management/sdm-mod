@@ -28,5 +28,115 @@
     "sounds": [
       "sdm_mod:scream"
     ]
+  },
+  "phase2_line_02_01": {
+    "sounds": [
+      "sdm_mod:phase2/line_02_01_natural_clean"
+    ]
+  },
+  "phase2_line_02_02": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_02_natural_clean"
+    ]
+  },
+  "phase2_line_02_03": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_03_natural_clean"
+    ]
+  },
+  "phase2_line_02_04": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_04_natural_clean"
+    ]
+  },
+  "phase2_line_02_05": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_05_natural_clean"
+    ]
+  },
+  "phase2_line_02_06": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_06_natural_clean"
+    ]
+  },
+  "phase2_line_02_07": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_07_natural_clean"
+    ]
+  },
+  "phase2_line_02_08": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_08_natural_clean"
+    ]
+  },
+  "phase2_line_02_09": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_09_natural_clean"
+    ]
+  },
+  "phase2_line_02_10": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_10_natural_clean"
+    ]
+  },
+  "phase2_line_02_11": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_11_natural_clean"
+    ]
+  },
+  "phase2_line_02_12": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_12_natural_clean"
+    ]
+  },
+  "phase2_line_02_13": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_13_natural_clean"
+    ]
+  },
+  "phase2_line_02_14": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_14_natural_clean"
+    ]
+  },
+  "phase2_line_02_15": {
+    "sounds": [
+      "sdm_mod:phase2/lines_02_15_natural_clean"
+    ]
+  },
+  "phase3_line_03_01": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_01_natural_clean"
+    ]
+  },
+  "phase3_line_03_02": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_02_natural_clean"
+    ]
+  },
+  "phase3_line_03_03": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_03_natural_clean"
+    ]
+  },
+  "phase3_line_03_04": {
+    "sounds": [
+      "sdm_mod:phase3/lines_03_04_natural_clean"
+    ]
+  },
+  "phase4_line_04_01": {
+    "sounds": [
+      "sdm_mod:phase4/lines_04_01_natural_clean"
+    ]
+  },
+  "phase4_line_04_02": {
+    "sounds": [
+      "sdm_mod:phase4/lines_04_02_natural_clean"
+    ]
+  },
+  "phase5_line_05_01": {
+    "sounds": [
+      "sdm_mod:phase5/lines_05_01_natural_clean"
+    ]
   }
 }

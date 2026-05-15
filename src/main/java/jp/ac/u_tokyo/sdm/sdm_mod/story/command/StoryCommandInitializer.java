@@ -65,7 +65,7 @@ public final class StoryCommandInitializer {
                 });
             GameRulesInitializer.applySetupDefaults(context.getSource().getServer());
             spawnSdmLogo(context.getSource().getServer().getOverworld());
-            StoryAutoStartService.enable();
+            StoryAutoStartService.enable(context.getSource().getServer());
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> ServerPlayNetworking.send(player, new SetupGuideHudPayload(true)));
             CommandPermissionInitializer.revokeModGrantedOps(context.getSource().getServer());

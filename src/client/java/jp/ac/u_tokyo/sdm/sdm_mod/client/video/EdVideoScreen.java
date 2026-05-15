@@ -75,6 +75,7 @@ public final class EdVideoScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
+        VideoSoundSilencer.silenceStoryNoise();
         handleTextureInit();
         uploadFrameIfReady();
         if (videoTexture != null) {
@@ -147,6 +148,7 @@ public final class EdVideoScreen extends Screen {
         }
 
         client.getMusicTracker().stop();
+        VideoSoundSilencer.silenceStoryNoise();
 
         new NativeDiscovery().discover();
         mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--quiet");
