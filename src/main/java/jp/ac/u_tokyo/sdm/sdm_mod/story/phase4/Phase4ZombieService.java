@@ -99,6 +99,7 @@ public final class Phase4ZombieService {
         boolean storyActive = storyManager.isActive();
         boolean phase4Active = storyActive && storyManager.isAtChapter(PHASE4_ID);
         boolean phase5Active = storyActive && storyManager.isAtChapter(PHASE5_ID);
+        List<ZombieEntity> toCleanup = new ArrayList<>();
 
         server.getWorlds().forEach(world -> world.iterateEntities().forEach(entity -> {
             if (!(entity instanceof ZombieEntity zombie) || !isManagedPhaseZombie(zombie)) {
@@ -115,9 +116,10 @@ public final class Phase4ZombieService {
                 return;
             }
 
-            cleanup(zombie);
+            toCleanup.add(zombie);
         }));
 
+        toCleanup.forEach(Phase4ZombieService::cleanup);
         pruneMissingDestinations(server);
     }
 
