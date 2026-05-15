@@ -24,7 +24,7 @@ public final class TeacherDialogueHud implements HudElement {
     // 1ティックあたりに進む文字数。
     private static final int CHARS_PER_TICK = 1;
     // 全文表示後、自動で消えるまでのティック数（20tick = 1秒）。
-    private static final int DISMISS_TICKS = 100;
+    private static final int DISMISS_TICKS = 30;
 
     private boolean active = false;
     private String fullText = "";

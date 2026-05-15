@@ -22,7 +22,7 @@ public final class TeacherDialogueScreen extends Screen {
     private static final int PANEL_RIGHT_MARGIN = 16;
     private static final int TEXT_PADDING = 12;
     // 1文字進めるのに必要なティック数。大きいほど遅くなる（1=20字/秒、2=10字/秒、4=5字/秒）。
-    private static final int TICKS_PER_CHAR = 3;
+    private static final int TICKS_PER_CHAR = 1;
 
     private final String fullText;
     private final Runnable afterClose;
