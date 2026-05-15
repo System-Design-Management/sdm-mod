@@ -19,9 +19,16 @@ public final class TeacherDialogueService {
 
     /**
      * 指定プレイヤーにダイアログをHUDオーバーレイとして表示する。
-     * ゲームは止まらず、全文表示後5秒で自動的に消える。
+     * ゲームは止まらず、全文表示後に自動的に消える。
      */
     public static void showAsHud(ServerPlayerEntity player, String text) {
-        ServerPlayNetworking.send(player, new TeacherDialogueHudPayload(text));
+        showAsHud(player, text, 0);
+    }
+
+    /**
+     * minDisplayTicks が指定された場合は、その tick 数に達するまで自動消去しない。
+     */
+    public static void showAsHud(ServerPlayerEntity player, String text, int minDisplayTicks) {
+        ServerPlayNetworking.send(player, new TeacherDialogueHudPayload(text, minDisplayTicks));
     }
 }

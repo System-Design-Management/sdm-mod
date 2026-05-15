@@ -67,7 +67,7 @@
   "screen.sdm_mod.technical_book.explanation": "Therefore, e^(iπ) + 1 = 0.",
   "screen.sdm_mod.technical_book.footnote": "It is widely known as a beautiful identity.",
   "screen.sdm_mod.technical_book.close": "Close",
-  "screen.sdm_mod.technical_book.close_hint": "Press Esc or Menu/Back to close",
+  "screen.sdm_mod.technical_book.close_hint": "Menu/Back to close",
   "screen.sdm_mod.warp.description": "Choose where to teleport.",
   "screen.sdm_mod.warp.close": "Close",
   "screen.sdm_mod.warp.teleported": "Teleported to %s.",

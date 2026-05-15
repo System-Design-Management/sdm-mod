@@ -30,15 +30,23 @@ public final class TeacherDialogueHud implements HudElement {
     private String fullText = "";
     private int visibleChars = 0;
     private int ticksSinceComplete = 0;
+    private int activeTicks = 0;
+    private int minDisplayTicks = 0;
 
     private TeacherDialogueHud() {
     }
 
     /** サーバーからパケットを受け取ったときに呼ぶ。メインスレッドから呼ぶこと。 */
     public void show(String text) {
+        show(text, 0);
+    }
+
+    public void show(String text, int minDisplayTicks) {
         this.fullText = text;
         this.visibleChars = 0;
         this.ticksSinceComplete = 0;
+        this.activeTicks = 0;
+        this.minDisplayTicks = Math.max(0, minDisplayTicks);
         this.active = true;
     }
 
@@ -51,12 +59,13 @@ public final class TeacherDialogueHud implements HudElement {
             return;
         }
 
+        activeTicks++;
         if (visibleChars < fullText.length()) {
             visibleChars = Math.min(visibleChars + CHARS_PER_TICK, fullText.length());
         } else {
-            // 全文表示済み。DISMISS_TICKS 後に自動消去する。
+            // 全文表示済み。通常の余韻とサーバー指定の最低表示時間を満たしたら消す。
             ticksSinceComplete++;
-            if (ticksSinceComplete >= DISMISS_TICKS) {
+            if (ticksSinceComplete >= DISMISS_TICKS && activeTicks >= minDisplayTicks) {
                 active = false;
             }
         }
