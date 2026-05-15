@@ -6,6 +6,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.entity.PosterEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.block.SearchPcBlock;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2PoliceOfficerGunTrigger;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialDialogueService;
@@ -13,6 +14,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2TutorialZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase3.Phase3ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.state.StoryProgress;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
@@ -47,6 +49,8 @@ public final class StoryStartService {
 
     public static StoryProgress start(MinecraftServer server) {
         GameRulesInitializer.applyStoryDefaults(server);
+        server.getPlayerManager().getPlayerList()
+            .forEach(player -> ServerPlayNetworking.send(player, new SetupGuideHudPayload(false)));
         server.getPlayerManager().getPlayerList().forEach(player -> stopBackgroundMusic(server, player));
         // Remove existing hostile/passive mobs before players are reset into the story state.
         StoryEntityControlService.clearNonPlayerLivingEntities(server);

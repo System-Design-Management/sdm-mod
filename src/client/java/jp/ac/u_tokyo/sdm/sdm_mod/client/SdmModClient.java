@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.SetupGuideHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BloodZombieEntityRenderer;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.entity.BoyEntityRenderer;
@@ -18,6 +19,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.warp.WarpSelectScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.story.StoryClientNetworking;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialogueHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -61,6 +63,13 @@ public class SdmModClient implements ClientModInitializer {
         HudElementRegistry.addLast(
             Identifier.of("sdm_mod", "door_arrow_hud"),
             DoorArrowHud.INSTANCE
+        );
+        HudElementRegistry.addLast(
+            Identifier.of("sdm_mod", "setup_guide_hud"),
+            SetupGuideHud.INSTANCE
+        );
+        ClientPlayNetworking.registerGlobalReceiver(SetupGuideHudPayload.ID, (payload, context) ->
+            context.client().execute(() -> SetupGuideHud.INSTANCE.setVisible(payload.visible()))
         );
         // HUD はフレームではなくティック単位で文字を進める必要があるため、
         // ClientTickEvents でティックごとに tick() を呼び出す。
