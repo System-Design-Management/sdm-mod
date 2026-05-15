@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.DoorArrowPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.service.TeacherDialogueService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -44,7 +44,7 @@ public final class Phase2DoorArrowService {
         }
 
         if (LOCATION_SCREEN_VIEWERS.add(player.getUuid())) {
-            TeacherDialogueService.showAsHud(player, PC_USED_TEXT);
+            Phase2DialogueVoiceService.showAsHud(player, PC_USED_TEXT, ModSounds.PHASE2_LINE_02_13);
         }
     }
 
@@ -66,7 +66,7 @@ public final class Phase2DoorArrowService {
             Long pendingTick = PENDING_SECOND_DIALOGUE_TICK.get(player.getUuid());
             if (pendingTick != null && currentTick >= pendingTick) {
                 PENDING_SECOND_DIALOGUE_TICK.remove(player.getUuid());
-                TeacherDialogueService.showAsHud(player, THIRD_FLOOR_ARRIVED_TEXT2);
+                Phase2DialogueVoiceService.showAsHud(player, THIRD_FLOOR_ARRIVED_TEXT2, ModSounds.PHASE2_LINE_02_15);
             }
         }
     }
@@ -78,7 +78,7 @@ public final class Phase2DoorArrowService {
         if (!wasOnThirdFloor && onThirdFloor && LOCATION_SCREEN_VIEWERS.contains(playerId)
                 && !THIRD_FLOOR_REACHED_AFTER_MAP.contains(playerId)) {
             THIRD_FLOOR_REACHED_AFTER_MAP.add(playerId);
-            TeacherDialogueService.showAsHud(player, THIRD_FLOOR_ARRIVED_TEXT1);
+            Phase2DialogueVoiceService.showAsHud(player, THIRD_FLOOR_ARRIVED_TEXT1, ModSounds.PHASE2_LINE_02_14);
             PENDING_SECOND_DIALOGUE_TICK.put(playerId, currentTick + SECOND_DIALOGUE_DELAY_TICKS);
         }
 
