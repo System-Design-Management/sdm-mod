@@ -1,8 +1,11 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -28,10 +31,14 @@ public final class TeacherDialogueScreen extends Screen {
     private final Runnable afterClose;
     // 0 = 手動で閉じる。正数 = 指定ティック後に自動で閉じる。
     private final int autoCloseTicks;
+    private final SoundEvent voice;
+    private final int minCloseTicks;
     private int visibleChars = 0;
     private int tickCounter = 0;
     private int autoCloseCounter = 0;
+    private int openTicks = 0;
     private boolean removedFired = false;
+    private boolean voiceStarted = false;
 
     public TeacherDialogueScreen(String text) {
         this(text, null, 0);
@@ -42,13 +49,40 @@ public final class TeacherDialogueScreen extends Screen {
     }
 
     public TeacherDialogueScreen(String text, Runnable afterClose, int autoCloseTicks) {
+        this(text, afterClose, autoCloseTicks, null, 0);
+    }
+
+    public TeacherDialogueScreen(String text, Runnable afterClose, SoundEvent voice, int minCloseTicks) {
+        this(text, afterClose, 0, voice, minCloseTicks);
+    }
+
+    public TeacherDialogueScreen(
+        String text,
+        Runnable afterClose,
+        int autoCloseTicks,
+        SoundEvent voice,
+        int minCloseTicks
+    ) {
         super(Text.empty());
         this.fullText = text;
         this.afterClose = afterClose;
         this.autoCloseTicks = autoCloseTicks;
+        this.voice = voice;
+        this.minCloseTicks = Math.max(0, minCloseTicks);
         // 自動消去モードでは最初から全文を表示する
         if (autoCloseTicks > 0) {
             this.visibleChars = text.length();
+        }
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        if (!voiceStarted && voice != null) {
+            MinecraftClient.getInstance().getSoundManager().play(
+                PositionedSoundInstance.master(voice, 1.0f, 1.0f)
+            );
+            voiceStarted = true;
         }
     }
 
@@ -62,9 +96,10 @@ public final class TeacherDialogueScreen extends Screen {
     // 毎ティック呼ばれる。TICKS_PER_CHAR ティックごとに1文字進める。自動消去モードではカウントダウンする。
     @Override
     public void tick() {
+        openTicks++;
         if (autoCloseTicks > 0) {
             autoCloseCounter++;
-            if (autoCloseCounter >= autoCloseTicks) {
+            if (autoCloseCounter >= autoCloseTicks && canClose()) {
                 this.close();
             }
             return;
@@ -86,6 +121,8 @@ public final class TeacherDialogueScreen extends Screen {
         }
         if (visibleChars < fullText.length()) {
             visibleChars = fullText.length();
+        } else if (!canClose()) {
+            return true;
         } else {
             this.close();
         }
@@ -103,6 +140,8 @@ public final class TeacherDialogueScreen extends Screen {
             || keyCode == GLFW.GLFW_KEY_ESCAPE) {
             if (visibleChars < fullText.length()) {
                 visibleChars = fullText.length();
+            } else if (!canClose()) {
+                return true;
             } else {
                 this.close();
             }
@@ -162,7 +201,7 @@ public final class TeacherDialogueScreen extends Screen {
 
         // 全文表示済みのとき、閉じ方のヒントを右下に表示する。
         if (visibleChars >= fullText.length()) {
-            String hint = autoCloseTicks > 0 ? "" : "[ クリックまたは Space で閉じる ]";
+            String hint = autoCloseTicks > 0 || !canClose() ? "" : "[ クリックまたは Space で閉じる ]";
             int hintWidth = this.textRenderer.getWidth(hint);
             context.drawText(
                 this.textRenderer,
@@ -184,5 +223,9 @@ public final class TeacherDialogueScreen extends Screen {
             removedFired = true;
             afterClose.run();
         }
+    }
+
+    private boolean canClose() {
+        return openTicks >= minCloseTicks;
     }
 }

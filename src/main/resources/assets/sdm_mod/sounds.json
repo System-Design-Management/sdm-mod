@@ -123,5 +123,20 @@
     "sounds": [
       "sdm_mod:phase3/lines_03_04_natural_clean"
     ]
+  },
+  "phase4_line_04_01": {
+    "sounds": [
+      "sdm_mod:phase4/lines_04_01_natural_clean"
+    ]
+  },
+  "phase4_line_04_02": {
+    "sounds": [
+      "sdm_mod:phase4/lines_04_02_natural_clean"
+    ]
+  },
+  "phase5_line_05_01": {
+    "sounds": [
+      "sdm_mod:phase5/lines_05_01_natural_clean"
+    ]
   }
 }

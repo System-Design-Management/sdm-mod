@@ -22,6 +22,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.sound.PositionedSoundInstance;
 
 public final class StoryClientNetworking {
+    private static final int PHASE4_LINE_04_02_MIN_CLOSE_TICKS = 150;
+    private static final int PHASE5_LINE_05_01_MIN_CLOSE_TICKS = 170;
+
     private StoryClientNetworking() {
     }
 
@@ -47,7 +50,9 @@ public final class StoryClientNetworking {
             context.client().execute(() ->
                 context.client().setScreen(new TeacherDialogueScreen(
                     "私が花火を打ち上げてやつらを部屋の隅におびきよせる。その間に部屋から出て、図書館の外に逃げろ！",
-                    () -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload())
+                    () -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload()),
+                    ModSounds.PHASE4_LINE_04_02,
+                    PHASE4_LINE_04_02_MIN_CLOSE_TICKS
                 ))
             )
         );
@@ -64,7 +69,9 @@ public final class StoryClientNetworking {
                         "こんなときになんてデカいおならしてるんだ！！匂いに奴らが反応して集まってくるぞ！急いで図書館の外まで逃げるんだ！！",
                         () -> ScreenScheduler.scheduleAction(
                             () -> ClientPlayNetworking.send(new Phase5OnaraClosedPayload())
-                        )
+                        ),
+                        ModSounds.PHASE5_LINE_05_01,
+                        PHASE5_LINE_05_01_MIN_CLOSE_TICKS
                     ))
                 ));
             })

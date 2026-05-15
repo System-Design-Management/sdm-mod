@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.screen;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.ModSounds;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.ScreenScheduler;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -20,6 +21,8 @@ public final class BookInteractionScreen extends Screen {
     private static final int BTN_W = 110;
     private static final int BTN_H = 20;
     private static final int BTN_GAP = 12;
+    private static final int PHASE4_LINE_04_01_MIN_CLOSE_TICKS = 70;
+    private static final int PHASE4_LINE_04_02_MIN_CLOSE_TICKS = 150;
 
     private final String bookTitle;
     private final boolean isKeyBook;
@@ -88,15 +91,20 @@ public final class BookInteractionScreen extends Screen {
     }
 
     private void openKeyBookDialogue() {
-        MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen("それだ！！よく見つけた！！",
+        MinecraftClient.getInstance().setScreen(new TeacherDialogueScreen(
+            "それだ！！よく見つけた！！",
             // removed() 内で setScreen() を呼ぶと外側の setScreen(null) に上書きされるため、
             // ScreenScheduler に積んで END_CLIENT_TICK で開く。
             () -> ScreenScheduler.schedule(new TeacherDialogueScreen(
-                "私が花火を打ち上げてゾンビたちを部屋の隅におびきよせる。その間に部屋から出て、図書館の外に逃げろ！",
+                "私が花火を打ち上げてやつらを部屋の隅におびきよせる。その間に部屋から出て、図書館の外に逃げろ！",
                 // removed() 内での ClientPlayNetworking.send() が失敗するケースを回避するため、
                 // scheduleAction に積んで END_CLIENT_TICK で送信する。
-                () -> ScreenScheduler.scheduleAction(() -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload()))
-            ))
+                () -> ScreenScheduler.scheduleAction(() -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload())),
+                ModSounds.PHASE4_LINE_04_02,
+                PHASE4_LINE_04_02_MIN_CLOSE_TICKS
+            )),
+            ModSounds.PHASE4_LINE_04_01,
+            PHASE4_LINE_04_01_MIN_CLOSE_TICKS
         ));
     }
 
