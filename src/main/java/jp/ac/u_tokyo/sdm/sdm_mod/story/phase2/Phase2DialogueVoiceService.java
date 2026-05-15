@@ -17,7 +17,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-final class Phase2DialogueVoiceService {
+public final class Phase2DialogueVoiceService {
     private static final float VOLUME = 1.0F;
     private static final float PITCH = 1.0F;
     private static final int TEXT_DISMISS_TICKS = 30;
@@ -28,7 +28,7 @@ final class Phase2DialogueVoiceService {
     private Phase2DialogueVoiceService() {
     }
 
-    static void initialize() {
+    public static void initialize() {
         if (initialized) {
             return;
         }
@@ -38,11 +38,11 @@ final class Phase2DialogueVoiceService {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> STATES.clear());
     }
 
-    static void enqueue(ServerPlayerEntity player, String key, String text, SoundEvent voice, int voiceTicks) {
+    public static void enqueue(ServerPlayerEntity player, String key, String text, SoundEvent voice, int voiceTicks) {
         enqueue(player, key, text, voice, voiceTicks, DeliveryMode.QUEUE);
     }
 
-    static void enqueue(
+    public static void enqueue(
         ServerPlayerEntity player,
         String key,
         String text,
@@ -71,11 +71,11 @@ final class Phase2DialogueVoiceService {
         startNextIfIdle(player, state, player.getWorld().getTime());
     }
 
-    static void enqueueText(ServerPlayerEntity player, String key, String text) {
+    public static void enqueueText(ServerPlayerEntity player, String key, String text) {
         enqueueText(player, key, text, DeliveryMode.QUEUE);
     }
 
-    static void enqueueText(ServerPlayerEntity player, String key, String text, DeliveryMode mode) {
+    public static void enqueueText(ServerPlayerEntity player, String key, String text, DeliveryMode mode) {
         PlayerDialogueState state = STATES.computeIfAbsent(player.getUuid(), ignored -> new PlayerDialogueState());
         DialogueCue cue = new DialogueCue(key, text, null, displayTicks(text, 0));
 
@@ -170,7 +170,7 @@ final class Phase2DialogueVoiceService {
         return Math.max(textTicks, soundTicks);
     }
 
-    enum DeliveryMode {
+    public enum DeliveryMode {
         QUEUE,
         INTERRUPT,
         COALESCE,

@@ -3,7 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.network;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase2.Phase2DoorArrowService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4DialogueClosedPayload;
-import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4FireworkService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4IntroDialogueService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ProfessorDialoguePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase4.Phase4ZombieService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.phase5.Phase5OnaraClosedPayload;
@@ -14,8 +14,6 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public final class StoryNetworking {
-    private static final String PHASE3_ID = "phase3";
-    private static final String PHASE4_ID = "phase4";
     private static final String PHASE5_ID = "phase5";
 
     private StoryNetworking() {
@@ -40,16 +38,9 @@ public final class StoryNetworking {
         ServerPlayNetworking.registerGlobalReceiver(SearchPcLocationOpenedPayload.ID, (payload, context) ->
             context.server().execute(() -> Phase2DoorArrowService.recordLocationScreenOpened(context.player()))
         );
-        // 教授ダイアログを閉じたプレイヤーからパケットが届いたら、花火を打ち上げてからphase4へ進む
+        // キー本を確認したプレイヤーへHUDセリフを流し、完了後にphase4へ進む
         ServerPlayNetworking.registerGlobalReceiver(Phase4DialogueClosedPayload.ID, (payload, context) ->
-            context.server().execute(() -> {
-                StoryManager storyManager = StoryModule.getStoryManager();
-                if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE3_ID)) {
-                    return;
-                }
-                storyManager.advanceToChapter(PHASE4_ID);
-                Phase4FireworkService.launchOnce(context.server());
-            })
+            context.server().execute(() -> Phase4IntroDialogueService.start(context.player()))
         );
         // おならダイアログを閉じたプレイヤーからパケットが届いたらゾンビをスポーンさせる
         ServerPlayNetworking.registerGlobalReceiver(Phase5OnaraClosedPayload.ID, (payload, context) ->

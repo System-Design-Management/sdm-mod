@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.sound.PositionedSoundInstance;
 
 public final class StoryClientNetworking {
-    private static final int PHASE4_LINE_04_02_MIN_CLOSE_TICKS = 150;
     private static final int PHASE5_LINE_05_01_MIN_CLOSE_TICKS = 170;
 
     private StoryClientNetworking() {
@@ -47,14 +46,7 @@ public final class StoryClientNetworking {
         );
         // phase4 開始時に教授のセリフ画面を表示し、閉じたらサーバーに通知する
         ClientPlayNetworking.registerGlobalReceiver(Phase4ProfessorDialoguePayload.ID, (payload, context) ->
-            context.client().execute(() ->
-                context.client().setScreen(new TeacherDialogueScreen(
-                    "私が花火を打ち上げてやつらを部屋の隅におびきよせる。その間に部屋から出て、図書館の外に逃げろ！",
-                    () -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload()),
-                    ModSounds.PHASE4_LINE_04_02,
-                    PHASE4_LINE_04_02_MIN_CLOSE_TICKS
-                ))
-            )
+            context.client().execute(() -> ClientPlayNetworking.send(new Phase4DialogueClosedPayload()))
         );
         // phase5のおなら演出: 音を再生 → 動き停止 → 音終了後に教授UI → 閉じたらゾンビスポーン
         ClientPlayNetworking.registerGlobalReceiver(Phase5OnaraPayload.ID, (payload, context) ->
