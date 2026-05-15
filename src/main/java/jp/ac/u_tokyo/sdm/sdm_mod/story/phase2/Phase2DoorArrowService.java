@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.server.MinecraftServer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.DoorArrowPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
@@ -23,10 +24,13 @@ public final class Phase2DoorArrowService {
     // 1つ目のセリフ（38文字）の表示 + 自動消去（40tick）に余裕を持たせた遅延
     private static final long SECOND_DIALOGUE_DELAY_TICKS = 85L;
     private static final int THIRD_FLOOR_MIN_Y = 41;
+    private static final long PC_USED_DELAY_TICKS = 20L;
     private static final Set<UUID> LOCATION_SCREEN_VIEWERS = new HashSet<>();
+    private static final Set<UUID> PC_USED_TEXT_SHOWN = new HashSet<>();
     private static final Set<UUID> THIRD_FLOOR_REACHED_AFTER_MAP = new HashSet<>();
     private static final Map<UUID, Boolean> LAST_ARROW_VISIBILITY = new HashMap<>();
     private static final Map<UUID, Boolean> LAST_THIRD_FLOOR_STATE = new HashMap<>();
+    private static final Map<UUID, Long> PENDING_PC_USED_TICK = new HashMap<>();
     private static final Map<UUID, Long> PENDING_SECOND_DIALOGUE_TICK = new HashMap<>();
 
     private Phase2DoorArrowService() {
@@ -42,9 +46,18 @@ public final class Phase2DoorArrowService {
         if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE2_ID)) {
             return;
         }
+        LOCATION_SCREEN_VIEWERS.add(player.getUuid());
+    }
 
-        if (LOCATION_SCREEN_VIEWERS.add(player.getUuid())) {
-            TeacherDialogueService.showAsHud(player, PC_USED_TEXT);
+    public static void recordLocationScreenClosed(ServerPlayerEntity player, MinecraftServer server) {
+        StoryManager storyManager = StoryModule.getStoryManager();
+        if (!storyManager.isActive() || !storyManager.isAtChapter(PHASE2_ID)) {
+            return;
+        }
+        UUID playerId = player.getUuid();
+        if (LOCATION_SCREEN_VIEWERS.contains(playerId) && PC_USED_TEXT_SHOWN.add(playerId)) {
+            long scheduledTick = server.getOverworld().getTime() + PC_USED_DELAY_TICKS;
+            PENDING_PC_USED_TICK.put(playerId, scheduledTick);
         }
     }
 
@@ -62,6 +75,12 @@ public final class Phase2DoorArrowService {
                 && THIRD_FLOOR_REACHED_AFTER_MAP.contains(player.getUuid())
                 && isOnThirdFloor(player);
             updateArrowVisibility(player, visible, currentTick);
+
+            Long pendingPcUsed = PENDING_PC_USED_TICK.get(player.getUuid());
+            if (pendingPcUsed != null && currentTick >= pendingPcUsed) {
+                PENDING_PC_USED_TICK.remove(player.getUuid());
+                TeacherDialogueService.showAsHud(player, PC_USED_TEXT);
+            }
 
             Long pendingTick = PENDING_SECOND_DIALOGUE_TICK.get(player.getUuid());
             if (pendingTick != null && currentTick >= pendingTick) {
@@ -102,9 +121,11 @@ public final class Phase2DoorArrowService {
 
     private static void clearState() {
         LOCATION_SCREEN_VIEWERS.clear();
+        PC_USED_TEXT_SHOWN.clear();
         THIRD_FLOOR_REACHED_AFTER_MAP.clear();
         LAST_ARROW_VISIBILITY.clear();
         LAST_THIRD_FLOOR_STATE.clear();
+        PENDING_PC_USED_TICK.clear();
         PENDING_SECOND_DIALOGUE_TICK.clear();
     }
 }

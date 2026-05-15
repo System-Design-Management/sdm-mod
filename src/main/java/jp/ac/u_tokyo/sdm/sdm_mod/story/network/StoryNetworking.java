@@ -30,6 +30,7 @@ public final class StoryNetworking {
         PayloadTypeRegistry.playS2C().register(ShowBookUiPayload.ID, ShowBookUiPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(StoryVideoStartPayload.ID, StoryVideoStartPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(SearchPcLocationOpenedPayload.ID, SearchPcLocationOpenedPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(SearchPcLocationClosedPayload.ID, SearchPcLocationClosedPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase4DialogueClosedPayload.ID, Phase4DialogueClosedPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Phase5OnaraPayload.ID, Phase5OnaraPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(FireworkShakePayload.ID, FireworkShakePayload.CODEC);
@@ -40,6 +41,9 @@ public final class StoryNetworking {
         );
         ServerPlayNetworking.registerGlobalReceiver(SearchPcLocationOpenedPayload.ID, (payload, context) ->
             context.server().execute(() -> Phase2DoorArrowService.recordLocationScreenOpened(context.player()))
+        );
+        ServerPlayNetworking.registerGlobalReceiver(SearchPcLocationClosedPayload.ID, (payload, context) ->
+            context.server().execute(() -> Phase2DoorArrowService.recordLocationScreenClosed(context.player(), context.server()))
         );
         // 教授ダイアログを閉じたプレイヤーからパケットが届いたら、花火を打ち上げてからphase4へ進む
         ServerPlayNetworking.registerGlobalReceiver(Phase4DialogueClosedPayload.ID, (payload, context) ->
