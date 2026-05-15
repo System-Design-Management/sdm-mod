@@ -2,8 +2,12 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandLockState;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.RespawnGuidePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -18,12 +22,16 @@ import java.util.Set;
 public final class StoryRespawnService {
     private static final String PHASE2_ID = "phase2";
     private static final String PHASE3_ID = "phase3";
+    private static final BlockPos[] PHASE3_RESPAWN_DOORS = {
+        new BlockPos(-175, 41, -640),
+        new BlockPos(-176, 41, -640)
+    };
     private static final String PHASE4_ID = "phase4";
     private static final float RESPAWN_YAW = 180.0f;
     private static final float RESPAWN_PITCH = 0.0f;
     private static final Map<String, RespawnPoint> RESPAWN_POINTS = Map.of(
         PHASE2_ID, new RespawnPoint(-160.5, 28.0, -625.0),
-        PHASE3_ID, new RespawnPoint(-170.5, 41.0, -643.0),
+        PHASE3_ID, new RespawnPoint(-175.0, 41.0, -642.0),
         PHASE4_ID, new RespawnPoint(-118.0, 41.0, -636.0)
     );
 
@@ -59,19 +67,48 @@ public final class StoryRespawnService {
 
         // Load the destination chunk before teleporting so command execution runs from a stable world state.
         world.getChunk(destinationChunk.x, destinationChunk.z);
-        newPlayer.getInventory().clear();
-        newPlayer.playerScreenHandler.sendContentUpdates();
-        newPlayer.teleport(
-            world,
-            respawnPoint.x(),
-            respawnPoint.y(),
-            respawnPoint.z(),
-            Set.<PositionFlag>of(),
-            RESPAWN_YAW,
-            RESPAWN_PITCH,
-            false
-        );
-        giveRespawnLoadout(server, newPlayer);
+
+        // phase3 only: preserve the exact inventory the player had before dying.
+        // Other phases clear inventory and re-give a standard loadout.
+        boolean preserveInventory = PHASE3_ID.equals(storyManager.getProgress().currentChapterId());
+        if (!preserveInventory) {
+            newPlayer.getInventory().clear();
+            newPlayer.playerScreenHandler.sendContentUpdates();
+        }
+
+        // Defer teleport to the next tick so Minecraft's own respawn position
+        // setup (TeleportTarget) does not overwrite our custom coordinates.
+        server.execute(() -> {
+            if (preserveInventory) {
+                closePhase3RespawnDoors(world, newPlayer);
+            }
+
+            newPlayer.teleport(
+                world,
+                respawnPoint.x(),
+                respawnPoint.y(),
+                respawnPoint.z(),
+                Set.<PositionFlag>of(),
+                RESPAWN_YAW,
+                RESPAWN_PITCH,
+                false
+            );
+
+            if (!preserveInventory) {
+                giveRespawnLoadout(server, newPlayer);
+            }
+
+            ServerPlayNetworking.send(newPlayer, RespawnGuidePayload.INSTANCE);
+        });
+    }
+
+    private static void closePhase3RespawnDoors(ServerWorld world, ServerPlayerEntity player) {
+        for (BlockPos pos : PHASE3_RESPAWN_DOORS) {
+            BlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof DoorBlock door) {
+                door.setOpen(player, world, state, pos, false);
+            }
+        }
     }
 
     private static void giveRespawnLoadout(MinecraftServer server, ServerPlayerEntity player) {

@@ -2,6 +2,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.client;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.DoorArrowHud;
+import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.RespawnGuideHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.render.CameraShakeState;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.SetupGuideHud;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.hud.TeacherDialogueHud;
@@ -20,6 +21,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.client.screen.warp.WarpSelectScreen;
 import jp.ac.u_tokyo.sdm.sdm_mod.client.story.StoryClientNetworking;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialogueHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.network.TeacherDialoguePayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.RespawnGuidePayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
@@ -69,6 +71,13 @@ public class SdmModClient implements ClientModInitializer {
             Identifier.of("sdm_mod", "setup_guide_hud"),
             SetupGuideHud.INSTANCE
         );
+        HudElementRegistry.addLast(
+            Identifier.of("sdm_mod", "respawn_guide_hud"),
+            RespawnGuideHud.INSTANCE
+        );
+        ClientPlayNetworking.registerGlobalReceiver(RespawnGuidePayload.ID, (payload, context) ->
+            context.client().execute(RespawnGuideHud.INSTANCE::show)
+        );
         ClientPlayNetworking.registerGlobalReceiver(SetupGuideHudPayload.ID, (payload, context) ->
             context.client().execute(() -> {
                 SetupGuideHud.INSTANCE.setVisible(payload.visible());
@@ -85,6 +94,7 @@ public class SdmModClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CameraShakeState.tick();
             TeacherDialogueHud.INSTANCE.tick();
+            RespawnGuideHud.INSTANCE.tick();
             // afterClose 内で setScreen() を呼べないため、ScheduledScreen に積まれた画面をここで開く
             Screen scheduled = ScreenScheduler.poll();
             if (scheduled != null) {

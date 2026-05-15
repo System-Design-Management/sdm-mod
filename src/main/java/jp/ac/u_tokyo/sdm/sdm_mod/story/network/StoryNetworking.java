@@ -34,6 +34,7 @@ public final class StoryNetworking {
         PayloadTypeRegistry.playC2S().register(Phase4DialogueClosedPayload.ID, Phase4DialogueClosedPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Phase5OnaraPayload.ID, Phase5OnaraPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(FireworkShakePayload.ID, FireworkShakePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(RespawnGuidePayload.ID, RespawnGuidePayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Phase5OnaraClosedPayload.ID, Phase5OnaraClosedPayload.CODEC);
         // 動画再生終了後にクライアントからこのパケットが届いたらストーリーを開始する
         ServerPlayNetworking.registerGlobalReceiver(StoryVideoStartPayload.ID, (payload, context) ->
