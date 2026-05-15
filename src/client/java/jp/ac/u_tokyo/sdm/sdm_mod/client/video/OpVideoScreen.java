@@ -83,6 +83,7 @@ public final class OpVideoScreen extends Screen {
         renderBackground(context, mouseX, mouseY, delta);
 
         if (playing) {
+            VideoSoundSilencer.silenceStoryNoise();
             handleTextureInit();
             uploadFrameIfReady();
             if (videoTexture != null) {
@@ -169,6 +170,7 @@ public final class OpVideoScreen extends Screen {
         clearChildren();
         playing = true;
         client.getMusicTracker().stop();
+        VideoSoundSilencer.silenceStoryNoise();
 
         int btnW = 60;
         int btnH = 20;
