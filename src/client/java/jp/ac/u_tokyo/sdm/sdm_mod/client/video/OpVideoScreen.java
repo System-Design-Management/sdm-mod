@@ -54,6 +54,7 @@ public final class OpVideoScreen extends Screen {
     private long videoImagePtr;
 
     private boolean playing;
+    private volatile boolean playbackStarted;
     private boolean cleanedUp;
 
     public OpVideoScreen() {
@@ -104,7 +105,14 @@ public final class OpVideoScreen extends Screen {
         }
         needsTextureInit = false;
 
-        // 前フレームのテクスチャを破棄
+        // 同じ解像度なら既存テクスチャを再利用する。
+        // シーク後に getBufferFormat() が再呼び出しされた場合でも、テクスチャを
+        // 破棄して空（黒）テクスチャを作り直さないことで黒フラッシュを防ぐ。
+        if (videoTexture != null && videoImage != null
+                && videoImage.getWidth() == videoWidth && videoImage.getHeight() == videoHeight) {
+            return;
+        }
+
         if (videoTexture != null) {
             client.getTextureManager().destroyTexture(VIDEO_TEXTURE_ID);
             videoTexture = null;
@@ -182,7 +190,9 @@ public final class OpVideoScreen extends Screen {
         );
 
         new NativeDiscovery().discover();
-        mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--quiet");
+        // --start-paused: VLC がデコーダを初期化してもクロックを進めず t=0 で待機する。
+        // これにより、A/V 同期によるフレームドロップを防ぎ、最初のフレームから再生できる。
+        mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--quiet", "--start-paused");
         mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
         CallbackVideoSurface surface = mediaPlayerFactory.videoSurfaces().newVideoSurface(
@@ -218,6 +228,16 @@ public final class OpVideoScreen extends Screen {
                         vlcjBuf.put(src);
                         frameReady = true;
                     }
+                    // --start-paused の場合、初回 display() は t=0 のフレームで呼ばれる。
+                    // ここで play() を呼ぶことで t=0 から再生を開始する。
+                    // paused() イベントより display() が先に呼ばれた場合はこちらが有効になる。
+                    if (!playbackStarted) {
+                        playbackStarted = true;
+                        new Thread(() -> {
+                            EmbeddedMediaPlayer p = mediaPlayer;
+                            if (p != null) p.controls().play();
+                        }).start();
+                    }
                 }
             },
             true // ロック有効（VLCJ がフレームを上書きする前に display() が完了するのを保証）
@@ -225,6 +245,16 @@ public final class OpVideoScreen extends Screen {
 
         mediaPlayer.videoSurface().set(surface);
         mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            // --start-paused でデコーダ初期化後に paused() が呼ばれる。
+            // display() より先に呼ばれた場合のフォールバックとして play() を起動する。
+            @Override
+            public void paused(MediaPlayer mp) {
+                if (!playbackStarted) {
+                    playbackStarted = true;
+                    new Thread(mp.controls()::play).start();
+                }
+            }
+
             @Override
             public void finished(MediaPlayer mp) {
                 videoFinished = true;

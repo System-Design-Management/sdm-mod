@@ -43,6 +43,8 @@ public final class GameRulesInitializer {
         server.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
         // Natural mob spawning must stay off once the story starts.
         server.getGameRules().get(GameRules.DO_MOB_SPAWNING).set(false, server);
+        // Prevent item drops on death; StoryRespawnService manages inventory per phase.
+        server.getGameRules().get(GameRules.KEEP_INVENTORY).set(true, server);
         server.getGameRules().get(GameRules.DO_WEATHER_CYCLE).set(false, server);
         server.getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK).set(false, server);
 
