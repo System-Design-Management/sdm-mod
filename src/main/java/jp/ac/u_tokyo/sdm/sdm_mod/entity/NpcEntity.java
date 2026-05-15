@@ -2,11 +2,13 @@ package jp.ac.u_tokyo.sdm.sdm_mod.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.world.World;
@@ -29,7 +31,26 @@ public abstract class NpcEntity extends ZombieEntity {
         setPersistent();
         setCanPickUpLoot(false);
         setBaby(false);
-        setSilent(true);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return null;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.2f;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return null;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return null;
     }
 
     public static DefaultAttributeContainer.Builder createNpcAttributes() {
