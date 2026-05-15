@@ -12,10 +12,12 @@ public final class GameRulesInitializer {
 
     public static void applyStoryDefaults(MinecraftServer server) {
         server.getGameRules().get(GameRules.ANNOUNCE_ADVANCEMENTS).set(false, server);
+        server.getGameRules().get(GameRules.LOG_ADMIN_COMMANDS).set(false, server);
         server.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
         // Natural mob spawning must stay off once the story starts.
         server.getGameRules().get(GameRules.DO_MOB_SPAWNING).set(false, server);
         server.getGameRules().get(GameRules.DO_WEATHER_CYCLE).set(false, server);
+        server.getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK).set(false, server);
 
         for (ServerWorld world : server.getWorlds()) {
             world.setTimeOfDay(STORY_NIGHT_TIME);

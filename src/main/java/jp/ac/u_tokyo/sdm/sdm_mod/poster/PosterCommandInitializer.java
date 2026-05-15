@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +49,7 @@ public final class PosterCommandInitializer {
             String posterId = StringArgumentType.getString(context, "poster_id");
             PosterDefinition def = PosterRegistry.get(posterId);
             if (def == null) {
-                context.getSource().sendError(Text.literal("Unknown poster ID: " + posterId));
+                LOGGER.warn("Unknown poster ID requested: {}", posterId);
                 return 0;
             }
 
@@ -60,14 +59,9 @@ public final class PosterCommandInitializer {
             NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, nbt);
 
             player.giveItemStack(stack);
-            context.getSource().sendFeedback(
-                () -> Text.literal("Gave poster '" + posterId + "' to " + player.getName().getString()),
-                true
-            );
             return 1;
         } catch (Exception e) {
             LOGGER.error("Failed to give poster item.", e);
-            context.getSource().sendError(Text.literal("Failed to give poster item."));
             return 0;
         }
     }

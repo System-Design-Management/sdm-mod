@@ -62,7 +62,6 @@ public final class StoryCommandInitializer {
             return 1;
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to execute setup.", exception);
-            context.getSource().sendError(Text.literal("Failed to execute setup. Check the log for details."));
             return 0;
         }
     }
@@ -94,14 +93,9 @@ public final class StoryCommandInitializer {
             // サーバー側で StoryStartService.start() が呼ばれる。
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> ServerPlayNetworking.send(player, ShowOpVideoPayload.INSTANCE));
-            context.getSource().sendFeedback(
-                () -> Text.literal("OP video triggered. Story will start after playback."),
-                true
-            );
             return 1;
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to trigger OP video.", exception);
-            context.getSource().sendError(Text.literal("Failed to trigger OP video. Check the log for details."));
             return 0;
         }
     }
