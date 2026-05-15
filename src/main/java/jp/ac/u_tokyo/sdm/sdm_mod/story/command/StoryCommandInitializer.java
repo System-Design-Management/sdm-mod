@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import jp.ac.u_tokyo.sdm.sdm_mod.ModEntities;
 import jp.ac.u_tokyo.sdm.sdm_mod.entity.SdmLogoEntity;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -55,6 +56,7 @@ public final class StoryCommandInitializer {
                     player.teleport(world, SETUP_X, SETUP_Y, SETUP_Z, Set.<PositionFlag>of(), player.getYaw(), player.getPitch(), false);
                 });
             spawnSdmLogo(context.getSource().getServer().getOverworld());
+            StoryAutoStartService.enable();
             context.getSource().sendFeedback(
                 () -> Text.literal("Setup complete: inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
                 true
