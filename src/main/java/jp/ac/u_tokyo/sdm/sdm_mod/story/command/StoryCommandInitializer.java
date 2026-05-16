@@ -10,6 +10,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.game.CommandPermissionInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.game.GameRulesInitializer;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -48,12 +49,15 @@ public final class StoryCommandInitializer {
                 .then(literal("start")
                     .executes(StoryCommandInitializer::executeStart))
                 .then(literal("setup")
-                    .executes(StoryCommandInitializer::executeSetup))
+                    .executes(context -> executeSetup(context, false))
+                    .then(literal("easy")
+                        .executes(context -> executeSetup(context, true))))
         ));
     }
 
-    private static int executeSetup(CommandContext<ServerCommandSource> context) {
+    private static int executeSetup(CommandContext<ServerCommandSource> context, boolean easyMode) {
         try {
+            StoryCombatService.setEasyMode(easyMode);
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> {
                     player.getInventory().clear();
@@ -78,7 +82,9 @@ public final class StoryCommandInitializer {
             }
             CommandLockState.lock();
             context.getSource().sendFeedback(
-                () -> Text.literal("Setup complete: inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
+                () -> Text.literal("Setup complete"
+                    + (easyMode ? " (easy)" : "")
+                    + ": inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
                 true
             );
             return 1;
