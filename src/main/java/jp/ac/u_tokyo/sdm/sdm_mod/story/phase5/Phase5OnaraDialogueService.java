@@ -18,7 +18,7 @@ public final class Phase5OnaraDialogueService {
     private static final String PHASE5_ID = "phase5";
     private static final String ONARA_WARNING_TEXT = "こんなときになんてデカいおならしてるんだ！！匂いに奴らが反応して集まってくるぞ！急いで図書館の外まで逃げるんだ！！";
     private static final int LINE_05_01_TICKS = 160;
-    private static final long STAIR_ARROW_START_DELAY_TICKS = LINE_05_01_TICKS + 10L;
+    private static final long STAIR_ARROW_START_DELAY_TICKS = 0L;
     private static final long ZOMBIE_SPAWN_DELAY_TICKS = 180L;
     private static final Map<UUID, Long> PENDING_ZOMBIE_SPAWN_TICKS = new HashMap<>();
     private static boolean zombiesSpawned;
