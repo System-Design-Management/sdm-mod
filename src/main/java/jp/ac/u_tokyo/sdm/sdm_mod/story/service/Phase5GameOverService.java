@@ -30,7 +30,7 @@ public final class Phase5GameOverService {
                 return;
             }
 
-            ServerPlayNetworking.send(player, Phase5GameOverPayload.INSTANCE);
+            ServerPlayNetworking.send(player, new Phase5GameOverPayload(StoryVideoSkipState.isVideoSkipAllowed()));
         });
     }
 }

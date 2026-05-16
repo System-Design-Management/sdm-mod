@@ -56,9 +56,15 @@ public final class OpVideoScreen extends Screen {
     private boolean playing;
     private volatile boolean playbackStarted;
     private boolean cleanedUp;
+    private final boolean allowSkip;
 
     public OpVideoScreen() {
+        this(false);
+    }
+
+    public OpVideoScreen(boolean allowSkip) {
         super(Text.empty());
+        this.allowSkip = allowSkip;
     }
 
     @Override
@@ -180,14 +186,16 @@ public final class OpVideoScreen extends Screen {
         client.getMusicTracker().stop();
         VideoSoundSilencer.silenceStoryNoise();
 
-        int btnW = 60;
-        int btnH = 20;
-        int margin = 1;
-        addDrawableChild(
-            ButtonWidget.builder(SKIP_TEXT, btn -> finishAndStartStory())
-                .dimensions(margin, margin, btnW, btnH)
-                .build()
-        );
+        if (allowSkip) {
+            int btnW = 60;
+            int btnH = 20;
+            int margin = 1;
+            addDrawableChild(
+                ButtonWidget.builder(SKIP_TEXT, btn -> finishAndStartStory())
+                    .dimensions(margin, margin, btnW, btnH)
+                    .build()
+            );
+        }
 
         new NativeDiscovery().discover();
         // --start-paused: VLC がデコーダを初期化してもクロックを進めず t=0 で待機する。

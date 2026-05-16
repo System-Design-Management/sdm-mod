@@ -3,6 +3,7 @@ package jp.ac.u_tokyo.sdm.sdm_mod.story.phase5;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowEdVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.runtime.StoryManager;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryVideoSkipState;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
@@ -50,6 +51,9 @@ public final class Phase5To6RegionTrigger {
         StoryManager storyManager = StoryModule.getStoryManager();
         storyManager.advanceToChapter(PHASE6_ID);
         server.getPlayerManager().getPlayerList()
-            .forEach(player -> ServerPlayNetworking.send(player, ShowEdVideoPayload.INSTANCE));
+            .forEach(player -> ServerPlayNetworking.send(
+                player,
+                new ShowEdVideoPayload(StoryVideoSkipState.isVideoSkipAllowed())
+            ));
     }
 }

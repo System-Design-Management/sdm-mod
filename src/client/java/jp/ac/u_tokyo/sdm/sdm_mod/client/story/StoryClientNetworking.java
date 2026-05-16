@@ -25,13 +25,13 @@ public final class StoryClientNetworking {
 
     public static void initialize() {
         ClientPlayNetworking.registerGlobalReceiver(Phase5GameOverPayload.ID, (payload, context) ->
-            context.client().execute(() -> context.client().setScreen(new BadEdVideoScreen()))
+            context.client().execute(() -> context.client().setScreen(new BadEdVideoScreen(payload.allowSkip())))
         );
         ClientPlayNetworking.registerGlobalReceiver(ShowOpVideoPayload.ID, (payload, context) ->
-            context.client().execute(() -> context.client().setScreen(new OpVideoScreen()))
+            context.client().execute(() -> context.client().setScreen(new OpVideoScreen(payload.allowSkip())))
         );
         ClientPlayNetworking.registerGlobalReceiver(ShowEdVideoPayload.ID, (payload, context) ->
-            context.client().execute(() -> context.client().setScreen(new EdVideoScreen()))
+            context.client().execute(() -> context.client().setScreen(new EdVideoScreen(payload.allowSkip())))
         );
         ClientPlayNetworking.registerGlobalReceiver(DoorArrowPayload.ID, (payload, context) ->
             context.client().execute(() -> DoorArrowHud.INSTANCE.apply(payload))
