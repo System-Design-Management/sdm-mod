@@ -34,7 +34,7 @@ public final class StoryClientNetworking {
             context.client().execute(() -> context.client().setScreen(new EdVideoScreen()))
         );
         ClientPlayNetworking.registerGlobalReceiver(DoorArrowPayload.ID, (payload, context) ->
-            context.client().execute(() -> DoorArrowHud.INSTANCE.setEnabled(payload.visible()))
+            context.client().execute(() -> DoorArrowHud.INSTANCE.apply(payload))
         );
         ClientPlayNetworking.registerGlobalReceiver(ShowBookUiPayload.ID, (payload, context) ->
             context.client().execute(() ->
