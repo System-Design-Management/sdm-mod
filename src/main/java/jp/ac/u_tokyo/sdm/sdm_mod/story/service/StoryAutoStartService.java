@@ -23,18 +23,23 @@ public final class StoryAutoStartService {
     private static final Box START_PRESSURE_PLATE_REGION = new Box(-57, 23, -452, -55, 26, -449);
 
     private static boolean enabled = false;
+    private static boolean debugMode = false;
 
     private StoryAutoStartService() {
     }
 
     public static void initialize() {
         ServerTickEvents.END_SERVER_TICK.register(StoryAutoStartService::tick);
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> enabled = false);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            enabled = false;
+            debugMode = false;
+        });
     }
 
-    public static void enable(MinecraftServer server) {
+    public static void enable(MinecraftServer server, boolean debug) {
         enabled = true;
-        prepareStartPressurePlateCommands(server.getOverworld());
+        debugMode = debug;
+        prepareStartPressurePlateCommands(server.getOverworld(), getStartCommand());
     }
 
     private static void tick(MinecraftServer server) {
@@ -45,13 +50,17 @@ public final class StoryAutoStartService {
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             if (START_PRESSURE_PLATE_REGION.contains(player.getX(), player.getY(), player.getZ())) {
                 enabled = false;
-                server.getCommandManager().executeWithPrefix(server.getCommandSource(), START_COMMAND);
+                server.getCommandManager().executeWithPrefix(server.getCommandSource(), getStartCommand());
                 return;
             }
         }
     }
 
-    private static void prepareStartPressurePlateCommands(ServerWorld world) {
+    private static String getStartCommand() {
+        return debugMode ? START_COMMAND + " debug" : START_COMMAND;
+    }
+
+    private static void prepareStartPressurePlateCommands(ServerWorld world, String startCommand) {
         for (BlockPos pos : START_COMMAND_BLOCK_POSITIONS) {
             world.getChunk(pos);
             BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -60,11 +69,11 @@ public final class StoryAutoStartService {
                 continue;
             }
 
-            commandBlock.getCommandExecutor().setCommand(START_COMMAND);
+            commandBlock.getCommandExecutor().setCommand(startCommand);
             commandBlock.markDirty();
             BlockState state = world.getBlockState(pos);
             world.updateListeners(pos, state, state, 3);
-            LOGGER.info("Configured start command block at {} to run '{}'.", pos, START_COMMAND);
+            LOGGER.info("Configured start command block at {} to run '{}'.", pos, startCommand);
         }
     }
 }

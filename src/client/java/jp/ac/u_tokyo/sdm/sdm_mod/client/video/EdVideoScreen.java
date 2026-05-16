@@ -49,21 +49,29 @@ public final class EdVideoScreen extends Screen {
     private long videoImagePtr;
 
     private boolean cleanedUp;
+    private final boolean allowSkip;
 
     public EdVideoScreen() {
+        this(false);
+    }
+
+    public EdVideoScreen(boolean allowSkip) {
         super(Text.empty());
+        this.allowSkip = allowSkip;
     }
 
     @Override
     protected void init() {
-        int btnW = 60;
-        int btnH = 20;
-        int margin = 1;
-        addDrawableChild(
-            ButtonWidget.builder(SKIP_TEXT, btn -> closeScreen())
-                .dimensions(margin, margin, btnW, btnH)
-                .build()
-        );
+        if (allowSkip) {
+            int btnW = 60;
+            int btnH = 20;
+            int margin = 1;
+            addDrawableChild(
+                ButtonWidget.builder(SKIP_TEXT, btn -> closeScreen())
+                    .dimensions(margin, margin, btnW, btnH)
+                    .build()
+            );
+        }
         startVideo();
     }
 

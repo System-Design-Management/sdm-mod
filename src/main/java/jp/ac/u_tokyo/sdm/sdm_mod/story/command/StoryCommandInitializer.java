@@ -12,6 +12,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.network.SetupGuideHudPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.network.ShowOpVideoPayload;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryCombatService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryVideoSkipState;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -47,17 +48,22 @@ public final class StoryCommandInitializer {
             literal("sdm_story")
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(literal("start")
-                    .executes(StoryCommandInitializer::executeStart))
+                    .executes(context -> executeStart(context, false))
+                    .then(literal("debug")
+                        .executes(context -> executeStart(context, true))))
                 .then(literal("setup")
-                    .executes(context -> executeSetup(context, false))
+                    .executes(context -> executeSetup(context, false, false))
+                    .then(literal("debug")
+                        .executes(context -> executeSetup(context, false, true)))
                     .then(literal("easy")
-                        .executes(context -> executeSetup(context, true))))
+                        .executes(context -> executeSetup(context, true, false))))
         ));
     }
 
-    private static int executeSetup(CommandContext<ServerCommandSource> context, boolean easyMode) {
+    private static int executeSetup(CommandContext<ServerCommandSource> context, boolean easyMode, boolean debugMode) {
         try {
             StoryCombatService.setEasyMode(easyMode);
+            StoryVideoSkipState.setVideoSkipAllowed(debugMode);
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> {
                     player.getInventory().clear();
@@ -69,7 +75,7 @@ public final class StoryCommandInitializer {
                 });
             GameRulesInitializer.applySetupDefaults(context.getSource().getServer());
             spawnSdmLogo(context.getSource().getServer().getOverworld());
-            StoryAutoStartService.enable(context.getSource().getServer());
+            StoryAutoStartService.enable(context.getSource().getServer(), debugMode);
             context.getSource().getServer().getPlayerManager().getPlayerList()
                 .forEach(player -> ServerPlayNetworking.send(player, new SetupGuideHudPayload(true)));
             CommandPermissionInitializer.revokeModGrantedOps(context.getSource().getServer());
@@ -84,6 +90,7 @@ public final class StoryCommandInitializer {
             context.getSource().sendFeedback(
                 () -> Text.literal("Setup complete"
                     + (easyMode ? " (easy)" : "")
+                    + (debugMode ? " (debug)" : "")
                     + ": inventory cleared, adventure mode, teleported to (-93, 24, -451)."),
                 true
             );
@@ -115,12 +122,13 @@ public final class StoryCommandInitializer {
     private record LogoPlacement(double x, double y, double z, float yaw) {
     }
 
-    private static int executeStart(CommandContext<ServerCommandSource> context) {
+    private static int executeStart(CommandContext<ServerCommandSource> context, boolean debugMode) {
         try {
+            StoryVideoSkipState.setVideoSkipAllowed(debugMode);
             // OP 動画をクライアントに表示させる。動画終了後にクライアントが StoryVideoStartPayload を送信し
             // サーバー側で StoryStartService.start() が呼ばれる。
             context.getSource().getServer().getPlayerManager().getPlayerList()
-                .forEach(player -> ServerPlayNetworking.send(player, ShowOpVideoPayload.INSTANCE));
+                .forEach(player -> ServerPlayNetworking.send(player, new ShowOpVideoPayload(debugMode)));
             return 1;
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to trigger OP video.", exception);

@@ -26,6 +26,7 @@ import jp.ac.u_tokyo.sdm.sdm_mod.story.service.Phase5GameOverService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryAutoStartService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryRespawnService;
 import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryStudentIdGateService;
+import jp.ac.u_tokyo.sdm.sdm_mod.story.service.StoryVideoSkipState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public final class StoryModule {
     public static void initialize() {
         StoryChapterRegistry.initialize();
         storyManager = StoryManager.createDefault();
+        StoryVideoSkipState.initialize();
         StoryAutoStartService.initialize();
         StoryEntityControlService.initialize();
         StoryCombatService.initialize();

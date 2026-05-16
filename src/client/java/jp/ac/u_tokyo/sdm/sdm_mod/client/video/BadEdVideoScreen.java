@@ -7,6 +7,7 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -28,6 +29,7 @@ import java.nio.ByteBuffer;
 
 public final class BadEdVideoScreen extends Screen {
     private static final Identifier VIDEO_TEXTURE_ID = Identifier.of("sdm_mod", "bad_ed_video_frame");
+    private static final Text SKIP_TEXT = Text.literal("スキップ");
     // scream.ogg が終わってから動画を開始するまでの待機tick数。screamの長さに合わせて調整すること。
     private static final int SCREAM_WAIT_TICKS = 60;
 
@@ -54,13 +56,29 @@ public final class BadEdVideoScreen extends Screen {
     private long videoImagePtr;
 
     private boolean cleanedUp;
+    private final boolean allowSkip;
 
     public BadEdVideoScreen() {
+        this(false);
+    }
+
+    public BadEdVideoScreen(boolean allowSkip) {
         super(Text.empty());
+        this.allowSkip = allowSkip;
     }
 
     @Override
     protected void init() {
+        if (allowSkip) {
+            int btnW = 60;
+            int btnH = 20;
+            int margin = 1;
+            addDrawableChild(
+                ButtonWidget.builder(SKIP_TEXT, btn -> closeScreen())
+                    .dimensions(margin, margin, btnW, btnH)
+                    .build()
+            );
+        }
         VideoSoundSilencer.silenceStoryNoise();
         client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.SCREAM, 1.0f, 1.0f));
     }
