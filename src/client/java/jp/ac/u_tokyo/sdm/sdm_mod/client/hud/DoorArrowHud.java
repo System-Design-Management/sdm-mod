@@ -1,5 +1,6 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.client.hud;
 
+import jp.ac.u_tokyo.sdm.sdm_mod.story.network.DoorArrowPayload;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -21,13 +22,21 @@ public final class DoorArrowHud implements HudElement {
     private static final int MARGIN = 16;
 
     private boolean arrowEnabled = false;
+    private boolean customTarget = false;
+    private double targetX = 0.0;
+    private double targetZ = 0.0;
+    private double minVisibleY = MIN_Y;
 
     private DoorArrowHud() {
     }
 
     /** サーバーから DoorArrowPayload を受け取ったときに呼ぶ。 */
-    public void setEnabled(boolean enabled) {
-        this.arrowEnabled = enabled;
+    public void apply(DoorArrowPayload payload) {
+        this.arrowEnabled = payload.visible();
+        this.customTarget = payload.customTarget();
+        this.targetX = payload.targetX();
+        this.targetZ = payload.targetZ();
+        this.minVisibleY = payload.minVisibleY();
     }
 
     @Override
@@ -38,22 +47,26 @@ public final class DoorArrowHud implements HudElement {
         PlayerEntity player = client.player;
         if (player == null) return;
 
-        // Y 座標が MIN_Y 未満のときは表示しない
-        if (player.getY() < MIN_Y) return;
+        // 指定された Y 座標より下では表示しない
+        if (player.getY() < minVisibleY) return;
 
         double px = player.getX();
         double pz = player.getZ();
 
-        // 最も近いドアを選択する
-        double targetX = DOOR_CENTERS[0][0];
-        double targetZ = DOOR_CENTERS[0][1];
-        double minDistSq = distSq(px, pz, targetX, targetZ);
-        for (double[] door : DOOR_CENTERS) {
-            double d = distSq(px, pz, door[0], door[1]);
-            if (d < minDistSq) {
-                minDistSq = d;
-                targetX = door[0];
-                targetZ = door[1];
+        double currentTargetX = targetX;
+        double currentTargetZ = targetZ;
+        if (!customTarget) {
+            // 最も近いドアを選択する
+            currentTargetX = DOOR_CENTERS[0][0];
+            currentTargetZ = DOOR_CENTERS[0][1];
+            double minDistSq = distSq(px, pz, currentTargetX, currentTargetZ);
+            for (double[] door : DOOR_CENTERS) {
+                double d = distSq(px, pz, door[0], door[1]);
+                if (d < minDistSq) {
+                    minDistSq = d;
+                    currentTargetX = door[0];
+                    currentTargetZ = door[1];
+                }
             }
         }
 
@@ -61,13 +74,13 @@ public final class DoorArrowHud implements HudElement {
         // コンパス方位（北=0, 東=90, 南=180, 西=270）に変換する。
         double playerBearing = ((player.getYaw() + 180.0) % 360 + 360) % 360;
 
-        // ドアへのコンパス方位を計算する。
-        double dx = targetX - px;
-        double dz = targetZ - pz;
-        double doorBearing = Math.toDegrees(Math.atan2(dx, -dz));
+        // 目的地へのコンパス方位を計算する。
+        double dx = currentTargetX - px;
+        double dz = currentTargetZ - pz;
+        double targetBearing = Math.toDegrees(Math.atan2(dx, -dz));
 
         // 画面上の矢印回転角（時計回り正）をラジアンに変換する。
-        double arrowAngleDeg = doorBearing - playerBearing;
+        double arrowAngleDeg = targetBearing - playerBearing;
         float arrowAngleRad = (float) Math.toRadians(arrowAngleDeg);
 
         int screenWidth = client.getWindow().getScaledWidth();
