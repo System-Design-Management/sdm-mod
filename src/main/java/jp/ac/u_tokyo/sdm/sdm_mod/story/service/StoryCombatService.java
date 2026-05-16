@@ -1,6 +1,7 @@
 package jp.ac.u_tokyo.sdm.sdm_mod.story.service;
 
 import jp.ac.u_tokyo.sdm.sdm_mod.story.StoryModule;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -14,13 +15,16 @@ import net.minecraft.util.ActionResult;
 public final class StoryCombatService {
     private static final double STORY_ZOMBIE_MAX_HEALTH = 4.0;
     private static final double STORY_ZOMBIE_ATTACK_DAMAGE = 4.0;
+    private static final double EASY_STORY_ZOMBIE_ATTACK_DAMAGE = 1.0;
     private static final double PHASE5_ZOMBIE_MOVEMENT_SPEED = 0.30;
+    private static boolean easyMode = false;
     // TODO: It is possible to slightly extend the player's attack reach only against story/phase zombies without changing zombie attack reach.
 
     private StoryCombatService() {
     }
 
     public static void initialize() {
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> easyMode = false);
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (world.isClient()) {
                 return ActionResult.PASS;
@@ -40,8 +44,12 @@ public final class StoryCombatService {
 
     public static void configureStoryZombieCombat(ZombieEntity zombie) {
         setAttributeBaseValue(zombie, EntityAttributes.MAX_HEALTH, STORY_ZOMBIE_MAX_HEALTH);
-        setAttributeBaseValue(zombie, EntityAttributes.ATTACK_DAMAGE, STORY_ZOMBIE_ATTACK_DAMAGE);
+        setAttributeBaseValue(zombie, EntityAttributes.ATTACK_DAMAGE, getStoryZombieAttackDamage());
         zombie.setHealth((float) STORY_ZOMBIE_MAX_HEALTH);
+    }
+
+    public static void setEasyMode(boolean enabled) {
+        easyMode = enabled;
     }
 
     public static void configurePhase5ZombieCombat(ZombieEntity zombie) {
@@ -53,6 +61,10 @@ public final class StoryCombatService {
 
     private static boolean isBareHanded(ItemStack stack) {
         return stack.isEmpty();
+    }
+
+    private static double getStoryZombieAttackDamage() {
+        return easyMode ? EASY_STORY_ZOMBIE_ATTACK_DAMAGE : STORY_ZOMBIE_ATTACK_DAMAGE;
     }
 
     private static void setAttributeBaseValue(ZombieEntity zombie, RegistryEntry<EntityAttribute> attribute, double value) {
